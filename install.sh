@@ -97,8 +97,6 @@ install_mysql() {
     print_message "Instalando MariaDB (MySQL)..."
     
     apt install -y mariadb-server mariadb-client
-    XIT
-    
     
     # Configurar MariaDB
     systemctl enable mariadb
