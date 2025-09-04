@@ -145,16 +145,19 @@ install_composer() {
 setup_database() {
     print_message "Configurando banco de dados..."
     
+    # Configurar senha do root do MySQL
+    mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'AMESMASENHA2022*';"
+    
     # Ler configurações do .env
     DB_DATABASE=$(grep DB_DATABASE .env | cut -d '=' -f2)
     DB_USERNAME=$(grep DB_USERNAME .env | cut -d '=' -f2)
     DB_PASSWORD=$(grep DB_PASSWORD .env | cut -d '=' -f2)
     
     # Criar banco e usuário
-    mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS $DB_DATABASE;"
-    mysql -u root -p -e "CREATE USER IF NOT EXISTS '$DB_USERNAME'@'localhost' IDENTIFIED BY '$DB_PASSWORD';"
-    mysql -u root -p -e "GRANT ALL PRIVILEGES ON $DB_DATABASE.* TO '$DB_USERNAME'@'localhost';"
-    mysql -u root -p -e "FLUSH PRIVILEGES;"
+    mysql -u root -p'AMESMASENHA2022*' -e "CREATE DATABASE IF NOT EXISTS $DB_DATABASE;"
+    mysql -u root -p'AMESMASENHA2022*' -e "CREATE USER IF NOT EXISTS '$DB_USERNAME'@'localhost' IDENTIFIED BY '$DB_PASSWORD';"
+    mysql -u root -p'AMESMASENHA2022*' -e "GRANT ALL PRIVILEGES ON $DB_DATABASE.* TO '$DB_USERNAME'@'localhost';"
+    mysql -u root -p'AMESMASENHA2022*' -e "FLUSH PRIVILEGES;"
     
     print_message "Banco de dados configurado com sucesso!"
 }
