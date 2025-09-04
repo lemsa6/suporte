@@ -186,7 +186,7 @@
             <h5 class="mb-0 fw-semibold">Configurações da Conta</h5>
         </div>
         <div class="card-body">
-            <form method="POST" action="{{ route('profile.settings') }}" class="d-flex flex-column gap-4">
+            <form method="POST" action="{{ route('profile.update') }}" class="d-flex flex-column gap-4">
                 @csrf
                 @method('PUT')
 
@@ -219,9 +219,9 @@
                     <div class="col-12 col-sm-6">
                         <label for="timezone" class="form-label fw-medium text-dark">Fuso Horário</label>
                         <select name="timezone" id="timezone" class="form-select @error('timezone') is-invalid @enderror">
-                            @foreach($timezones as $timezone)
-                                <option value="{{ $timezone }}" {{ old('timezone', $user->timezone) == $timezone ? 'selected' : '' }}>
-                                    {{ $timezone }}
+                            @foreach($timezones as $value => $label)
+                                <option value="{{ $value }}" {{ old('timezone', $user->timezone) == $value ? 'selected' : '' }}>
+                                    {{ $label }}
                                 </option>
                             @endforeach
                         </select>

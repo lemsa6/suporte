@@ -145,13 +145,19 @@ install_composer() {
 setup_database() {
     print_message "Configurando banco de dados..."
     
-    # Configurar senha do root do MySQL
-    mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'AMESMASENHA2022*';"
+    # Criar arquivo .env se não existir
+    if [ ! -f .env ]; then
+        print_message "Criando arquivo .env..."
+        cp .env.example .env
+    fi
     
-    # Ler configurações do .env
-    DB_DATABASE=$(grep DB_DATABASE .env | cut -d '=' -f2)
-    DB_USERNAME=$(grep DB_USERNAME .env | cut -d '=' -f2)
-    DB_PASSWORD=$(grep DB_PASSWORD .env | cut -d '=' -f2)
+    # Configurar senha do root do MySQL
+    mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'AMESMASENHA2022*';" 2>/dev/null || true
+    
+    # Configurações fixas
+    DB_DATABASE="suporte"
+    DB_USERNAME="suporte"
+    DB_PASSWORD="AMESMASENHA2022*"
     
     # Criar banco e usuário
     mysql -u root -p'AMESMASENHA2022*' -e "CREATE DATABASE IF NOT EXISTS $DB_DATABASE;"

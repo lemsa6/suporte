@@ -27,7 +27,19 @@ class ProfileController extends Controller
     {
         $user = auth()->user();
         
-        return view('profile.edit', compact('user'));
+        // Lista de fusos horários comuns
+        $timezones = [
+            'America/Sao_Paulo' => 'Brasília (GMT-3)',
+            'America/New_York' => 'Nova York (GMT-5)',
+            'America/Los_Angeles' => 'Los Angeles (GMT-8)',
+            'Europe/London' => 'Londres (GMT+0)',
+            'Europe/Paris' => 'Paris (GMT+1)',
+            'Asia/Tokyo' => 'Tóquio (GMT+9)',
+            'Australia/Sydney' => 'Sydney (GMT+10)',
+            'UTC' => 'UTC (GMT+0)',
+        ];
+        
+        return view('profile.edit', compact('user', 'timezones'));
     }
 
     /**

@@ -1,4 +1,4 @@
-# Sistema de Chamados - Estrutura Completa (Produtividade + Simplicidade)
+o sistema usa npm local só i# Sistema de Chamados - Estrutura Completa (Produtividade + Simplicidade)
 
 ## 1. Arquitetura Técnica
 - **Backend:** Laravel 12+
