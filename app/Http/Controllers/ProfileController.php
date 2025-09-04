@@ -178,4 +178,31 @@ class ProfileController extends Controller
 
         return back()->with('success', 'Preferências atualizadas com sucesso!');
     }
+
+    /**
+     * Delete the user's account.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function destroy(Request $request): RedirectResponse
+    {
+        $user = auth()->user();
+        
+        $validated = $request->validate([
+            'delete_confirmation' => ['required', 'string', 'in:DELETE'],
+        ]);
+
+        // Fazer logout antes de deletar
+        auth()->logout();
+        
+        // Deletar a conta
+        $user->delete();
+        
+        // Invalidar sessão
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login')->with('success', 'Sua conta foi excluída com sucesso.');
+    }
 }
