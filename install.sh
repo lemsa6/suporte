@@ -72,8 +72,10 @@ update_system() {
 install_php() {
     print_message "Instalando PHP 8.2..."
     
-    # Adicionar repositório PHP
-    add-apt-repository ppa:ondrej/php -y
+    # Adicionar repositório PHP para Debian
+    apt install -y lsb-release ca-certificates apt-transport-https software-properties-common gnupg
+    wget -qO - https://packages.sury.org/php/apt.gpg | apt-key add -
+    echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
     apt update
     
     # Instalar PHP e extensões
