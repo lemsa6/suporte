@@ -12,6 +12,13 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Primeiro, adicionar a coluna hash se não existir
+        if (!Schema::hasColumn('tickets', 'hash')) {
+            Schema::table('tickets', function (Blueprint $table) {
+                $table->string('hash', 32)->nullable()->after('ticket_number');
+            });
+        }
+        
         // Adicionar hashes únicos para tickets existentes que não têm hash
         $this->addHashesToExistingTickets();
         
