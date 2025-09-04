@@ -16,9 +16,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- CSS compilado diretamente -->
-                <link rel="stylesheet" href="{{ asset('build/assets/app-4456f621.css') }}">
-            <link rel="stylesheet" href="{{ asset('build/assets/app-cba1bdaf.css') }}">
-            <script src="{{ asset('build/assets/app-478fd0a3.js') }}" defer></script>
+    <link rel="stylesheet" href="{{ asset('build/assets/app-4456f621.css') }}">
+    <link rel="stylesheet" href="{{ asset('build/assets/app-9d8fa3fc.css') }}">
+    <script src="{{ asset('build/assets/app-478fd0a3.js') }}" defer></script>
 </head>
 <body>
     <div class="login-container">
