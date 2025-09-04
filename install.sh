@@ -37,9 +37,9 @@ print_header() {
 # Verificar se é root
 check_root() {
     if [[ $EUID -eq 0 ]]; then
-        print_error "Este script não deve ser executado como root!"
-        print_message "Execute: sudo ./install.sh"
-        exit 1
+        print_warning "Executando como root. Continuando..."
+    else
+        print_message "Executando como usuário normal."
     fi
 }
 
@@ -64,8 +64,8 @@ check_os() {
 # Atualizar sistema
 update_system() {
     print_message "Atualizando sistema..."
-    sudo apt update && sudo apt upgrade -y
-    sudo apt install -y curl wget git nano htop unzip software-properties-common
+    apt update && apt upgrade -y
+    apt install -y curl wget git nano htop unzip software-properties-common
 }
 
 # Instalar PHP 8.2
@@ -73,19 +73,19 @@ install_php() {
     print_message "Instalando PHP 8.2..."
     
     # Adicionar repositório PHP
-    sudo add-apt-repository ppa:ondrej/php -y
-    sudo apt update
+    add-apt-repository ppa:ondrej/php -y
+    apt update
     
     # Instalar PHP e extensões
-    sudo apt install -y php8.2-fpm php8.2-cli php8.2-mysql php8.2-xml php8.2-mbstring \
+    apt install -y php8.2-fpm php8.2-cli php8.2-mysql php8.2-xml php8.2-mbstring \
         php8.2-curl php8.2-zip php8.2-gd php8.2-bcmath php8.2-intl php8.2-readline \
         php8.2-xmlrpc php8.2-soap php8.2-ldap php8.2-imagick
     
     # Configurar PHP
-    sudo sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 100M/' /etc/php/8.2/fpm/php.ini
-    sudo sed -i 's/post_max_size = 8M/post_max_size = 100M/' /etc/php/8.2/fpm/php.ini
-    sudo sed -i 's/max_execution_time = 30/max_execution_time = 300/' /etc/php/8.2/fpm/php.ini
-    sudo sed -i 's/memory_limit = 128M/memory_limit = 512M/' /etc/php/8.2/fpm/php.ini
+    sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 100M/' /etc/php/8.2/fpm/php.ini
+    sed -i 's/post_max_size = 8M/post_max_size = 100M/' /etc/php/8.2/fpm/php.ini
+    sed -i 's/max_execution_time = 30/max_execution_time = 300/' /etc/php/8.2/fpm/php.ini
+    sed -i 's/memory_limit = 128M/memory_limit = 512M/' /etc/php/8.2/fpm/php.ini
     
     print_message "PHP 8.2 instalado com sucesso!"
 }
@@ -94,10 +94,10 @@ install_php() {
 install_mysql() {
     print_message "Instalando MySQL 8.0..."
     
-    sudo apt install -y mysql-server mysql-client
+    apt install -y mysql-server mysql-client
     
     # Configurar MySQL
-    sudo mysql_secure_installation
+    mysql_secure_installation
     
     print_message "MySQL instalado com sucesso!"
 }
@@ -106,11 +106,11 @@ install_mysql() {
 install_nginx() {
     print_message "Instalando Nginx..."
     
-    sudo apt install -y nginx
+    apt install -y nginx
     
     # Configurar Nginx
-    sudo systemctl enable nginx
-    sudo systemctl start nginx
+    systemctl enable nginx
+    systemctl start nginx
     
     print_message "Nginx instalado com sucesso!"
 }
@@ -119,8 +119,8 @@ install_nginx() {
 install_nodejs() {
     print_message "Instalando Node.js 18..."
     
-    curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-    sudo apt install -y nodejs
+    curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+    apt install -y nodejs
     
     print_message "Node.js instalado com sucesso!"
 }
@@ -131,8 +131,8 @@ install_composer() {
     
     cd /tmp
     curl -sS https://getcomposer.org/installer | php
-    sudo mv composer.phar /usr/local/bin/composer
-    sudo chmod +x /usr/local/bin/composer
+    mv composer.phar /usr/local/bin/composer
+    chmod +x /usr/local/bin/composer
     
     print_message "Composer instalado com sucesso!"
 }
@@ -160,7 +160,7 @@ setup_nginx() {
     print_message "Configurando Nginx..."
     
     # Criar configuração do site
-    sudo tee /etc/nginx/sites-available/suporte > /dev/null <<EOF
+    tee /etc/nginx/sites-available/suporte > /dev/null <<EOF
 server {
     listen 80;
     server_name _;
@@ -187,14 +187,14 @@ server {
 EOF
 
     # Ativar site
-    sudo ln -sf /etc/nginx/sites-available/suporte /etc/nginx/sites-enabled/
-    sudo rm -f /etc/nginx/sites-enabled/default
+    ln -sf /etc/nginx/sites-available/suporte /etc/nginx/sites-enabled/
+    rm -f /etc/nginx/sites-enabled/default
     
     # Testar configuração
-    sudo nginx -t
+    nginx -t
     
     # Reiniciar Nginx
-    sudo systemctl restart nginx
+    systemctl restart nginx
     
     print_message "Nginx configurado com sucesso!"
 }
@@ -223,8 +223,8 @@ setup_laravel() {
     php artisan key:generate
     
     # Configurar permissões
-    sudo chown -R www-data:www-data storage bootstrap/cache
-    sudo chmod -R 775 storage bootstrap/cache
+    chown -R www-data:www-data storage bootstrap/cache
+    chmod -R 775 storage bootstrap/cache
     
     # Criar link simbólico para storage
     php artisan storage:link
@@ -249,11 +249,11 @@ setup_ssl() {
         print_message "Configurando SSL com Let's Encrypt..."
         
         # Instalar Certbot
-        sudo apt install -y certbot python3-certbot-nginx
+        apt install -y certbot python3-certbot-nginx
         
         # Obter certificado
         read -p "Digite o domínio para SSL: " DOMAIN
-        sudo certbot --nginx -d $DOMAIN
+        certbot --nginx -d $DOMAIN
         
         print_message "SSL configurado com sucesso!"
     fi
@@ -263,10 +263,10 @@ setup_ssl() {
 setup_firewall() {
     print_message "Configurando firewall..."
     
-    sudo ufw allow 22/tcp
-    sudo ufw allow 80/tcp
-    sudo ufw allow 443/tcp
-    sudo ufw --force enable
+    ufw allow 22/tcp
+    ufw allow 80/tcp
+    ufw allow 443/tcp
+    ufw --force enable
     
     print_message "Firewall configurado com sucesso!"
 }
@@ -275,7 +275,7 @@ setup_firewall() {
 create_backup_script() {
     print_message "Criando script de backup..."
     
-    sudo tee /usr/local/bin/backup-suporte.sh > /dev/null <<EOF
+    tee /usr/local/bin/backup-suporte.sh > /dev/null <<EOF
 #!/bin/bash
 DATE=\$(date +%Y%m%d_%H%M%S)
 BACKUP_DIR="/backup/suporte"
@@ -298,7 +298,7 @@ find \$BACKUP_DIR -name "*.tar.gz" -mtime +7 -delete
 echo "Backup realizado: \$DATE"
 EOF
 
-    sudo chmod +x /usr/local/bin/backup-suporte.sh
+    chmod +x /usr/local/bin/backup-suporte.sh
     
     # Configurar crontab
     (crontab -l 2>/dev/null; echo "0 2 * * * /usr/local/bin/backup-suporte.sh") | crontab -
