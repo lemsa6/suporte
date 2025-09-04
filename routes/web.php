@@ -1,0 +1,146 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ClientController;
+use App\Http\Controllers\TicketController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\AttachmentController;
+use App\Http\Controllers\CompanyUserController;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
+|
+*/
+
+// Rotas públicas
+Route::get('/', function () {
+    return redirect()->route('login');
+});
+
+// Rotas de autenticação
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [LoginController::class, 'login']);
+});
+
+// Rotas autenticadas
+Route::middleware('auth')->group(function () {
+    
+    // Dashboard
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    
+    // Logout
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+    
+    // Perfil do usuário
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
+    
+    // Rotas dos Tickets
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/tickets', [TicketController::class, 'index'])->name('tickets.index');
+        Route::get('/tickets/create', [TicketController::class, 'create'])->name('tickets.create');
+        Route::post('/tickets', [TicketController::class, 'store'])->name('tickets.store');
+        Route::get('/tickets/{ticketNumber}', [TicketController::class, 'show'])->name('tickets.show');
+        Route::get('/tickets/{ticketNumber}/edit', [TicketController::class, 'edit'])->name('tickets.edit');
+        Route::put('/tickets/{ticketNumber}', [TicketController::class, 'update'])->name('tickets.update');
+        Route::delete('/tickets/{ticketNumber}', [TicketController::class, 'destroy'])->name('tickets.destroy');
+        Route::post('/tickets/{ticketNumber}/message', [TicketController::class, 'addMessage'])->name('tickets.message');
+    });
+    
+    // Rotas de anexos
+    Route::get('/attachments/{attachment}/download', [AttachmentController::class, 'download'])->name('attachments.download');
+    Route::get('/attachments/{attachment}/preview', [AttachmentController::class, 'preview'])->name('attachments.preview');
+    Route::delete('/attachments/{attachment}', [AttachmentController::class, 'destroy'])->name('attachments.destroy');
+    
+    // Rotas de clientes (apenas Admin e Técnicos)
+    Route::middleware('role:admin,tecnico')->group(function () {
+        Route::resource('clients', ClientController::class);
+        Route::post('/clients/{client}/toggle-status', [ClientController::class, 'toggleStatus'])->name('clients.toggle-status');
+        
+        // Rotas para gerenciar contatos dos clientes
+        Route::post('/clients/{client}/contacts', [ClientController::class, 'storeContact'])->name('clients.contacts.store');
+        Route::get('/clients/{client}/contacts/{contact}/edit', [ClientController::class, 'editContact'])->name('clients.contacts.edit');
+        Route::put('/clients/{client}/contacts/{contact}', [ClientController::class, 'updateContact'])->name('clients.contacts.update');
+        Route::delete('/clients/{client}/contacts/{contact}', [ClientController::class, 'deleteContact'])->name('clients.contacts.delete');
+        
+        // API endpoints para clientes
+        Route::get('/api/clients', [ClientController::class, 'apiList'])->name('api.clients.list');
+        Route::get('/api/clients/search-cnpj', [ClientController::class, 'apiSearchByCnpj'])->name('api.clients.search-cnpj');
+        
+        // Rotas de categorias (apenas Admin e Técnicos)
+        Route::resource('categories', CategoryController::class);
+        Route::post('/categories/{category}/toggle-status', [CategoryController::class, 'toggleStatus'])->name('categories.toggle-status');
+        
+        // API endpoints para categorias
+        Route::get('/api/categories', [CategoryController::class, 'apiList'])->name('api.categories.list');
+        Route::get('/api/categories/{category}/stats', [CategoryController::class, 'apiStats'])->name('api.categories.stats');
+        
+        // Rotas de relatórios (apenas Admin e Técnicos)
+        Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+        Route::get('/reports/tickets', [ReportController::class, 'tickets'])->name('reports.tickets');
+        Route::get('/reports/clients', [ReportController::class, 'clients'])->name('reports.clients');
+        Route::get('/api/reports/chart-data', [ReportController::class, 'chartData'])->name('api.reports.chart-data');
+    });
+
+    // Rotas para gestores gerenciarem usuários da empresa
+    Route::middleware('role:cliente_gestor')->group(function () {
+        Route::resource('company.users', CompanyUserController::class);
+        Route::post('/company/users/{companyUser}/toggle-status', [CompanyUserController::class, 'toggleStatus'])->name('company.users.toggle-status');
+    });
+
+// Rota para buscar contatos de um cliente (usada no formulário de criação de ticket) - Acesso para todos autenticados
+Route::get('/clients/{client}/contacts', [ClientController::class, 'getContacts'])->name('clients.contacts.index')->middleware('auth');
+
+// Rota de teste para verificar se está funcionando
+Route::get('/test-contacts/{client}', function($client) {
+    $clientModel = \App\Models\Client::find($client);
+    if (!$clientModel) {
+        return response()->json(['error' => 'Cliente não encontrado'], 404);
+    }
+    
+    $contacts = $clientModel->contacts()
+        ->select('id', 'name', 'email', 'phone', 'position', 'department', 'is_primary')
+        ->orderBy('is_primary', 'desc')
+        ->orderBy('name')
+        ->get();
+    
+    return response()->json($contacts);
+})->name('test.contacts');
+    
+    // Rotas de configurações (apenas Admin)
+    Route::middleware('can:manage-system')->group(function () {
+        Route::get('/settings', function () {
+            return view('settings.index');
+        })->name('settings.index');
+        
+        Route::get('/settings/users', function () {
+            return view('settings.users');
+        })->name('settings.users');
+        
+        // Gerenciamento de usuários
+        Route::resource('users', UserController::class);
+        Route::post('/users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
+        
+        Route::get('/settings/system', function () {
+            return view('settings.system');
+        })->name('settings.system');
+    });
+});
+
+// Rota de fallback
+Route::fallback(function () {
+    return redirect()->route('dashboard');
+});

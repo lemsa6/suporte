@@ -1,0 +1,204 @@
+/* Dashboard Styles - Sistema de Tickets */
+
+/* Background geral */
+body {
+    background: rgb(243, 244, 246);
+}
+
+/* Forçar transparência em elementos do Bootstrap */
+.row, .col, .col-12, .col-sm-6, .col-lg-3, .col-lg-4, .col-lg-8 {
+    background: transparent !important;
+}
+
+.card {
+    background: transparent !important;
+}
+
+.card-body {
+    background: transparent !important;
+}
+
+/* Cards de estatísticas */
+.stats-card {
+    background: transparent;
+    border-radius: 16px;
+    border: 1px solid rgba(81, 45, 168, 0.1);
+    box-shadow: 0 8px 25px rgba(81, 45, 168, 0.08);
+    transition: all 0.3s ease;
+}
+
+.stats-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 35px rgba(81, 45, 168, 0.15);
+}
+
+.stats-icon {
+    background: linear-gradient(135deg, #FFD54F 0%, #FFB300 100%);
+    border-radius: 12px;
+    padding: 1rem;
+    color: #512DA8;
+}
+
+.stats-number {
+    color: #512DA8;
+    font-weight: 700;
+}
+
+.stats-label {
+    color: #7B1FA2;
+    font-weight: 500;
+}
+
+/* Cards principais */
+.main-card {
+    background: transparent;
+    border-radius: 16px;
+    border: 1px solid rgba(81, 45, 168, 0.1);
+    box-shadow: 0 8px 25px rgba(81, 45, 168, 0.08);
+}
+
+/* Headers dos cards */
+.card-header {
+    background: linear-gradient(135deg, #512DA8 0%, #7B1FA2 100%);
+    color: #ffffff;
+    border-radius: 16px 16px 0 0 !important;
+    border: none;
+    padding: 1.25rem 1.5rem;
+}
+
+.card-header h5 {
+    color: #ffffff;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Estatísticas rápidas */
+.quick-stats-item {
+    background: rgba(255, 213, 79, 0.1);
+    border: 1px solid rgba(255, 213, 79, 0.2);
+    border-radius: 12px;
+    padding: 1rem;
+    transition: all 0.3s ease;
+}
+
+.quick-stats-item:hover {
+    background: rgba(255, 213, 79, 0.15);
+    border-color: rgba(255, 213, 79, 0.3);
+}
+
+.quick-stats-icon {
+    background: linear-gradient(135deg, #FFD54F 0%, #FFB300 100%);
+    border-radius: 50%;
+    padding: 0.75rem;
+    color: #512DA8;
+}
+
+/* Header da tabela */
+.table-header {
+    background: linear-gradient(135deg, #512DA8 0%, #7B1FA2 100%);
+    color: #ffffff;
+}
+
+.table-header th {
+    color: #ffffff;
+    font-weight: 600;
+    border: none;
+    padding: 1rem 1.5rem;
+}
+
+/* Botões outline */
+.btn-outline-primary {
+    color: #512DA8;
+    border-color: #512DA8;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+    background: #512DA8;
+    border-color: #512DA8;
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.btn-outline-secondary {
+    color: #7B1FA2;
+    border-color: #7B1FA2;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-secondary:hover {
+    background: #7B1FA2;
+    border-color: #7B1FA2;
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+/* Badges */
+.badge {
+    border-radius: 8px;
+    font-weight: 500;
+    padding: 0.5rem 0.75rem;
+}
+
+/* Estado vazio */
+.empty-state {
+    background: rgba(255, 213, 79, 0.05);
+    border: 2px dashed rgba(255, 213, 79, 0.3);
+    border-radius: 16px;
+    padding: 3rem 2rem;
+}
+
+.empty-state svg {
+    color: #FFD54F;
+}
+
+.empty-state h6 {
+    color: #512DA8;
+    font-weight: 600;
+}
+
+.empty-state p {
+    color: #7B1FA2;
+}
+
+.empty-state .btn {
+    background: linear-gradient(135deg, #FFD54F 0%, #FFB300 100%);
+    border: none;
+    color: #512DA8;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.empty-state .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 213, 79, 0.3);
+}
+
+/* Títulos e textos personalizados */
+.dashboard-title {
+    color: #512DA8;
+}
+
+.dashboard-subtitle {
+    color: #7B1FA2;
+}
+
+/* Botão principal do header */
+.btn-primary-custom {
+    background: linear-gradient(135deg, #FFD54F 0%, #FFB300 100%);
+    border: none;
+    color: #512DA8;
+    font-weight: 600;
+}
+
+.btn-primary-custom:hover {
+    background: linear-gradient(135deg, #FFB300 0%, #FF8F00 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 25px rgba(255, 213, 79, 0.3);
+}

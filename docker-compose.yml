@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: ticket_app
+    restart: unless-stopped
+    working_dir: /var/www/
+    volumes:
+      - ./:/var/www
+      - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - ticket_network
+    depends_on:
+      - db
+
+  nginx:
+    image: nginx:alpine
+    container_name: ticket_nginx
+    restart: unless-stopped
+    ports:
+      - "9000:80"
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+    networks:
+      - ticket_network
+    depends_on:
+      - app
+
+  db:
+    image: mysql:8.0
+    container_name: ticket_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ticket_system
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: ticket
+      MYSQL_USER: ticket
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    ports:
+      - "3316:3306"
+    volumes:
+      - ./docker/mysql/data:/var/lib/mysql
+      - ./docker/mysql/my.cnf:/etc/mysql/my.cnf
+    networks:
+      - ticket_network
+
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: ticket_mailpit
+    restart: unless-stopped
+    ports:
+      - "1025:1025"  # SMTP
+      - "8025:8025"  # Interface web
+    networks:
+      - ticket_network
+
+networks:
+  ticket_network:
+    driver: bridge
+
+volumes:
+  dbdata:
+    driver: local

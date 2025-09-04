@@ -1,0 +1,7 @@
+/* Importar fontes */
+@import url('https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap');
+
+/* Estilos personalizados */
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+}
