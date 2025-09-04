@@ -94,14 +94,18 @@ install_php() {
 
 # Instalar MySQL
 install_mysql() {
-    print_message "Instalando MySQL 8.0..."
+    print_message "Instalando MariaDB (MySQL)..."
     
-    apt install -y mysql-server mysql-client
+    apt install -y mariadb-server mariadb-client
+    XIT
     
-    # Configurar MySQL
+    
+    # Configurar MariaDB
+    systemctl enable mariadb
+    systemctl start mariadb
     mysql_secure_installation
     
-    print_message "MySQL instalado com sucesso!"
+    print_message "MariaDB instalado com sucesso!"
 }
 
 # Instalar Nginx
