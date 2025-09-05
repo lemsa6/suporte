@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\Ticket;
 use App\Models\User;
-use App\Models\TicketReply;
+use App\Models\TicketMessage;
 use App\Notifications\TicketAssigned;
 use App\Notifications\TicketClosed;
 use App\Notifications\TicketUrgent;
@@ -12,175 +12,203 @@ use App\Notifications\TicketReplyNotification;
 use App\Notifications\NewTicketCreated;
 use App\Notifications\TicketStatusChange;
 use App\Notifications\TicketPriorityChange;
+use App\Mail\ClientTicketCreatedMail;
+use App\Mail\ClientTicketCreatedForYouMail;
+use App\Mail\ClientTicketRepliedMail;
+use App\Mail\ClientTicketStatusChangedMail;
+use App\Mail\ClientTicketClosedMail;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Mail;
 
 class NotificationService
 {
     /**
      * Notificar sobre novo ticket criado
      */
-    public function notifyNewTicket(Ticket $ticket): void
+    public function notifyNewTicket(Ticket $ticket, $createdBy = null): void
     {
-        // Notificar todos os administradores e técnicos
+        // Notificar todos os administradores e técnicos (exceto quem criou)
         $users = User::whereIn('role', ['admin', 'tecnico'])
             ->where('is_active', true)
+            ->where('notify_ticket_created', true)
+            ->where('id', '!=', $createdBy?->id)
             ->get();
 
         if ($users->isNotEmpty()) {
             Notification::send($users, new NewTicketCreated($ticket));
         }
 
-        // Se for ticket urgente, notificar imediatamente
-        if ($ticket->priority === 'alta') {
-            $this->notifyUrgentTicket($ticket);
+        // Notificar quem criou o ticket (se for usuário interno e tiver preferência ativada)
+        if ($createdBy && $createdBy->notify_ticket_created) {
+            $createdBy->notify(new NewTicketCreated($ticket));
         }
-    }
 
-    /**
-     * Notificar sobre ticket atribuído
-     */
-    public function notifyTicketAssigned(Ticket $ticket, User $assignedUser): void
-    {
-        if ($assignedUser && $assignedUser->is_active) {
-            $assignedUser->notify(new TicketAssigned($ticket));
-        }
-    }
-
-    /**
-     * Notificar sobre ticket fechado
-     */
-    public function notifyTicketClosed(Ticket $ticket, User $closedBy = null): void
-    {
-        // Notificar o contato que abriu o ticket
+        // Notificar o cliente destinatário do ticket
         if ($ticket->contact && $ticket->contact->email) {
-            // Aqui você pode implementar notificação para e-mails externos
-            // Por enquanto, vamos notificar usuários internos
-        }
-
-        // Notificar o técnico responsável
-        if ($ticket->assignedTo) {
-            $ticket->assignedTo->notify(new TicketClosed($ticket, $closedBy));
-        }
-
-        // Notificar administradores
-        $admins = User::where('role', 'admin')
-            ->where('is_active', true)
-            ->get();
-
-        if ($admins->isNotEmpty()) {
-            Notification::send($admins, new TicketClosed($ticket, $closedBy));
+            // Se foi criado por usuário interno (admin/tecnico), usar notificação específica
+            if ($createdBy && in_array($createdBy->role, ['admin', 'tecnico'])) {
+                $this->notifyClientTicketCreatedForYou($ticket, $createdBy);
+            } else {
+                $this->notifyClientTicketCreated($ticket);
+            }
         }
     }
 
     /**
-     * Notificar sobre ticket urgente
+     * Notificar cliente sobre ticket criado por ele mesmo
      */
-    public function notifyUrgentTicket(Ticket $ticket): void
+    public function notifyClientTicketCreated(Ticket $ticket): void
     {
-        // Notificar todos os administradores e técnicos sobre ticket urgente
+        if ($ticket->contact && $ticket->contact->email) {
+            Mail::to($ticket->contact->email)->send(new ClientTicketCreatedMail($ticket));
+        }
+    }
+
+    /**
+     * Notificar cliente sobre ticket criado PARA ele (por admin/tecnico)
+     */
+    public function notifyClientTicketCreatedForYou(Ticket $ticket, $createdBy = null): void
+    {
+        if ($ticket->contact && $ticket->contact->email) {
+            Mail::to($ticket->contact->email)->send(new ClientTicketCreatedForYouMail($ticket, $createdBy));
+        }
+    }
+
+    /**
+     * Notificar sobre nova resposta
+     */
+    public function notifyTicketReply(Ticket $ticket, TicketMessage $reply, $repliedBy = null): void
+    {
+        // Notificar usuários internos
         $users = User::whereIn('role', ['admin', 'tecnico'])
             ->where('is_active', true)
-            ->get();
-
-        if ($users->isNotEmpty()) {
-            Notification::send($users, new TicketUrgent($ticket));
-        }
-    }
-
-    /**
-     * Notificar sobre nova resposta ao ticket
-     */
-    public function notifyTicketReply(Ticket $ticket, TicketReply $reply, User $repliedBy = null): void
-    {
-        $recipients = collect();
-
-        // Adicionar o técnico responsável (se houver)
-        if ($ticket->assignedTo && $ticket->assignedTo->id !== $repliedBy?->id) {
-            $recipients->push($ticket->assignedTo);
-        }
-
-        // Adicionar administradores
-        $admins = User::where('role', 'admin')
-            ->where('is_active', true)
+            ->where('notify_ticket_replied', true)
             ->where('id', '!=', $repliedBy?->id)
             ->get();
 
-        $recipients = $recipients->merge($admins);
-
-        // Se a resposta não for interna, notificar o contato do cliente
-        if (!$reply->is_internal && $ticket->contact && $ticket->contact->email) {
-            // Aqui você pode implementar notificação para e-mails externos
+        if ($users->isNotEmpty()) {
+            Notification::send($users, new TicketReplyNotification($ticket, $reply));
         }
 
-        // Enviar notificações
-        if ($recipients->isNotEmpty()) {
-            Notification::send($recipients, new TicketReplyNotification($ticket, $reply, $repliedBy));
+        // Notificar cliente se a resposta não for interna
+        if (!$reply->is_internal && $ticket->contact && $ticket->contact->email) {
+            $this->notifyClientTicketReplied($ticket, $reply, $repliedBy);
         }
     }
 
     /**
-     * Notificar sobre mudança de status do ticket
+     * Notificar cliente sobre nova resposta
      */
-    public function notifyStatusChange(Ticket $ticket, string $oldStatus, string $newStatus, User $changedBy = null): void
+    public function notifyClientTicketReplied(Ticket $ticket, TicketMessage $reply, $repliedBy = null): void
     {
-        // Se o status mudou para "fechado", usar a notificação específica
-        if ($newStatus === 'fechado') {
-            $this->notifyTicketClosed($ticket, $changedBy);
-            return;
+        if ($ticket->contact && $ticket->contact->email) {
+            Mail::to($ticket->contact->email)->send(new ClientTicketRepliedMail($ticket, $reply, $repliedBy));
         }
+    }
 
-        // Se o status mudou para "em andamento" e foi atribuído, usar a notificação específica
-        if ($newStatus === 'em andamento' && $ticket->assignedTo) {
-            $this->notifyTicketAssigned($ticket, $ticket->assignedTo);
-            return;
-        }
-
-        // Para outras mudanças de status, notificar administradores e técnicos
+    /**
+     * Notificar sobre mudança de status
+     */
+    public function notifyStatusChange(Ticket $ticket, string $oldStatus, string $newStatus, $changedBy = null): void
+    {
+        // Notificar usuários internos
         $users = User::whereIn('role', ['admin', 'tecnico'])
             ->where('is_active', true)
+            ->where('notify_ticket_status_changed', true)
+            ->where('id', '!=', $changedBy?->id)
             ->get();
 
         if ($users->isNotEmpty()) {
             Notification::send($users, new TicketStatusChange($ticket, $oldStatus, $newStatus, $changedBy));
         }
 
-        // Notificar o contato do cliente se não for mudança para fechado
+        // Notificar cliente
         if ($ticket->contact && $ticket->contact->email) {
-            // Aqui você pode implementar notificação para e-mails externos
+            $this->notifyClientTicketStatusChanged($ticket, $oldStatus, $newStatus, $changedBy);
         }
     }
 
     /**
-     * Notificar sobre mudança de prioridade do ticket
+     * Notificar cliente sobre mudança de status
      */
-    public function notifyPriorityChange(Ticket $ticket, string $oldPriority, string $newPriority, User $changedBy = null): void
+    public function notifyClientTicketStatusChanged(Ticket $ticket, string $oldStatus, string $newStatus, $changedBy = null): void
     {
-        // Se a prioridade mudou para alta, notificar como urgente
-        if ($newPriority === 'alta') {
-            $this->notifyUrgentTicket($ticket);
+        if ($ticket->contact && $ticket->contact->email) {
+            Mail::to($ticket->contact->email)->send(new ClientTicketStatusChangedMail($ticket, $oldStatus, $newStatus, $changedBy));
         }
+    }
 
-        // Notificar administradores e técnicos sobre mudança de prioridade
+    /**
+     * Notificar sobre ticket fechado
+     */
+    public function notifyTicketClosed(Ticket $ticket, $closedBy = null): void
+    {
+        // Notificar usuários internos
         $users = User::whereIn('role', ['admin', 'tecnico'])
             ->where('is_active', true)
+            ->where('notify_ticket_closed', true)
+            ->where('id', '!=', $closedBy?->id)
+            ->get();
+
+        if ($users->isNotEmpty()) {
+            Notification::send($users, new TicketClosed($ticket, $closedBy));
+        }
+
+        // Notificar cliente
+        if ($ticket->contact && $ticket->contact->email) {
+            $this->notifyClientTicketClosed($ticket, $closedBy);
+        }
+    }
+
+    /**
+     * Notificar cliente sobre ticket fechado
+     */
+    public function notifyClientTicketClosed(Ticket $ticket, $closedBy = null): void
+    {
+        if ($ticket->contact && $ticket->contact->email) {
+            Mail::to($ticket->contact->email)->send(new ClientTicketClosedMail($ticket, $closedBy));
+        }
+    }
+
+    /**
+     * Notificar sobre atribuição de ticket
+     */
+    public function notifyTicketAssigned(Ticket $ticket, User $assignedTo, $assignedBy = null): void
+    {
+        if ($assignedTo->notify_ticket_created) {
+            $assignedTo->notify(new TicketAssigned($ticket, $assignedBy));
+        }
+    }
+
+    /**
+     * Notificar sobre mudança de prioridade
+     */
+    public function notifyPriorityChange(Ticket $ticket, string $oldPriority, string $newPriority, $changedBy = null): void
+    {
+        $users = User::whereIn('role', ['admin', 'tecnico'])
+            ->where('is_active', true)
+            ->where('notify_ticket_priority_changed', true)
+            ->where('id', '!=', $changedBy?->id)
             ->get();
 
         if ($users->isNotEmpty()) {
             Notification::send($users, new TicketPriorityChange($ticket, $oldPriority, $newPriority, $changedBy));
         }
-
-        // Notificar o contato do cliente sobre mudança de prioridade
-        if ($ticket->contact && $ticket->contact->email) {
-            // Aqui você pode implementar notificação para e-mails externos
-        }
     }
 
     /**
-     * Limpar notificações antigas (método de manutenção)
+     * Notificar sobre ticket urgente
      */
-    public function cleanOldNotifications(int $daysOld = 30): void
+    public function notifyTicketUrgent(Ticket $ticket, $markedBy = null): void
     {
-        // Implementar limpeza de notificações antigas se necessário
-        // Por padrão, o Laravel já gerencia isso automaticamente
+        $users = User::whereIn('role', ['admin', 'tecnico'])
+            ->where('is_active', true)
+            ->where('notify_ticket_urgent', true)
+            ->where('id', '!=', $markedBy?->id)
+            ->get();
+
+        if ($users->isNotEmpty()) {
+            Notification::send($users, new TicketUrgent($ticket, $markedBy));
+        }
     }
 }

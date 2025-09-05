@@ -17,7 +17,46 @@
 
 @section('content')
 <div class="d-flex flex-column gap-4">
-    <!-- Informações do Perfil -->
+    <!-- Navegação por Abas -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0">
+            <ul class="nav nav-tabs nav-tabs-custom border-0" id="profileTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link {{ !request('tab') || request('tab') === 'profile' ? 'active' : '' }}" 
+                            id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab">
+                        <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                        Perfil
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link {{ request('tab') === 'notifications' ? 'active' : '' }}" 
+                            id="notifications-tab" data-bs-toggle="tab" data-bs-target="#notifications" type="button" role="tab">
+                        <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4 19h6v-6H4v6zM4 5h6V1H4v4zM15 3h5l-5-5v5z"></path>
+                        </svg>
+                        Notificações
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link {{ request('tab') === 'security' ? 'active' : '' }}" 
+                            id="security-tab" data-bs-toggle="tab" data-bs-target="#security" type="button" role="tab">
+                        <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                        </svg>
+                        Segurança
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Conteúdo das Abas -->
+    <div class="tab-content" id="profileTabsContent">
+        <!-- Aba Perfil -->
+        <div class="tab-pane fade {{ !request('tab') || request('tab') === 'profile' ? 'show active' : '' }}" 
+             id="profile" role="tabpanel">
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-white border-0">
             <h5 class="mb-0 fw-semibold">Informações do Perfil</h5>
@@ -48,45 +87,119 @@
                         @enderror
                     </div>
 
-                    <!-- Telefone -->
+                            <!-- Fuso Horário -->
                     <div class="col-12 col-sm-6">
-                        <label for="phone" class="form-label fw-medium text-dark">Telefone</label>
-                        <input type="tel" name="phone" id="phone" value="{{ old('phone', $user->phone) }}" 
-                            class="form-control @error('phone') is-invalid @enderror">
-                        @error('phone')
+                                <label for="timezone" class="form-label fw-medium text-dark">Fuso Horário</label>
+                                <select name="timezone" id="timezone" class="form-select @error('timezone') is-invalid @enderror">
+                                    @foreach($timezones as $value => $label)
+                                        <option value="{{ $value }}" {{ old('timezone', $user->timezone) == $value ? 'selected' : '' }}>
+                                            {{ $label }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('timezone')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
-                    <!-- Cargo -->
+                            <!-- Idioma -->
                     <div class="col-12 col-sm-6">
-                        <label for="position" class="form-label fw-medium text-dark">Cargo</label>
-                        <input type="text" name="position" id="position" value="{{ old('position', $user->position) }}" 
-                            class="form-control @error('position') is-invalid @enderror">
-                        @error('position')
+                                <label for="language" class="form-label fw-medium text-dark">Idioma</label>
+                                <select name="language" id="language" class="form-select @error('language') is-invalid @enderror">
+                                    <option value="pt_BR" {{ old('language', $user->language) == 'pt_BR' ? 'selected' : '' }}>Português (Brasil)</option>
+                                    <option value="en" {{ old('language', $user->language) == 'en' ? 'selected' : '' }}>English</option>
+                                    <option value="es" {{ old('language', $user->language) == 'es' ? 'selected' : '' }}>Español</option>
+                                </select>
+                                @error('language')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
+                        </div>
 
-                    <!-- Departamento -->
-                    <div class="col-12 col-sm-6">
-                        <label for="department" class="form-label fw-medium text-dark">Departamento</label>
-                        <input type="text" name="department" id="department" value="{{ old('department', $user->department) }}" 
-                            class="form-control @error('department') is-invalid @enderror">
-                        @error('department')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-primary d-inline-flex align-items-center">
+                                <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                Salvar Perfil
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Aba Notificações -->
+        <div class="tab-pane fade {{ request('tab') === 'notifications' ? 'show active' : '' }}" 
+             id="notifications" role="tabpanel">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0">
+                    <h5 class="mb-0 fw-semibold">Preferências de Notificação</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ route('profile.notifications.update') }}" class="d-flex flex-column gap-4">
+                        @csrf
+                        @method('PUT')
+
+                        <div class="row g-3">
+                            <!-- Notificações de Ticket Criado -->
+                            <div class="col-12">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="notify_ticket_created" id="notify_ticket_created" 
+                                        value="1" {{ old('notify_ticket_created', $user->notify_ticket_created) ? 'checked' : '' }}>
+                                    <label class="form-check-label fw-medium text-dark" for="notify_ticket_created">
+                                        <strong>Novos Tickets</strong>
+                                    </label>
+                                    <div class="form-text">Receba notificação quando um novo ticket for criado.</div>
+                                </div>
+                            </div>
+
+                            <!-- Notificações de Resposta -->
+                            <div class="col-12">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="notify_ticket_replied" id="notify_ticket_replied" 
+                                        value="1" {{ old('notify_ticket_replied', $user->notify_ticket_replied) ? 'checked' : '' }}>
+                                    <label class="form-check-label fw-medium text-dark" for="notify_ticket_replied">
+                                        <strong>Respostas em Tickets</strong>
+                                    </label>
+                                    <div class="form-text">Receba notificação quando alguém responder a um ticket.</div>
+                                </div>
+                            </div>
+
+                            <!-- Notificações de Mudança de Status -->
+                            <div class="col-12">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="notify_ticket_status_changed" id="notify_ticket_status_changed" 
+                                        value="1" {{ old('notify_ticket_status_changed', $user->notify_ticket_status_changed) ? 'checked' : '' }}>
+                                    <label class="form-check-label fw-medium text-dark" for="notify_ticket_status_changed">
+                                        <strong>Mudança de Status</strong>
+                                    </label>
+                                    <div class="form-text">Receba notificação quando o status de um ticket for alterado.</div>
+                                </div>
+                            </div>
+
+                            <!-- Notificações de Ticket Fechado -->
+                            <div class="col-12">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="notify_ticket_closed" id="notify_ticket_closed" 
+                                        value="1" {{ old('notify_ticket_closed', $user->notify_ticket_closed) ? 'checked' : '' }}>
+                                    <label class="form-check-label fw-medium text-dark" for="notify_ticket_closed">
+                                        <strong>Tickets Fechados</strong>
+                                    </label>
+                                    <div class="form-text">Receba notificação quando um ticket for fechado.</div>
+                                </div>
                     </div>
 
-                    <!-- Bio -->
+                            <!-- Notificações de Mudança de Prioridade -->
                     <div class="col-12">
-                        <label for="bio" class="form-label fw-medium text-dark">Biografia</label>
-                        <textarea name="bio" id="bio" rows="3" 
-                            class="form-control @error('bio') is-invalid @enderror">{{ old('bio', $user->bio) }}</textarea>
-                        @error('bio')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                        <div class="form-text">Uma breve descrição sobre você e suas responsabilidades.</div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="notify_ticket_priority_changed" id="notify_ticket_priority_changed" 
+                                        value="1" {{ old('notify_ticket_priority_changed', $user->notify_ticket_priority_changed) ? 'checked' : '' }}>
+                                    <label class="form-check-label fw-medium text-dark" for="notify_ticket_priority_changed">
+                                        <strong>Mudança de Prioridade</strong>
+                                    </label>
+                                    <div class="form-text">Receba notificação quando a prioridade de um ticket for alterada.</div>
+                                </div>
                     </div>
                 </div>
 
@@ -95,32 +208,35 @@
                         <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                         </svg>
-                        Atualizar Perfil
+                                Salvar Preferências
                     </button>
                 </div>
             </form>
+                </div>
         </div>
     </div>
 
-    <!-- Alterar Senha -->
+        <!-- Aba Segurança -->
+        <div class="tab-pane fade {{ request('tab') === 'security' ? 'show active' : '' }}" 
+             id="security" role="tabpanel">
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-white border-0">
             <h5 class="mb-0 fw-semibold">Alterar Senha</h5>
         </div>
         <div class="card-body">
-            <form method="POST" action="{{ route('profile.password') }}" class="d-flex flex-column gap-4">
+                    <form method="POST" action="{{ route('profile.password.update') }}" class="d-flex flex-column gap-4">
                 @csrf
                 @method('PUT')
 
                 <div class="row g-3">
                     <!-- Senha Atual -->
-                    <div class="col-12 col-sm-6">
+                            <div class="col-12">
                         <label for="current_password" class="form-label fw-medium text-dark">Senha Atual</label>
                         <div class="input-group">
                             <input type="password" name="current_password" id="current_password" 
                                 class="form-control @error('current_password') is-invalid @enderror" required>
-                            <button class="btn btn-outline-secondary" type="button" id="toggleCurrentPassword">
-                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('current_password')">
+                                        <svg class="password-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                                 </svg>
@@ -137,8 +253,8 @@
                         <div class="input-group">
                             <input type="password" name="password" id="password" 
                                 class="form-control @error('password') is-invalid @enderror" required>
-                            <button class="btn btn-outline-secondary" type="button" id="toggleNewPassword">
-                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('password')">
+                                        <svg class="password-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                                 </svg>
@@ -155,8 +271,8 @@
                         <div class="input-group">
                             <input type="password" name="password_confirmation" id="password_confirmation" 
                                 class="form-control @error('password_confirmation') is-invalid @enderror" required>
-                            <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword">
-                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('password_confirmation')">
+                                        <svg class="password-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                                 </svg>
@@ -169,7 +285,7 @@
                 </div>
 
                 <div class="d-flex justify-content-end">
-                    <button type="submit" class="btn btn-primary d-inline-flex align-items-center">
+                            <button type="submit" class="btn btn-primary d-inline-flex align-items-center">
                         <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
                         </svg>
@@ -180,85 +296,8 @@
         </div>
     </div>
 
-    <!-- Configurações da Conta -->
-    <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white border-0">
-            <h5 class="mb-0 fw-semibold">Configurações da Conta</h5>
-        </div>
-        <div class="card-body">
-            <form method="POST" action="{{ route('profile.update') }}" class="d-flex flex-column gap-4">
-                @csrf
-                @method('PUT')
-
-                <div class="row g-3">
-                    <!-- Notificações por Email -->
-                    <div class="col-12">
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="email_notifications" id="email_notifications" 
-                                value="1" {{ old('email_notifications', $user->email_notifications) ? 'checked' : '' }}>
-                            <label class="form-check-label fw-medium text-dark" for="email_notifications">
-                                Receber notificações por email
-                            </label>
-                            <div class="form-text">Receba atualizações sobre tickets e atividades por email.</div>
-                        </div>
-                    </div>
-
-                    <!-- Notificações Push -->
-                    <div class="col-12">
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="push_notifications" id="push_notifications" 
-                                value="1" {{ old('push_notifications', $user->push_notifications) ? 'checked' : '' }}>
-                            <label class="form-check-label fw-medium text-dark" for="push_notifications">
-                                Receber notificações push
-                            </label>
-                            <div class="form-text">Receba notificações em tempo real no navegador.</div>
-                        </div>
-                    </div>
-
-                    <!-- Fuso Horário -->
-                    <div class="col-12 col-sm-6">
-                        <label for="timezone" class="form-label fw-medium text-dark">Fuso Horário</label>
-                        <select name="timezone" id="timezone" class="form-select @error('timezone') is-invalid @enderror">
-                            @foreach($timezones as $value => $label)
-                                <option value="{{ $value }}" {{ old('timezone', $user->timezone) == $value ? 'selected' : '' }}>
-                                    {{ $label }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('timezone')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <!-- Idioma -->
-                    <div class="col-12 col-sm-6">
-                        <label for="language" class="form-label fw-medium text-dark">Idioma</label>
-                        <select name="language" id="language" class="form-select @error('language') is-invalid @enderror">
-                            <option value="pt_BR" {{ old('language', $user->language) == 'pt_BR' ? 'selected' : '' }}>Português (Brasil)</option>
-                            <option value="en" {{ old('language', $user->language) == 'en' ? 'selected' : '' }}>English</option>
-                            <option value="es" {{ old('language', $user->language) == 'es' ? 'selected' : '' }}>Español</option>
-                        </select>
-                        @error('language')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                </div>
-
-                <div class="d-flex justify-content-end">
-                    <button type="submit" class="btn btn-primary d-inline-flex align-items-center">
-                        <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        </svg>
-                        Salvar Configurações
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Excluir Conta -->
-    <div class="card border-danger border-opacity-25">
+            <!-- Zona de Perigo -->
+            <div class="card border-danger border-opacity-25 mt-4">
         <div class="card-header bg-danger bg-opacity-10 border-danger border-opacity-25">
             <h5 class="mb-0 fw-semibold text-danger">Zona de Perigo</h5>
         </div>
@@ -278,6 +317,8 @@
                         </svg>
                         Excluir Conta
                     </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -317,35 +358,53 @@
         </div>
     </div>
 </div>
+@endsection
+
+@push('styles')
+<style>
+.nav-tabs-custom .nav-link {
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: #6c757d;
+    font-weight: 500;
+    padding: 12px 20px;
+    transition: all 0.3s ease;
+}
+
+.nav-tabs-custom .nav-link:hover {
+    border-color: #dee2e6;
+    color: #495057;
+}
+
+.nav-tabs-custom .nav-link.active {
+    border-color: #667eea;
+    color: #667eea;
+    background: none;
+}
+
+.nav-tabs-custom .nav-link svg {
+    transition: transform 0.3s ease;
+}
+
+.nav-tabs-custom .nav-link:hover svg {
+    transform: scale(1.1);
+}
+</style>
+@endpush
 
 @push('scripts')
 <script>
-// Toggle password visibility
-document.getElementById('toggleCurrentPassword').addEventListener('click', function() {
-    togglePasswordVisibility('current_password', this);
-});
-
-document.getElementById('toggleNewPassword').addEventListener('click', function() {
-    togglePasswordVisibility('password', this);
-});
-
-document.getElementById('toggleConfirmPassword').addEventListener('click', function() {
-    togglePasswordVisibility('password_confirmation', this);
-});
-
-function togglePasswordVisibility(inputId, button) {
-    const input = document.getElementById(inputId);
-    const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
-    input.setAttribute('type', type);
+function togglePassword(fieldId) {
+    const field = document.getElementById(fieldId);
+    const icon = field.nextElementSibling.querySelector('svg');
     
-    // Change icon
-    const icon = button.querySelector('svg');
-    if (type === 'text') {
+    if (field.type === 'password') {
+        field.type = 'text';
         icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"></path>';
     } else {
+        field.type = 'password';
         icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>';
     }
 }
 </script>
 @endpush
-@endsection

@@ -39,13 +39,23 @@ class Setting extends Model
      *
      * @param string $key
      * @param mixed $value
+     * @param string $name
+     * @param string $group
+     * @param string $type
+     * @param string|null $description
      * @return void
      */
-    public static function set(string $key, $value)
+    public static function set(string $key, $value, string $name = null, string $group = 'general', string $type = 'text', string $description = null)
     {
         self::updateOrCreate(
             ['key' => $key],
-            ['value' => $value]
+            [
+                'value' => $value,
+                'name' => $name ?? ucfirst(str_replace('_', ' ', $key)),
+                'group' => $group,
+                'type' => $type,
+                'description' => $description,
+            ]
         );
     }
 

@@ -198,7 +198,7 @@ class TicketController extends Controller
         }
 
         // Enviar notificações
-        $this->notificationService->notifyNewTicket($ticket);
+        $this->notificationService->notifyNewTicket($ticket, auth()->user());
         
         return redirect()->route('tickets.show', $ticket->ticket_number)
             ->with('success', 'Ticket criado com sucesso!');
@@ -406,6 +406,11 @@ class TicketController extends Controller
                     'disk' => 'public',
                 ]);
             }
+        }
+        
+        // Notificar sobre a resposta
+        if ($validated['type'] === 'reply') {
+            $this->notificationService->notifyTicketReply($ticket, $ticketMessage, $user);
         }
         
         return back()->with('success', 'Mensagem adicionada com sucesso!');

@@ -22,6 +22,11 @@ class User extends Authenticatable
         'password',
         'role',
         'is_active',
+        'notify_ticket_created',
+        'notify_ticket_replied',
+        'notify_ticket_status_changed',
+        'notify_ticket_closed',
+        'notify_ticket_priority_changed',
     ];
 
     /**
@@ -31,6 +36,11 @@ class User extends Authenticatable
      */
     protected $attributes = [
         'is_active' => true,
+        'notify_ticket_created' => true,
+        'notify_ticket_replied' => true,
+        'notify_ticket_status_changed' => true,
+        'notify_ticket_closed' => true,
+        'notify_ticket_priority_changed' => false,
     ];
 
     /**
@@ -54,6 +64,11 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
+            'notify_ticket_created' => 'boolean',
+            'notify_ticket_replied' => 'boolean',
+            'notify_ticket_status_changed' => 'boolean',
+            'notify_ticket_closed' => 'boolean',
+            'notify_ticket_priority_changed' => 'boolean',
         ];
     }
 

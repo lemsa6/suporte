@@ -51,6 +51,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
     Route::put('/profile/preferences', [ProfileController::class, 'updatePreferences'])->name('profile.preferences.update');
+    Route::put('/profile/notifications', [ProfileController::class, 'updateNotifications'])->name('profile.notifications.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     
     // Rotas dos Tickets
@@ -126,22 +127,37 @@ Route::get('/test-contacts/{client}', function($client) {
 })->name('test.contacts');
     
     // Rotas de configurações (apenas Admin)
-    Route::middleware('can:manage-system')->group(function () {
+    Route::middleware('role:admin')->group(function () {
+        // Configurações principais
+        Route::get('/admin/settings', [App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('admin.settings.index');
+        Route::get('/admin/settings/system', [App\Http\Controllers\Admin\SettingsController::class, 'system'])->name('admin.settings.system');
+        Route::put('/admin/settings/system', [App\Http\Controllers\Admin\SettingsController::class, 'updateSystem'])->name('admin.settings.system.update');
+        Route::get('/admin/settings/email', [App\Http\Controllers\Admin\SettingsController::class, 'email'])->name('admin.settings.email');
+        Route::put('/admin/settings/email', [App\Http\Controllers\Admin\SettingsController::class, 'updateEmail'])->name('admin.settings.email.update');
+        Route::get('/admin/settings/templates', [App\Http\Controllers\Admin\SettingsController::class, 'templates'])->name('admin.settings.templates');
+        Route::put('/admin/settings/templates', [App\Http\Controllers\Admin\SettingsController::class, 'updateTemplate'])->name('admin.settings.templates.update');
+        Route::post('/admin/settings/templates/preview', [App\Http\Controllers\Admin\SettingsController::class, 'previewTemplate'])->name('admin.settings.templates.preview');
+        Route::post('/admin/settings/templates/test', [App\Http\Controllers\Admin\SettingsController::class, 'testEmail'])->name('admin.settings.templates.test');
+        Route::get('/admin/settings/notifications', function () {
+            return view('admin.settings.notifications');
+        })->name('admin.settings.notifications');
+        
+        // Rotas legadas (compatibilidade)
         Route::get('/settings', function () {
-            return view('settings.index');
+            return redirect()->route('admin.settings.index');
         })->name('settings.index');
         
         Route::get('/settings/users', function () {
-            return view('settings.users');
+            return view('admin.settings.users');
         })->name('settings.users');
+        
+        Route::get('/settings/system', function () {
+            return redirect()->route('admin.settings.system');
+        })->name('settings.system');
         
         // Gerenciamento de usuários
         Route::resource('users', UserController::class);
         Route::post('/users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
-        
-        Route::get('/settings/system', function () {
-            return view('settings.system');
-        })->name('settings.system');
     });
 });
 

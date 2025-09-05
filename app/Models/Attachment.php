@@ -29,7 +29,7 @@ class Attachment extends Model
         return $this->belongsTo(TicketMessage::class);
     }
 
-    public function ticket(): BelongsTo
+    public function ticket()
     {
         return $this->ticketMessage->ticket;
     }

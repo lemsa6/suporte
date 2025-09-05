@@ -27,7 +27,7 @@
 
 @section('content')
 <div class="d-flex flex-column gap-4">
-    <form action="{{ route('tickets.update', $ticket->hash) }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('tickets.update', $ticket->ticket_number) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
         

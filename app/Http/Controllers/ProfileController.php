@@ -180,6 +180,27 @@ class ProfileController extends Controller
     }
 
     /**
+     * Update notification preferences.
+     */
+    public function updateNotifications(Request $request): RedirectResponse
+    {
+        $user = auth()->user();
+
+        $validated = $request->validate([
+            'notify_ticket_created' => ['boolean'],
+            'notify_ticket_replied' => ['boolean'],
+            'notify_ticket_status_changed' => ['boolean'],
+            'notify_ticket_closed' => ['boolean'],
+            'notify_ticket_priority_changed' => ['boolean'],
+        ]);
+
+        $user->update($validated);
+
+        return redirect()->route('profile.edit', ['tab' => 'notifications'])
+            ->with('success', 'Preferências de notificação atualizadas com sucesso.');
+    }
+
+    /**
      * Delete the user's account.
      *
      * @param  \Illuminate\Http\Request  $request

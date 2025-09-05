@@ -3,7 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\Ticket;
-use App\Models\TicketReply;
+use App\Models\TicketMessage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -20,7 +20,7 @@ class TicketReplyNotification extends Notification implements ShouldQueue
     /**
      * Create a new notification instance.
      */
-    public function __construct(Ticket $ticket, TicketReply $reply, $repliedBy = null)
+    public function __construct(Ticket $ticket, TicketMessage $reply, $repliedBy = null)
     {
         $this->ticket = $ticket;
         $this->reply = $reply;
