@@ -241,12 +241,33 @@
                                             <small class="text-muted d-block mb-2">Anexos:</small>
                                             <div class="d-flex flex-wrap gap-2">
                                                 @foreach($message->attachments as $attachment)
-                                                    <a href="{{ route('attachments.download', $attachment) }}" class="btn btn-sm btn-outline-secondary">
-                                                        <svg class="me-1" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
-                                                        </svg>
-                                                        {{ $attachment->filename }}
-                                                    </a>
+                                                    <div class="btn-group" role="group">
+                                                        @php
+                                                            $canPreview = in_array($attachment->file_type, [
+                                                                'application/pdf',
+                                                                'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp',
+                                                                'text/plain', 'text/html', 'application/json', 'text/csv', 'text/xml'
+                                                            ]);
+                                                        @endphp
+                                                        
+                                                        @if($canPreview)
+                                                            <button type="button" class="btn btn-sm btn-outline-primary" 
+                                                                    onclick="previewAttachment({{ $attachment->id }}, '{{ $attachment->filename }}', '{{ $attachment->file_type }}')">
+                                                                <svg class="me-1" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                                                </svg>
+                                                                Preview
+                                                            </button>
+                                                        @endif
+                                                        
+                                                        <a href="{{ route('attachments.download', $attachment) }}" class="btn btn-sm btn-outline-secondary">
+                                                            <svg class="me-1" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
+                                                            </svg>
+                                                            Download
+                                                        </a>
+                                                    </div>
                                                 @endforeach
                                             </div>
                                         </div>
@@ -338,6 +359,48 @@
     @endif
 </div>
 
+<!-- Modal de Preview de Anexos -->
+<div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-semibold" id="previewModalLabel">
+                    <svg class="me-2" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                    </svg>
+                    Preview do Arquivo
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div id="previewContent" class="d-flex justify-content-center align-items-center" style="min-height: 500px;">
+                    <div class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Carregando...</span>
+                        </div>
+                        <p class="mt-2 text-muted">Carregando preview...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                    Fechar
+                </button>
+                <a id="downloadBtn" href="#" class="btn btn-primary">
+                    <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
+                    </svg>
+                    Download
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Modal para alterar status -->
 <div id="status-modal" class="modal fade" tabindex="-1">
     <div class="modal-dialog">
@@ -408,6 +471,115 @@
         if (confirm('Tem certeza que deseja reabrir este ticket?')) {
             // Implementar reabertura via AJAX
             console.log('Reabrindo ticket', ticketHash);
+        }
+    }
+
+    function previewAttachment(attachmentId, filename, fileType) {
+        // Mostrar modal
+        const modal = new bootstrap.Modal(document.getElementById('previewModal'));
+        modal.show();
+        
+        // Atualizar título
+        document.getElementById('previewModalLabel').innerHTML = `
+            <svg class="me-2" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+            </svg>
+            Preview: ${filename}
+        `;
+        
+        // Atualizar link de download
+        document.getElementById('downloadBtn').href = `/attachments/${attachmentId}/download`;
+        
+        // Carregar preview
+        const previewContent = document.getElementById('previewContent');
+        previewContent.innerHTML = `
+            <div class="text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Carregando...</span>
+                </div>
+                <p class="mt-2 text-muted">Carregando preview...</p>
+            </div>
+        `;
+        
+        // Determinar como exibir o arquivo
+        const previewUrl = `/attachments/${attachmentId}/preview`;
+        
+        if (fileType.startsWith('image/')) {
+            // Para imagens
+            const img = document.createElement('img');
+            img.src = previewUrl;
+            img.className = 'img-fluid';
+            img.style.maxHeight = '70vh';
+            img.onload = function() {
+                previewContent.innerHTML = '';
+                previewContent.appendChild(img);
+            };
+            img.onerror = function() {
+                previewContent.innerHTML = `
+                    <div class="text-center text-muted">
+                        <svg class="mb-3" width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                        <p>Erro ao carregar imagem</p>
+                    </div>
+                `;
+            };
+        } else if (fileType === 'application/pdf') {
+            // Para PDFs
+            const iframe = document.createElement('iframe');
+            iframe.src = previewUrl;
+            iframe.style.width = '100%';
+            iframe.style.height = '70vh';
+            iframe.style.border = 'none';
+            iframe.onload = function() {
+                previewContent.innerHTML = '';
+                previewContent.appendChild(iframe);
+            };
+            iframe.onerror = function() {
+                previewContent.innerHTML = `
+                    <div class="text-center text-muted">
+                        <svg class="mb-3" width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                        <p>Erro ao carregar PDF</p>
+                    </div>
+                `;
+            };
+        } else if (fileType.startsWith('text/') || fileType === 'application/json') {
+            // Para arquivos de texto
+            fetch(previewUrl)
+                .then(response => response.text())
+                .then(text => {
+                    const pre = document.createElement('pre');
+                    pre.className = 'bg-light p-3 rounded';
+                    pre.style.maxHeight = '70vh';
+                    pre.style.overflow = 'auto';
+                    pre.textContent = text;
+                    previewContent.innerHTML = '';
+                    previewContent.appendChild(pre);
+                })
+                .catch(error => {
+                    previewContent.innerHTML = `
+                        <div class="text-center text-muted">
+                            <svg class="mb-3" width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                            </svg>
+                            <p>Erro ao carregar arquivo</p>
+                        </div>
+                    `;
+                });
+        } else {
+            // Para outros tipos
+            previewContent.innerHTML = `
+                <div class="text-center text-muted">
+                    <svg class="mb-3" width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <p>Preview não disponível para este tipo de arquivo</p>
+                    <p class="small">Use o botão Download para baixar o arquivo</p>
+                </div>
+            `;
         }
     }
 </script>

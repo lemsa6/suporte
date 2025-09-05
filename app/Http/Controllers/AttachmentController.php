@@ -6,73 +6,79 @@ use App\Models\Attachment;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Gate;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class AttachmentController extends Controller
 {
     /**
      * Download de anexo
      */
-    public function download(Attachment $attachment): Response
+    public function download(Attachment $attachment): BinaryFileResponse
     {
-        // Verificar se o usuário pode acessar o ticket
-        $this->authorize('view', $attachment->ticket);
-
-        if (!Storage::disk($attachment->disk)->exists($attachment->file_path)) {
-            abort(404, 'Arquivo não encontrado');
+        // Verificar se o usuário tem acesso ao ticket
+        $user = auth()->user();
+        $ticket = $attachment->ticket();
+        
+        if ($user->isCliente() && $ticket->client_id !== $user->client_id) {
+            abort(403, 'Acesso negado a este anexo.');
         }
-
-        return Storage::disk($attachment->disk)->download(
-            $attachment->file_path,
-            $attachment->filename
-        );
+        
+        $filePath = Storage::disk($attachment->disk)->path($attachment->file_path);
+        
+        if (!file_exists($filePath)) {
+            abort(404, 'Arquivo não encontrado.');
+        }
+        
+        return response()->download($filePath, $attachment->filename);
     }
-
+    
     /**
-     * Preview de anexo (para imagens)
+     * Preview de anexo
      */
     public function preview(Attachment $attachment): Response
     {
-        // Verificar se o usuário pode acessar o ticket
-        $this->authorize('view', $attachment->ticket);
-
-        if (!Storage::disk($attachment->disk)->exists($attachment->file_path)) {
-            abort(404, 'Arquivo não encontrado');
+        // Verificar se o usuário tem acesso ao ticket
+        $user = auth()->user();
+        $ticket = $attachment->ticket();
+        
+        if ($user->isCliente() && $ticket->client_id !== $user->client_id) {
+            abort(403, 'Acesso negado a este anexo.');
         }
-
-        // Se for imagem, retornar como imagem
-        if ($attachment->isImage()) {
-            $file = Storage::disk($attachment->disk)->get($attachment->file_path);
-            return response($file, 200, [
-                'Content-Type' => $attachment->file_type,
-                'Content-Disposition' => 'inline; filename="' . $attachment->filename . '"'
-            ]);
+        
+        $filePath = Storage::disk($attachment->disk)->path($attachment->file_path);
+        
+        if (!file_exists($filePath)) {
+            abort(404, 'Arquivo não encontrado.');
         }
-
-        // Para outros tipos, redirecionar para download
-        return redirect()->route('attachments.download', $attachment);
+        
+        $mimeType = $attachment->file_type;
+        $content = file_get_contents($filePath);
+        
+        return response($content)
+            ->header('Content-Type', $mimeType)
+            ->header('Content-Disposition', 'inline; filename="' . $attachment->filename . '"')
+            ->header('Cache-Control', 'no-cache, must-revalidate');
     }
-
+    
     /**
-     * Remover anexo
+     * Verificar se arquivo pode ser previewed
      */
-    public function destroy(Attachment $attachment): \Illuminate\Http\RedirectResponse
+    public function canPreview(Attachment $attachment): bool
     {
-        // Verificar se o usuário pode remover o anexo
-        $this->authorize('delete', $attachment->ticket);
-
-        try {
-            // Remover arquivo do storage
-            if (Storage::disk($attachment->disk)->exists($attachment->file_path)) {
-                Storage::disk($attachment->disk)->delete($attachment->file_path);
-            }
-
-            // Remover registro do banco
-            $attachment->delete();
-
-            return back()->with('success', 'Anexo removido com sucesso!');
-        } catch (\Exception $e) {
-            return back()->with('error', 'Erro ao remover anexo: ' . $e->getMessage());
-        }
+        $previewableTypes = [
+            'application/pdf',
+            'image/jpeg',
+            'image/jpg', 
+            'image/png',
+            'image/gif',
+            'image/webp',
+            'text/plain',
+            'text/html',
+            'application/json',
+            'text/csv',
+            'text/xml'
+        ];
+        
+        return in_array($attachment->file_type, $previewableTypes);
     }
 }

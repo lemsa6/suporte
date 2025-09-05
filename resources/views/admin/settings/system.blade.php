@@ -112,6 +112,30 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+
+                        <!-- Website da Empresa -->
+                        <div class="col-12 col-md-6">
+                            <label for="company_website" class="form-label fw-medium text-dark">Website da Empresa</label>
+                            <input type="url" id="company_website" name="company_website" 
+                                class="form-control @error('company_website') is-invalid @enderror"
+                                value="{{ old('company_website', $settings['company_website']) }}"
+                                placeholder="https://www.empresa.com.br">
+                            @error('company_website')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Horário de Atendimento -->
+                        <div class="col-12 col-md-6">
+                            <label for="company_working_hours" class="form-label fw-medium text-dark">Horário de Atendimento</label>
+                            <input type="text" id="company_working_hours" name="company_working_hours" 
+                                class="form-control @error('company_working_hours') is-invalid @enderror"
+                                value="{{ old('company_working_hours', $settings['company_working_hours']) }}"
+                                placeholder="Segunda a Sexta, 8h às 18h">
+                            @error('company_working_hours')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
 
                     <div class="d-flex justify-content-end">

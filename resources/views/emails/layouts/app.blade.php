@@ -146,7 +146,7 @@
     <div class="email-container">
         <!-- Header -->
         <div class="header">
-            <div class="logo">8Bits Pro</div>
+            <div class="logo">{{ \App\Models\Setting::get('company_name', '8Bits Pro') }}</div>
             <div class="tagline">Soluções em Tecnologia</div>
         </div>
 
@@ -158,14 +158,20 @@
         <!-- Footer -->
         <div class="footer">
             <div class="footer-info">
-                <strong>8Bits Pro - Soluções em Tecnologia</strong><br>
-                📧 contato@8bits.pro | 📞 (11) 99999-9999<br>
-                🕒 Horário de Atendimento: Segunda a Sexta, 8h às 18h
+                <strong>{{ \App\Models\Setting::get('company_name', '8Bits Pro') }} - Soluções em Tecnologia</strong><br>
+                📧 {{ \App\Models\Setting::get('company_email', 'contato@8bits.pro') }} | 
+                📞 {{ \App\Models\Setting::get('company_phone', '(11) 99999-9999') }}<br>
+                @if(\App\Models\Setting::get('company_address'))
+                    📍 {{ \App\Models\Setting::get('company_address') }}<br>
+                @endif
+                @if(\App\Models\Setting::get('company_website'))
+                    🌐 <a href="{{ \App\Models\Setting::get('company_website') }}" style="color: #667eea; text-decoration: none;">{{ \App\Models\Setting::get('company_website') }}</a><br>
+                @endif
+                🕒 Horário de Atendimento: {{ \App\Models\Setting::get('company_working_hours', 'Segunda a Sexta, 8h às 18h') }}
             </div>
             
             <div class="unsubscribe">
-                <a href="{{ route('profile.edit') }}?tab=notifications">Gerenciar Notificações</a> | 
-                <a href="mailto:contato@8bits.pro">Contato</a>
+                <a href="mailto:{{ \App\Models\Setting::get('company_email', 'contato@8bits.pro') }}">Contato</a>
             </div>
         </div>
     </div>

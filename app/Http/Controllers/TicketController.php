@@ -52,7 +52,7 @@ class TicketController extends Controller
         
         $tickets = $query->latest('updated_at')->paginate(20);
         
-        // Estatísticas para o dashboard
+        // Estatísticas para o dashboard (apenas tickets ativos)
         $stats = [
             'total' => Ticket::count(),
             'open' => Ticket::where('status', 'aberto')->count(),
@@ -338,21 +338,31 @@ class TicketController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $ticketNumber): RedirectResponse
+    public function destroy(string $ticketNumber)
     {
         $ticket = Ticket::findByNumber($ticketNumber);
         
         if (!$ticket) {
+            if (request()->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'Ticket não encontrado.'], 404);
+            }
             abort(404, 'Ticket não encontrado.');
         }
 
         // Verificar se o usuário tem acesso ao ticket
         $user = auth()->user();
         if ($user->isCliente() && $ticket->client_id !== $user->client_id) {
+            if (request()->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'Acesso negado a este ticket.'], 403);
+            }
             abort(403, 'Acesso negado a este ticket.');
         }
 
         $ticket->delete();
+        
+        if (request()->expectsJson()) {
+            return response()->json(['success' => true, 'message' => 'Ticket removido com sucesso!']);
+        }
         
         return redirect()
             ->route('tickets.index')

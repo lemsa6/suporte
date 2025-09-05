@@ -34,6 +34,8 @@ class SettingsController extends Controller
             'company_email' => Setting::get('company_email', 'contato@8bits.pro'),
             'company_phone' => Setting::get('company_phone', '(11) 99999-9999'),
             'company_address' => Setting::get('company_address', ''),
+            'company_website' => Setting::get('company_website', ''),
+            'company_working_hours' => Setting::get('company_working_hours', 'Segunda a Sexta, 8h às 18h'),
             'timezone' => Setting::get('timezone', 'America/Sao_Paulo'),
         ];
 
@@ -51,6 +53,8 @@ class SettingsController extends Controller
             'company_email' => 'required|email|max:255',
             'company_phone' => 'required|string|max:50',
             'company_address' => 'nullable|string|max:500',
+            'company_website' => 'nullable|url|max:255',
+            'company_working_hours' => 'nullable|string|max:255',
             'timezone' => 'required|string|max:50',
         ]);
 

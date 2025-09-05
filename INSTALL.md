@@ -1,214 +1,107 @@
-# 🚀 Instalação do Sistema de Suporte
+# 🚀 Instalação Rápida - Sistema de Suporte v1.1
 
-## 📋 Pré-requisitos
+> **📚 Para instalação detalhada, consulte [docs/INSTALACAO.md](docs/INSTALACAO.md)**
 
-- **Sistema Operacional**: Debian 12, Ubuntu 22.04+ ou similar
-- **Acesso**: Usuário com privilégios sudo
-- **Memória**: Mínimo 2GB RAM
-- **Disco**: Mínimo 10GB espaço livre
-- **Rede**: Acesso à internet
+## **Pré-requisitos**
 
-## ⚡ Instalação Rápida
+- Docker e Docker Compose
+- Git
+- Navegador moderno
 
-### 1. Clone o repositório
+## **Instalação em 5 Passos**
+
+### **1. Clone o repositório**
 ```bash
 git clone https://github.com/lemsa6/suporte.git
 cd suporte
 ```
 
-### 2. Configure o ambiente
+### **2. Configure o ambiente**
 ```bash
-# Copie o arquivo de configuração
 cp .env.example .env
-
-# Edite as configurações (opcional)
-nano .env
+# Edite o .env com suas configurações
 ```
 
-### 3. Execute a instalação
+### **3. Execute com Docker**
 ```bash
-# Torne o script executável
-chmod +x install.sh
-
-# Execute a instalação
-sudo ./install.sh
+docker-compose up -d
+docker-compose exec app composer install
+docker-compose exec app npm install
 ```
 
-### 4. Acesse o sistema
-- **URL**: `http://seu-ip` ou `http://seu-dominio`
-- **Login**: `admin@admin.com`
-- **Senha**: `password`
-
-## 🔧 Instalação com SSL
-
-Para instalar com certificado SSL automático:
-
+### **4. Configure o banco**
 ```bash
-sudo ./install.sh --ssl
+docker-compose exec app php artisan key:generate
+docker-compose exec app php artisan migrate
+docker-compose exec app php artisan db:seed
+docker-compose exec app npm run build
 ```
 
-O script irá solicitar o domínio e configurar automaticamente o Let's Encrypt.
+### **5. Acesse o sistema**
+- **URL**: http://localhost:9000
+- **Login**: admin@admin.com / password
+- **E-mails**: http://localhost:8025 (Mailpit)
 
-## 📝 Configurações Importantes
+## **Configuração de E-mail**
 
-### Banco de Dados
-Edite o arquivo `.env` para configurar o banco:
-
-```env
-DB_DATABASE=suporte
-DB_USERNAME=suporte
-DB_PASSWORD=sua_senha_forte
-```
-
-### E-mail
-Configure o envio de e-mails:
-
+### **Gmail (Recomendado)**
 ```env
 MAIL_MAILER=smtp
 MAIL_HOST=smtp.gmail.com
 MAIL_PORT=587
 MAIL_USERNAME=seu-email@gmail.com
-MAIL_PASSWORD=sua-senha-de-app
+MAIL_PASSWORD=sua-chave-de-aplicativo
 MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=seu-email@gmail.com
+MAIL_FROM_NAME="Sistema de Suporte"
 ```
 
-## 🛠 O que o script instala
+**Importante:** Use uma [Chave de Aplicativo](https://myaccount.google.com/apppasswords) do Gmail.
 
-- **PHP 8.2** com todas as extensões necessárias
-- **MySQL 8.0** configurado e seguro
-- **Nginx** com configuração otimizada
-- **Node.js 18** para compilação de assets
-- **Composer** para dependências PHP
-- **Certbot** para SSL (opcional)
-- **Firewall UFW** configurado
-- **Script de backup** automático
+## **Troubleshooting Rápido**
 
-## 🔄 Pós-instalação
-
-### 1. Configurar domínio (opcional)
+### **Problemas Comuns**
 ```bash
-# Edite a configuração do Nginx
-sudo nano /etc/nginx/sites-available/suporte
+# E-mails não chegam
+docker-compose logs mailpit
 
-# Altere o server_name
-server_name seu-dominio.com;
+# Erro 419 (CSRF)
+docker-compose exec app php artisan cache:clear
 
-# Reinicie o Nginx
-sudo systemctl restart nginx
+# Assets não carregam
+docker-compose exec app npm run build
+
+# Banco não conecta
+docker-compose logs mysql
 ```
 
-### 2. Configurar SSL manualmente
+### **Comandos Úteis**
 ```bash
-# Instalar Certbot
-sudo apt install certbot python3-certbot-nginx
-
-# Obter certificado
-sudo certbot --nginx -d seu-dominio.com
-```
-
-### 3. Configurar backup
-O script já cria um backup automático, mas você pode ajustar:
-
-```bash
-# Editar configurações de backup
-sudo nano /usr/local/bin/backup-suporte.sh
-
-# Verificar crontab
-crontab -l
-```
-
-## 🚨 Solução de Problemas
-
-### Erro de permissões
-```bash
-sudo chown -R www-data:www-data storage bootstrap/cache
-sudo chmod -R 775 storage bootstrap/cache
-```
-
-### Erro de banco de dados
-```bash
-# Verificar status do MySQL
-sudo systemctl status mysql
-
-# Reiniciar MySQL
-sudo systemctl restart mysql
-```
-
-### Erro de Nginx
-```bash
-# Testar configuração
-sudo nginx -t
+# Reiniciar tudo
+docker-compose down && docker-compose up -d
 
 # Ver logs
-sudo tail -f /var/log/nginx/error.log
-```
-
-### Erro de PHP
-```bash
-# Verificar status do PHP-FPM
-sudo systemctl status php8.2-fpm
-
-# Reiniciar PHP-FPM
-sudo systemctl restart php8.2-fpm
-```
-
-## 📊 Monitoramento
-
-### Verificar status dos serviços
-```bash
-# Status geral
-sudo systemctl status nginx mysql php8.2-fpm
-
-# Logs em tempo real
-sudo tail -f /var/log/nginx/access.log
-sudo tail -f /var/log/nginx/error.log
-sudo tail -f /var/log/mysql/error.log
-```
-
-### Verificar uso de recursos
-```bash
-# Uso de memória e CPU
-htop
-
-# Uso de disco
-df -h
-
-# Uso de banco de dados
-mysql -u root -p -e "SHOW PROCESSLIST;"
-```
-
-## 🔄 Atualizações
-
-### Atualizar o sistema
-```bash
-# Atualizar código
-git pull origin main
-
-# Atualizar dependências
-composer install --optimize-autoloader --no-dev
-npm install && npm run build
+docker-compose logs -f
 
 # Limpar cache
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
+docker-compose exec app php artisan optimize:clear
 ```
 
-### Atualizar banco de dados
-```bash
-# Executar migrações
-php artisan migrate --force
-```
+## **Documentação Completa**
 
-## 📞 Suporte
+- **[Guia de Instalação Detalhado](docs/INSTALACAO.md)** - Instalação passo a passo
+- **[Guia de Uso](docs/USO_SISTEMA.md)** - Como usar o sistema
+- **[Arquitetura](docs/ARQUITETURA.md)** - Documentação técnica
+- **[README Principal](README.md)** - Visão geral do projeto
 
-Se encontrar problemas:
+## **Suporte**
 
-1. Verifique os logs de erro
-2. Consulte a documentação
-3. Abra uma issue no GitHub
-4. Entre em contato com o desenvolvedor
+- **GitHub Issues**: [Criar issue](https://github.com/lemsa6/suporte/issues)
+- **E-mail**: contato@8bits.pro
+- **Documentação**: Pasta `docs/`
 
 ---
 
-**Sistema de Suporte v1.0** - Instalação automatizada 🚀
+**Sistema de Suporte v1.1** - Instalação Rápida
+
+*Para instalação detalhada, consulte [docs/INSTALACAO.md](docs/INSTALACAO.md)*
