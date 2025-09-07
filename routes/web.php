@@ -158,7 +158,7 @@ Route::get('/test-contacts/{client}', function($client) {
         Route::post('/users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
         
         // Sistema de Auditoria
-        Route::prefix('audit')->name('audit.')->group(function () {
+        Route::prefix('admin/audit')->name('admin.audit.')->group(function () {
             Route::get('/', [App\Http\Controllers\AuditController::class, 'index'])->name('index');
             Route::get('/statistics', [App\Http\Controllers\AuditController::class, 'statistics'])->name('statistics');
             Route::get('/export', [App\Http\Controllers\AuditController::class, 'export'])->name('export');

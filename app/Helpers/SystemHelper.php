@@ -13,6 +13,28 @@ class SystemHelper
     }
     
     /**
+     * Get company name from settings
+     */
+    public static function companyName(): string
+    {
+        try {
+            $setting = \App\Models\Setting::where('key', 'company_name')->first();
+            return $setting ? $setting->value : config('app.name', 'Sistema de Suporte');
+        } catch (\Exception $e) {
+            // Se não conseguir acessar o banco, retorna o valor padrão
+            return config('app.name', 'Sistema de Suporte');
+        }
+    }
+    
+    /**
+     * Get app name (company name or system name)
+     */
+    public static function appName(): string
+    {
+        return self::companyName();
+    }
+    
+    /**
      * Get system version
      */
     public static function version(): string

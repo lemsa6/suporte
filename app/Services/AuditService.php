@@ -209,6 +209,16 @@ class AuditService
         ?User $user = null,
         ?Request $request = null
     ): AuditLog {
+        // Verificar se auditoria de visualização está habilitada
+        try {
+            $auditViews = \App\Models\Setting::where('key', 'audit_views')->first();
+            if ($auditViews && $auditViews->value === 'false') {
+                return null; // Não registrar visualizações se desabilitado
+            }
+        } catch (\Exception $e) {
+            // Se não conseguir acessar configurações, continua registrando
+        }
+        
         return $this->log('viewed', $ticket, $user, $request);
     }
 
