@@ -1,4 +1,7 @@
 {
+    "name": "sistema-suporte-tickets",
+    "version": "1.2.0",
+    "description": "Sistema de Suporte e Tickets com Sistema de Auditoria Completo",
     "private": true,
     "scripts": {
         "dev": "vite",

@@ -1,4 +1,4 @@
-# 📖 Guia de Uso - Sistema de Suporte v1.1
+# 📖 Guia de Uso - Sistema de Suporte v1.2
 
 ## **Visão Geral**
 
@@ -320,6 +320,37 @@ O Sistema de Suporte e Tickets é uma plataforma completa para gerenciamento de 
 - Tickets excluídos ficam no banco (soft delete)
 - Contate o administrador para restaurar
 - Ou use comandos específicos no banco
+
+## **🔍 Sistema de Auditoria** 🆕
+
+### **O que é o Sistema de Auditoria?**
+O sistema de auditoria registra automaticamente todas as ações realizadas no sistema, incluindo:
+- **Criação** de tickets e mensagens
+- **Atualizações** de status e prioridade
+- **Visualizações** de tickets
+- **Respostas** e comentários
+- **Fechamento** de tickets
+
+### **Como acessar os logs de auditoria?**
+1. Faça login como **Administrador** ou **Técnico**
+2. No menu lateral, clique em **"Auditoria"**
+3. Visualize todos os logs com filtros avançados
+
+### **Funcionalidades disponíveis:**
+- **Lista de Logs**: Visualização paginada de todas as ações
+- **Filtros**: Por tipo de evento, usuário, IP, data
+- **Detalhes**: Informações completas de cada ação
+- **Estatísticas**: Análise de atividade do sistema
+- **Exportação**: Download em CSV para análise externa
+- **Logs por Ticket**: Histórico específico de cada ticket
+
+### **Informações capturadas:**
+- **Usuário**: Quem executou a ação
+- **Data/Hora**: Quando a ação foi realizada
+- **IP**: Endereço IP do usuário
+- **User Agent**: Navegador e sistema operacional
+- **URL**: Página onde a ação foi executada
+- **Valores**: Dados antes e depois da alteração
 
 ## **🆘 Suporte Técnico**
 

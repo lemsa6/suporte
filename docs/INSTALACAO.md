@@ -1,4 +1,4 @@
-# 🚀 Guia de Instalação - Sistema de Suporte v1.1
+# 🚀 Guia de Instalação - Sistema de Suporte v1.2
 
 ## **Pré-requisitos**
 

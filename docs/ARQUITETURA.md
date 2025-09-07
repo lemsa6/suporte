@@ -91,6 +91,45 @@ class CheckRoleMiddleware
 }
 ```
 
+### **4. Sistema de Auditoria** 🆕
+
+```php
+// Middleware de captura de dados de auditoria
+class CaptureAuditInfo
+{
+    public function handle(Request $request, Closure $next): Response
+    {
+        // Captura IP real considerando proxies
+        $ipAddress = $this->getRealIpAddress($request);
+        
+        // Adiciona informações à requisição
+        $request->merge([
+            'audit_ip' => $ipAddress,
+            'audit_user_agent' => $request->userAgent(),
+        ]);
+        
+        return $next($request);
+    }
+}
+
+// Service de auditoria
+class AuditService
+{
+    public function log(string $eventType, Model $auditable, ...): AuditLog
+    {
+        return AuditLog::create([
+            'event_type' => $eventType,
+            'auditable_type' => get_class($auditable),
+            'auditable_id' => $auditable->id,
+            'user_id' => $user?->id,
+            'ip_address' => $ipAddress,
+            'user_agent' => $userAgent,
+            // ... outros campos
+        ]);
+    }
+}
+```
+
 ## **📊 Banco de Dados**
 
 ### **1. Relacionamentos Principais**
@@ -103,6 +142,10 @@ clients (1) -----> (N) client_contacts
 tickets (1) -----> (N) ticket_messages
 ticket_messages (1) -----> (N) attachments
 categories (1) -----> (N) tickets
+
+-- Sistema de Auditoria 🆕
+users (1) -----> (N) audit_logs
+audit_logs (N) -----> (1) auditable (polimórfico)
 ```
 
 ### **2. Soft Deletes**
@@ -127,7 +170,10 @@ database/migrations/
 ├── 2025_08_15_000004_create_tickets_table.php
 ├── 2025_08_15_000005_create_ticket_messages_table.php
 ├── 2025_08_15_000006_create_attachments_table.php
-└── 2025_09_05_170827_add_soft_delete_to_tickets_table.php
+├── 2025_09_05_170827_add_soft_delete_to_tickets_table.php
+├── 2025_09_07_021207_create_audit_logs_table.php 🆕
+├── 2025_09_07_021231_add_audit_fields_to_tickets_table.php 🆕
+└── 2025_09_07_021302_add_audit_fields_to_ticket_messages_table.php 🆕
 ```
 
 ## **📧 Sistema de Notificações**

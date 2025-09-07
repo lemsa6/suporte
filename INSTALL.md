@@ -1,4 +1,4 @@
-ERVIDOR NA VERDADE É ROO# 🚀 Instalação Rápida - Sistema de Suporte v1.1
+# 🚀 Instalação Rápida - Sistema de Suporte v1.2
 
 > **📚 Para instalação detalhada, consulte [docs/INSTALACAO.md](docs/INSTALACAO.md)**
 

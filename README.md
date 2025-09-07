@@ -1,6 +1,6 @@
-# 🎫 Sistema de Suporte e Tickets - v1.1
+# 🎫 Sistema de Suporte e Tickets - v1.2
 
-Sistema completo de gerenciamento de tickets de suporte desenvolvido em Laravel 12, com interface responsiva, sistema de notificações avançado e funcionalidades para empresas e clientes.
+Sistema completo de gerenciamento de tickets de suporte desenvolvido em Laravel 12, com interface responsiva, sistema de notificações avançado, **sistema de auditoria completo** e funcionalidades para empresas e clientes.
 
 ## 🚀 **Funcionalidades Principais**
 
@@ -52,6 +52,15 @@ Sistema completo de gerenciamento de tickets de suporte desenvolvido em Laravel 
 - Preview de PDFs, imagens e arquivos de texto
 - Download seguro com controle de acesso
 - Modal responsivo para visualização
+
+### ✅ **Sistema de Auditoria Completo** 🆕
+- **Rastreamento Automático**: Todas as ações são registradas automaticamente
+- **Captura de Dados**: IP real, User Agent, data/hora, usuário, URL
+- **Tipos de Eventos**: Criação, atualização, exclusão, respostas, fechamento, visualização
+- **Interface de Consulta**: Lista paginada com filtros avançados
+- **Estatísticas**: Análise de atividade do sistema
+- **Exportação CSV**: Dados para análise externa
+- **Segurança**: Rastreamento de IPs e User Agents para auditoria de segurança
 
 ### ✅ **Dashboard e Relatórios**
 - Dashboard principal com estatísticas em tempo real
@@ -343,8 +352,27 @@ Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalh
 - ✅ Remoção de links desnecessários
 - ✅ Configuração de domínio para produção
 
+## 📋 **Changelog**
+
+### **v1.2 - Sistema de Auditoria Completo** (06/09/2025)
+- 🆕 **Sistema de Auditoria**: Rastreamento automático de todas as ações
+- 🆕 **Captura de Dados**: IP real, User Agent, data/hora, usuário
+- 🆕 **Interface de Consulta**: Lista paginada com filtros avançados
+- 🆕 **Estatísticas**: Análise de atividade do sistema
+- 🆕 **Exportação CSV**: Dados para análise externa
+- 🆕 **Logs por Ticket**: Histórico específico de cada ticket
+- 🆕 **Segurança**: Rastreamento de IPs e User Agents
+- 🆕 **Documentação**: Documentação técnica completa
+
+### **v1.1 - Sistema de Notificações** (05/09/2025)
+- ✅ Sistema de notificações por e-mail
+- ✅ Templates personalizáveis
+- ✅ Configuração de e-mail com presets
+- ✅ Interface de configurações
+- ✅ Melhorias na segurança
+
 ---
 
-**Sistema de Suporte v1.1** - Desenvolvido com ❤️ em Laravel 12
+**Sistema de Suporte v1.2** - Desenvolvido com ❤️ em Laravel 12
 
-*Última atualização: 05/09/2025*
+*Última atualização: 06/09/2025*
