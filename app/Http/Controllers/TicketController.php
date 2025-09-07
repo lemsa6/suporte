@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\TicketMessage;
 use App\Models\Attachment;
 use App\Services\NotificationService;
+use App\Services\AuditService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -19,10 +20,12 @@ use Illuminate\Support\Facades\DB;
 class TicketController extends Controller
 {
     protected $notificationService;
+    protected $auditService;
 
-    public function __construct(NotificationService $notificationService)
+    public function __construct(NotificationService $notificationService, AuditService $auditService)
     {
         $this->notificationService = $notificationService;
+        $this->auditService = $auditService;
     }
 
     // Middleware aplicado nas rotas
@@ -169,6 +172,10 @@ class TicketController extends Controller
         
         $validated['opened_at'] = now();
         
+        // Adicionar informações de auditoria
+        $validated['created_ip'] = $request->get('audit_ip') ?? $request->ip();
+        $validated['created_user_agent'] = $request->get('audit_user_agent') ?? $request->userAgent();
+        
         $ticket = Ticket::create($validated);
         
         // Criar mensagem inicial
@@ -179,6 +186,8 @@ class TicketController extends Controller
             'type' => 'reply',
             'message' => $validated['description'],
             'is_internal' => false,
+            'ip_address' => $request->get('audit_ip') ?? $request->ip(),
+            'user_agent' => $request->get('audit_user_agent') ?? $request->userAgent(),
         ]);
 
         // Processar anexos
@@ -196,6 +205,10 @@ class TicketController extends Controller
                 ]);
             }
         }
+
+        // Registrar auditoria
+        $this->auditService->logCreated($ticket, auth()->user(), $request);
+        $this->auditService->logTicketReply($ticket, $ticketMessage, auth()->user(), $request);
 
         // Enviar notificações
         $this->notificationService->notifyNewTicket($ticket, auth()->user());
@@ -239,6 +252,9 @@ class TicketController extends Controller
             }));
         }
         
+        // Registrar visualização do ticket
+        $this->auditService->logTicketViewed($ticket, auth()->user(), request());
+
         // Dados para formulários
         $technicians = User::tecnicos()->orderBy('name')->get();
         $priorities = ['baixa', 'média', 'alta'];
@@ -300,16 +316,23 @@ class TicketController extends Controller
             'is_urgent' => 'boolean',
         ]);
         
-        // Capturar valores antigos para notificações
+        // Capturar valores antigos para notificações e auditoria
+        $oldValues = $ticket->toArray();
         $oldStatus = $ticket->status;
         $oldPriority = $ticket->priority;
         $oldAssignedTo = $ticket->assigned_to;
+        
+        // Adicionar informações de auditoria
+        $validated['updated_ip'] = $request->get('audit_ip') ?? $request->ip();
+        $validated['updated_user_agent'] = $request->get('audit_user_agent') ?? $request->userAgent();
         
         // Atualizar timestamps baseado no status
         if ($validated['status'] === 'resolvido' && $ticket->status !== 'resolvido') {
             $validated['resolved_at'] = now();
         } elseif ($validated['status'] === 'fechado' && $ticket->status !== 'fechado') {
             $validated['closed_at'] = now();
+            $validated['closed_ip'] = $validated['updated_ip'];
+            $validated['closed_user_agent'] = $validated['updated_user_agent'];
         }
         
         $ticket->update($validated);
@@ -328,6 +351,27 @@ class TicketController extends Controller
             if ($assignedUser) {
                 $this->notificationService->notifyTicketAssigned($ticket, $assignedUser);
             }
+        }
+
+        // Registrar auditoria
+        $this->auditService->logUpdated($ticket, $oldValues, $ticket->toArray(), auth()->user(), $request);
+        
+        // Logs específicos para mudanças
+        if ($oldStatus !== $validated['status']) {
+            $this->auditService->logStatusChange($ticket, $oldStatus, $validated['status'], auth()->user(), $request);
+        }
+        
+        if ($oldPriority !== $validated['priority']) {
+            $this->auditService->logPriorityChange($ticket, $oldPriority, $validated['priority'], auth()->user(), $request);
+        }
+        
+        if ($oldAssignedTo !== ($validated['assigned_to'] ?? null)) {
+            $assignedUser = User::find($validated['assigned_to']);
+            $this->auditService->logTicketAssigned($ticket, $assignedUser, auth()->user(), $request);
+        }
+        
+        if ($validated['status'] === 'fechado' && $oldStatus !== 'fechado') {
+            $this->auditService->logTicketClosed($ticket, auth()->user(), $request);
         }
         
         return redirect()
@@ -400,6 +444,8 @@ class TicketController extends Controller
             'type' => $validated['type'],
             'message' => $validated['message'],
             'is_internal' => $user->isCliente() ? false : ($validated['is_internal'] ?? false),
+            'ip_address' => $request->get('audit_ip') ?? $request->ip(),
+            'user_agent' => $request->get('audit_user_agent') ?? $request->userAgent(),
         ]);
         
         // Processar anexos
@@ -417,6 +463,9 @@ class TicketController extends Controller
                 ]);
             }
         }
+        
+        // Registrar auditoria
+        $this->auditService->logTicketReply($ticket, $ticketMessage, $user, $request);
         
         // Notificar sobre a resposta
         if ($validated['type'] === 'reply') {

@@ -156,6 +156,19 @@ Route::get('/test-contacts/{client}', function($client) {
         // Gerenciamento de usuários
         Route::resource('users', UserController::class);
         Route::post('/users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
+        
+        // Sistema de Auditoria
+        Route::prefix('audit')->name('audit.')->group(function () {
+            Route::get('/', [App\Http\Controllers\AuditController::class, 'index'])->name('index');
+            Route::get('/statistics', [App\Http\Controllers\AuditController::class, 'statistics'])->name('statistics');
+            Route::get('/export', [App\Http\Controllers\AuditController::class, 'export'])->name('export');
+            Route::get('/ticket/{ticketNumber}', [App\Http\Controllers\AuditController::class, 'ticketLogs'])->name('ticket');
+            Route::get('/{auditLog}', [App\Http\Controllers\AuditController::class, 'show'])->name('show');
+            
+            // APIs
+            Route::get('/api/logs', [App\Http\Controllers\AuditController::class, 'apiLogs'])->name('api.logs');
+            Route::get('/api/statistics', [App\Http\Controllers\AuditController::class, 'apiStatistics'])->name('api.statistics');
+        });
     });
 });
 
