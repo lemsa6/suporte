@@ -1,0 +1,46 @@
+[1mdiff --git a/resources/views/layouts/app.blade.php b/resources/views/layouts/app.blade.php[m
+[1mindex 2465a04..edcaeff 100644[m
+[1m--- a/resources/views/layouts/app.blade.php[m
+[1m+++ b/resources/views/layouts/app.blade.php[m
+[36m@@ -204,14 +204,14 @@[m [mfunction toggleSidebar() {[m
+             const mainContent = document.querySelector('.main-content');[m
+             [m
+             if (window.innerWidth < 992) {[m
+[31m-                sidebar.classList.toggle('d-none');[m
+[32m+[m[32m                sidebar.classList.toggle('show');[m
+                 [m
+[31m-                if (sidebar.classList.contains('d-none')) {[m
+[32m+[m[32m                if (sidebar.classList.contains('show')) {[m
+                     mainContent.style.marginLeft = '0';[m
+                     mainContent.style.width = '100%';[m
+                 } else {[m
+[31m-                    mainContent.style.marginLeft = '280px';[m
+[31m-                    mainContent.style.width = 'calc(100% - 280px)';[m
+[32m+[m[32m                    mainContent.style.marginLeft = '0';[m
+[32m+[m[32m                    mainContent.style.width = '100%';[m
+                 }[m
+             }[m
+         }[m
+[36m@@ -222,11 +222,11 @@[m [mfunction toggleSidebar() {[m
+             const mainContent = document.querySelector('.main-content');[m
+             [m
+             if (window.innerWidth >= 992) {[m
+[31m-                sidebar.classList.remove('d-none');[m
+[32m+[m[32m                sidebar.classList.remove('show');[m
+                 mainContent.style.marginLeft = '280px';[m
+                 mainContent.style.width = 'calc(100% - 280px)';[m
+             } else {[m
+[31m-                sidebar.classList.add('d-none');[m
+[32m+[m[32m                sidebar.classList.remove('show');[m
+                 mainContent.style.marginLeft = '0';[m
+                 mainContent.style.width = '100%';[m
+             }[m
+[36m@@ -235,7 +235,7 @@[m [mfunction toggleSidebar() {[m
+         // Initialize sidebar state on page load[m
+         document.addEventListener('DOMContentLoaded', function() {[m
+             if (window.innerWidth < 992) {[m
+[31m-                document.getElementById('sidebar').classList.add('d-none');[m
+[32m+[m[32m                document.getElementById('sidebar').classList.remove('show');[m
+                 document.querySelector('.main-content').style.marginLeft = '0';[m
+                 document.querySelector('.main-content').style.width = '100%';[m
+             }[m

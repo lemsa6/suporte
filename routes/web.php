@@ -147,9 +147,7 @@ Route::get('/test-contacts/{client}', function($client) {
             return redirect()->route('admin.settings.index');
         })->name('settings.index');
         
-        Route::get('/settings/users', function () {
-            return view('admin.settings.users');
-        })->name('settings.users');
+        Route::get('/settings/users', [UserController::class, 'index'])->name('settings.users');
         
         Route::get('/settings/system', function () {
             return redirect()->route('admin.settings.system');

@@ -204,14 +204,14 @@
             const mainContent = document.querySelector('.main-content');
             
             if (window.innerWidth < 992) {
-                sidebar.classList.toggle('d-none');
+                sidebar.classList.toggle('show');
                 
-                if (sidebar.classList.contains('d-none')) {
+                if (sidebar.classList.contains('show')) {
                     mainContent.style.marginLeft = '0';
                     mainContent.style.width = '100%';
                 } else {
-                    mainContent.style.marginLeft = '280px';
-                    mainContent.style.width = 'calc(100% - 280px)';
+                    mainContent.style.marginLeft = '0';
+                    mainContent.style.width = '100%';
                 }
             }
         }
@@ -222,11 +222,11 @@
             const mainContent = document.querySelector('.main-content');
             
             if (window.innerWidth >= 992) {
-                sidebar.classList.remove('d-none');
+                sidebar.classList.remove('show');
                 mainContent.style.marginLeft = '280px';
                 mainContent.style.width = 'calc(100% - 280px)';
             } else {
-                sidebar.classList.add('d-none');
+                sidebar.classList.remove('show');
                 mainContent.style.marginLeft = '0';
                 mainContent.style.width = '100%';
             }
@@ -235,7 +235,7 @@
         // Initialize sidebar state on page load
         document.addEventListener('DOMContentLoaded', function() {
             if (window.innerWidth < 992) {
-                document.getElementById('sidebar').classList.add('d-none');
+                document.getElementById('sidebar').classList.remove('show');
                 document.querySelector('.main-content').style.marginLeft = '0';
                 document.querySelector('.main-content').style.width = '100%';
             }

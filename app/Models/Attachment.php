@@ -29,9 +29,9 @@ class Attachment extends Model
         return $this->belongsTo(TicketMessage::class);
     }
 
-    public function ticket()
+    public function ticket(): BelongsTo
     {
-        return $this->ticketMessage->ticket;
+        return $this->belongsTo(Ticket::class, 'ticket_id');
     }
 
     // Scopes

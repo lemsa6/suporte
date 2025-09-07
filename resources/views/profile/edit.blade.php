@@ -224,7 +224,7 @@
             <h5 class="mb-0 fw-semibold">Alterar Senha</h5>
         </div>
         <div class="card-body">
-                    <form method="POST" action="{{ route('profile.password.update') }}" class="d-flex flex-column gap-4">
+                    <form method="POST" action="{{ route('profile.password') }}" class="d-flex flex-column gap-4">
                 @csrf
                 @method('PUT')
 
