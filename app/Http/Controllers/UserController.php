@@ -19,7 +19,7 @@ class UserController extends Controller
     public function index()
     {
         $users = User::with('assignedTickets')->paginate(15);
-        return view('users.index', compact('users'));
+        return view('admin.settings.users', compact('users'));
     }
 
     /**
