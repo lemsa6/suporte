@@ -963,3 +963,141 @@
 /* Table auto layout */
 .ticket-table-auto { table-layout: auto; }
 
+/* Category Color Picker Styles */
+.color-option {
+    @apply transition-all duration-200 ease-in-out;
+}
+
+.color-option:hover {
+    @apply transform scale-105 shadow-md;
+}
+
+.color-option:focus {
+    @apply outline-none ring-2 ring-primary ring-offset-2;
+}
+
+.color-picker-btn {
+    @apply transition-all duration-200 ease-in-out;
+}
+
+.color-picker-btn:hover {
+    @apply transform scale-105 shadow-md;
+}
+
+.color-picker-btn:focus {
+    @apply outline-none ring-2 ring-primary ring-offset-2;
+}
+
+/* Category Color Badge */
+.category-color-badge {
+    background-color: var(--category-color, #3B82F6);
+    @apply border border-gray-300;
+}
+
+.category-color-avatar {
+    background-color: var(--category-color, #3B82F6);
+    @apply border border-gray-300;
+}
+
+/* Form Control Enhancements */
+.form-control-color {
+    @apply w-12 h-12 p-1 border border-gray-300 rounded cursor-pointer;
+}
+
+.form-control-color::-webkit-color-swatch-wrapper {
+    @apply p-0;
+}
+
+.form-control-color::-webkit-color-swatch {
+    @apply border-0 rounded;
+}
+
+/* Modal Enhancements */
+.modal-content {
+    @apply rounded-lg shadow-xl border-0;
+}
+
+.modal-header {
+    @apply border-b border-gray-200 px-6 py-4;
+}
+
+.modal-body {
+    @apply px-6 py-4;
+}
+
+.modal-footer {
+    @apply border-t border-gray-200 px-6 py-4;
+}
+
+/* Alert Enhancements */
+.alert {
+    @apply rounded-lg border px-4 py-3;
+}
+
+.alert-info {
+    @apply bg-blue-50 border-blue-200 text-blue-800;
+}
+
+.alert-success {
+    @apply bg-green-50 border-green-200 text-green-800;
+}
+
+.alert-warning {
+    @apply bg-yellow-50 border-yellow-200 text-yellow-800;
+}
+
+.alert-danger {
+    @apply bg-red-50 border-red-200 text-red-800;
+}
+
+/* Loading States */
+.loading {
+    @apply opacity-50 pointer-events-none;
+}
+
+.loading::after {
+    content: '';
+    @apply absolute inset-0 bg-white bg-opacity-50 flex items-center justify-center;
+}
+
+/* Animation Utilities */
+.fade-in {
+    @apply animate-fade-in;
+}
+
+.slide-in {
+    @apply animate-slide-in;
+}
+
+@keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slide-in {
+    from { transform: translateY(-10px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* Responsive Utilities */
+@media (max-width: 640px) {
+    .mobile-stack {
+        @apply flex-col space-y-2;
+    }
+    
+    .mobile-full {
+        @apply w-full;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .no-print {
+        @apply hidden;
+    }
+    
+    .print-break {
+        page-break-before: always;
+    }
+}
+

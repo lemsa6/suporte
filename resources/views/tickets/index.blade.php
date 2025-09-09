@@ -183,9 +183,9 @@
                             <td class="ticket-table-cell-flex">
                                 <div class="flex items-center">
                                     <div class="ticket-table-client-avatar">
-                                        <span class="ticket-table-client-initial">{{ substr($ticket->client->trade_name ?? $ticket->client->company_name ?? 'N/A', 0, 1) }}</span>
+                                        <span class="ticket-table-client-initial">{{ $ticket->client->display_initial }}</span>
                                     </div>
-                                    <span class="font-medium">{{ $ticket->client->trade_name ?? $ticket->client->company_name ?? 'N/A' }}</span>
+                                    <span class="font-medium">{{ $ticket->client->display_name }}</span>
                                 </div>
                             </td>
                             <td class="ticket-table-cell">

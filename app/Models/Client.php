@@ -77,4 +77,21 @@ class Client extends Model
                substr($cnpj, 8, 4) . '-' . 
                substr($cnpj, 12, 2);
     }
+
+    /**
+     * Obtém o nome de exibição do cliente (prioriza trade_name)
+     */
+    public function getDisplayNameAttribute(): string
+    {
+        return $this->trade_name ?? $this->company_name ?? 'N/A';
+    }
+
+    /**
+     * Obtém a inicial do nome de exibição
+     */
+    public function getDisplayInitialAttribute(): string
+    {
+        $name = $this->display_name;
+        return strtoupper(substr($name, 0, 1));
+    }
 }

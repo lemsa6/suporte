@@ -10,6 +10,8 @@ use App\Models\TicketMessage;
 use App\Models\Attachment;
 use App\Services\NotificationService;
 use App\Services\AuditService;
+use App\Http\Requests\StoreTicketRequest;
+use App\Http\Requests\UpdateTicketRequest;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -92,18 +94,9 @@ class TicketController extends Controller
     /**
      * Armazena novo ticket
      */
-    public function store(Request $request): RedirectResponse
+    public function store(StoreTicketRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'client_id' => 'nullable|exists:clients,id',
-            'category_id' => 'required|exists:categories,id',
-            'title' => 'required|string|max:255',
-            'description' => 'required|string|max:5000',
-            'priority' => 'required|in:baixa,média,alta',
-            'assigned_to' => 'nullable|exists:users,id',
-            'is_urgent' => 'nullable|boolean',
-            'attachments.*' => 'nullable|file|max:25000|mimes:pdf,jpg,jpeg,png,zip,txt,log,doc,docx,xls,xlsx',
-        ]);
+        $validated = $request->validated();
         
         // Definir valores padrão
         $validated['is_urgent'] = $validated['is_urgent'] ?? false;

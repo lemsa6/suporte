@@ -3,123 +3,86 @@
 @section('title', 'Nova Categoria')
 
 @section('header')
-<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-md-between">
-    <div class="flex-grow-1">
-        <div class="d-flex align-items-center mb-2">
-            <x-button variant="outline" size="sm" tag="a" href="{{ route('categories.index') }}" class="me-3">
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+    <div class="mb-4 sm:mb-0">
+        <div class="flex items-center mb-2">
+            <x-button variant="outline" size="sm" tag="a" href="{{ route('categories.index') }}" class="mr-3">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                 </svg>
                 Voltar
             </x-button>
-            <h2 class="fs-2 fw-bold text-dark mb-0">
-                Nova Categoria
-            </h2>
+            <h1 class="page-title mb-0">Nova Categoria</h1>
         </div>
-        <p class="text-muted">
-            Crie uma nova categoria para organizar tickets
-        </p>
+        <p class="text-gray-600 mt-2">Crie uma nova categoria para organizar tickets</p>
     </div>
 </div>
 @endsection
 
 @section('content')
-<div class="d-flex flex-column gap-4">
-    <form action="{{ route('categories.store') }}" method="POST" class="d-flex flex-column gap-4">
+<div class="space-y-6">
+    <form action="{{ route('categories.store') }}" method="POST" class="space-y-6">
         @csrf
         
         <!-- Informações da Categoria -->
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white border-0">
-                <h5 class="mb-0 fw-semibold">Informações da Categoria</h5>
-            </div>
-            <div class="card-body">
-                <div class="d-flex flex-column gap-4">
+        <x-card title="Informações da Categoria">
+            <div class="space-y-4">
                     <!-- Nome -->
-                    <div>
-                        <label for="name" class="form-label fw-medium text-dark">Nome da Categoria *</label>
-                        <input type="text" name="name" id="name" required
-                            class="form-control @error('name') is-invalid @enderror"
-                            value="{{ old('name') }}"
-                            placeholder="Ex: Suporte Técnico, Infraestrutura, Software...">
-                        @error('name')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
+                    <x-input
+                        name="name"
+                        label="Nome da Categoria"
+                        placeholder="Ex: Suporte Técnico, Infraestrutura, Software..."
+                        required
+                        :value="old('name')"
+                    />
 
                     <!-- Descrição -->
-                    <div>
-                        <label for="description" class="form-label fw-medium text-dark">Descrição</label>
-                        <textarea name="description" id="description" rows="3"
-                            class="form-control @error('description') is-invalid @enderror"
-                            placeholder="Descreva brevemente o que esta categoria representa...">{{ old('description') }}</textarea>
-                        @error('description')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
+                    <x-textarea
+                        name="description"
+                        label="Descrição"
+                        placeholder="Descreva brevemente o que esta categoria representa..."
+                        rows="3"
+                        :value="old('description')"
+                    />
 
                     <!-- Cor da Categoria -->
                     <div>
                         <label class="form-label fw-medium text-dark mb-3">Cor da Categoria *</label>
                         
                         <!-- Cores Predefinidas -->
-                        <div class="row g-2 mb-3">
-                            <div class="col-2 col-sm-1">
-                                <button type="button" class="color-option w-100 h-12 rounded border-2 border-light hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
-                                    data-color="#3B82F6" class="color-blue" title="Azul"></button>
-                            </div>
-                            <div class="col-2 col-sm-1">
-                                <button type="button" class="color-option w-100 h-12 rounded border-2 border-light hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
-                                    data-color="#10B981" class="color-green" title="Verde"></button>
-                            </div>
-                            <div class="col-2 col-sm-1">
-                                <button type="button" class="color-option w-100 h-12 rounded border-2 border-light hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
-                                    data-color="#F59E0B" class="color-yellow" title="Amarelo"></button>
-                            </div>
-                            <div class="col-2 col-sm-1">
-                                <button type="button" class="color-option w-100 h-12 rounded border-2 border-light hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
-                                    data-color="#EF4444" class="color-red" title="Vermelho"></button>
-                            </div>
-                            <div class="col-2 col-sm-1">
-                                <button type="button" class="color-option w-100 h-12 rounded border-2 border-light hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
-                                    data-color="#8B5CF6" class="color-purple" title="Roxo"></button>
-                            </div>
-                            <div class="col-2 col-sm-1">
-                                <button type="button" class="color-option w-100 h-12 rounded border-2 border-light hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
-                                    data-color="#F97316" class="color-orange" title="Laranja"></button>
-                            </div>
+                        <div class="grid grid-cols-6 gap-2 mb-3">
+                            <button type="button" class="color-option w-full h-12 rounded border-2 border-gray-200 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
+                                data-color="#3B82F6" style="background-color: #3B82F6;" title="Azul"></button>
+                            <button type="button" class="color-option w-full h-12 rounded border-2 border-gray-200 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
+                                data-color="#10B981" style="background-color: #10B981;" title="Verde"></button>
+                            <button type="button" class="color-option w-full h-12 rounded border-2 border-gray-200 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
+                                data-color="#F59E0B" style="background-color: #F59E0B;" title="Amarelo"></button>
+                            <button type="button" class="color-option w-full h-12 rounded border-2 border-gray-200 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
+                                data-color="#EF4444" style="background-color: #EF4444;" title="Vermelho"></button>
+                            <button type="button" class="color-option w-full h-12 rounded border-2 border-gray-200 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
+                                data-color="#8B5CF6" style="background-color: #8B5CF6;" title="Roxo"></button>
+                            <button type="button" class="color-option w-full h-12 rounded border-2 border-gray-200 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
+                                data-color="#F97316" style="background-color: #F97316;" title="Laranja"></button>
                         </div>
 
                         <!-- Cores Adicionais -->
-                        <div class="row g-2 mb-3">
-                            <div class="col-2 col-sm-1">
-                                <button type="button" class="color-option w-100 h-12 rounded border-2 border-light hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
-                                    data-color="#06B6D4" class="color-cyan" title="Ciano"></button>
-                            </div>
-                            <div class="col-2 col-sm-1">
-                                <button type="button" class="color-option w-100 h-12 rounded border-2 border-light hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
-                                    data-color="#84CC16" class="color-lime" title="Lima"></button>
-                            </div>
-                            <div class="col-2 col-sm-1">
-                                <button type="button" class="color-option w-100 h-12 rounded border-2 border-light hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
-                                    data-color="#EC4899" class="color-pink" title="Rosa"></button>
-                            </div>
-                            <div class="col-2 col-sm-1">
-                                <button type="button" class="color-option w-100 h-12 rounded border-2 border-light hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
-                                    data-color="#6B7280" class="color-gray" title="Cinza"></button>
-                            </div>
-                            <div class="col-2 col-sm-1">
-                                <button type="button" class="color-option w-100 h-12 rounded border-2 border-light hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
-                                    data-color="#059669" class="color-green" title="Esmeralda"></button>
-                            </div>
-                            <div class="col-2 col-sm-1">
-                                <button type="button" class="color-option w-100 h-12 rounded border-2 border-light hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
-                                    data-color="#DC2626" class="color-red" title="Vermelho Escuro"></button>
-                            </div>
+                        <div class="grid grid-cols-6 gap-2 mb-3">
+                            <button type="button" class="color-option w-full h-12 rounded border-2 border-gray-200 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
+                                data-color="#06B6D4" style="background-color: #06B6D4;" title="Ciano"></button>
+                            <button type="button" class="color-option w-full h-12 rounded border-2 border-gray-200 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
+                                data-color="#84CC16" style="background-color: #84CC16;" title="Lima"></button>
+                            <button type="button" class="color-option w-full h-12 rounded border-2 border-gray-200 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
+                                data-color="#EC4899" style="background-color: #EC4899;" title="Rosa"></button>
+                            <button type="button" class="color-option w-full h-12 rounded border-2 border-gray-200 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
+                                data-color="#6B7280" style="background-color: #6B7280;" title="Cinza"></button>
+                            <button type="button" class="color-option w-full h-12 rounded border-2 border-gray-200 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
+                                data-color="#059669" style="background-color: #059669;" title="Esmeralda"></button>
+                            <button type="button" class="color-option w-full h-12 rounded border-2 border-gray-200 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
+                                data-color="#DC2626" style="background-color: #DC2626;" title="Vermelho Escuro"></button>
                         </div>
 
                         <!-- Seletor de Cor Personalizada -->
-                        <div class="d-flex align-items-center gap-3">
+                        <div class="flex items-center gap-3">
                             <label for="custom-color" class="form-label fw-medium text-dark mb-0">Cor personalizada:</label>
                             <input type="color" id="custom-color" name="custom_color" 
                                 class="form-control form-control-color"
@@ -135,8 +98,8 @@
                         @enderror
 
                         <!-- Preview da Cor Selecionada -->
-                        <div class="mt-3 p-3 rounded border bg-light">
-                            <div class="d-flex align-items-center gap-3">
+                        <div class="mt-3 p-3 rounded border bg-gray-50">
+                            <div class="flex items-center gap-3">
                                 <div id="color-preview" class="w-8 h-8 rounded border category-color-badge" style="--category-color: {{ old('color', '#3B82F6') }};"></div>
                                 <div>
                                     <p class="mb-0 fw-medium text-dark">Preview da Cor</p>
@@ -160,12 +123,11 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-                </div>
             </div>
-        </div>
+        </x-card>
 
         <!-- Botões de Ação -->
-        <div class="d-flex justify-content-end gap-2">
+        <div class="flex justify-end gap-3">
             <x-button variant="outline" tag="a" href="{{ route('categories.index') }}">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -224,13 +186,13 @@
         // Remover seleção anterior de todos os botões
         document.querySelectorAll('.color-option').forEach(btn => {
             btn.classList.remove('border-primary', 'ring-2', 'ring-primary');
-            btn.classList.add('border-light');
+            btn.classList.add('border-gray-200');
         });
         
         // Marcar cor selecionada (se for uma das predefinidas)
         const selectedButton = document.querySelector(`[data-color="${color}"]`);
         if (selectedButton) {
-            selectedButton.classList.remove('border-light');
+            selectedButton.classList.remove('border-gray-200');
             selectedButton.classList.add('border-primary', 'ring-2', 'ring-primary');
         }
         
@@ -270,7 +232,7 @@
         // Marcar botão da cor padrão como selecionado
         const defaultButton = document.querySelector(`[data-color="${selectedColor}"]`);
         if (defaultButton) {
-            defaultButton.classList.remove('border-light');
+            defaultButton.classList.remove('border-gray-200');
             defaultButton.classList.add('border-primary', 'ring-2', 'ring-primary');
         }
     });
