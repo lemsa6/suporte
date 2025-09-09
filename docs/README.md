@@ -1,11 +1,11 @@
-# 📚 Documentação - Sistema de Suporte v1.1
+# 📚 Documentação - Sistema de Suporte v1.2
 
 Bem-vindo à documentação completa do Sistema de Suporte e Tickets. Aqui você encontrará todos os recursos necessários para instalar, configurar e usar o sistema.
 
 ## **📖 Índice de Documentação**
 
 ### **🚀 Para Começar**
-- **[README Principal](../README.md)** - Visão geral do projeto e funcionalidades
+- **[Compêndio Completo](COMPENDIO_SISTEMA_SUPORTE.md)** - Documentação consolidada do sistema
 - **[Instalação Rápida](../INSTALL.md)** - Instalação em 5 passos
 - **[Guia de Instalação Detalhado](INSTALACAO.md)** - Instalação completa passo a passo
 
@@ -15,8 +15,8 @@ Bem-vindo à documentação completa do Sistema de Suporte e Tickets. Aqui você
 
 ### **🔧 Para Desenvolvedores**
 - **[Arquitetura do Sistema](ARQUITETURA.md)** - Documentação técnica completa
-- **[API e Rotas](ARQUITETURA.md#-documentação-de-api)** - Documentação da API
-- **[Padrões de Desenvolvimento](ARQUITETURA.md#-padrões-de-desenvolvimento)** - Convenções de código
+- **[Componentes do Sistema](COMPONENTES_SISTEMA.md)** - Documentação dos componentes Blade
+- **[Sistema de Cores Padrão](SISTEMA_CORES_PADRAO.md)** - Sistema de cores e design
 
 ## **🎯 Por Onde Começar?**
 
@@ -82,10 +82,10 @@ Bem-vindo à documentação completa do Sistema de Suporte e Tickets. Aqui você
 - **Docker** - Containerização completa
 
 ### **Frontend**
-- **Bootstrap 5** - Framework CSS responsivo
-- **SCSS** - Pré-processador CSS
+- **Tailwind CSS** - Framework CSS utilitário
+- **Componentes Blade** - Componentes reutilizáveis
 - **JavaScript Vanilla** - Interatividade
-- **AJAX** - Requisições assíncronas
+- **Vite** - Build tool moderno
 
 ### **Infraestrutura**
 - **Docker Compose** - Orquestração de containers

@@ -1,5 +1,7 @@
 # 🏗️ Arquitetura do Sistema de Suporte
 
+> **📚 Para documentação completa, consulte o [Compêndio do Sistema](COMPENDIO_SISTEMA_SUPORTE.md)**
+
 ## **Visão Geral**
 
 O Sistema de Suporte e Tickets foi desenvolvido seguindo as melhores práticas do Laravel 12, com arquitetura MVC, padrões de design e princípios SOLID.

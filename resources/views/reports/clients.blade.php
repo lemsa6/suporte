@@ -86,7 +86,7 @@
                 </h3>
                 
                 @if(request()->hasAny(['status', 'date_from', 'date_to']))
-                    <span class="inline-d-flex align-items-center px-2.5 py-0.5 rounded-circle fs-6 fw-medium bg-info bg-opacity-10 text-blue-800">
+                    <span class="inline-d-flex align-items-center px-2.5 py-0.5 rounded-circle fs-6 fw-medium bg-roxo-det bg-opacity-10 text-roxo">
                         Filtros aplicados
                     </span>
                 @endif
@@ -180,7 +180,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="fs-6 text-dark">
                                             @if($client->tickets_count > 0)
-                                                <span class="inline-d-flex align-items-center px-2.5 py-0.5 rounded-circle fs-6 fw-medium bg-info bg-opacity-10 text-blue-800">
+                                                <span class="inline-d-flex align-items-center px-2.5 py-0.5 rounded-circle fs-6 fw-medium bg-roxo-det bg-opacity-10 text-roxo">
                                                     {{ $client->tickets_count }} ticket(s)
                                                 </span>
                                             @else

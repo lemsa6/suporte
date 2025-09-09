@@ -170,7 +170,7 @@
         @if($ticket->resolution_notes)
         <div class="mt-6 pt-6 border-t border-gray-200">
             <h3 class="section-title mb-4">Notas de Resolução</h3>
-            <div class="bg-blue-50 border border-blue-200 p-4 rounded-lg">
+            <div class="alert-info p-4 rounded-lg">
                 <p class="text-gray-900">{{ $ticket->resolution_notes }}</p>
             </div>
         </div>
@@ -195,7 +195,7 @@
                         <!-- Avatar -->
                         <div class="flex-shrink-0">
                             <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-medium
-                                @if($message->user) bg-blue-600
+                                @if($message->user) bg-roxo
                                 @else bg-gray-600
                                 @endif">
                                 @if($message->user)
@@ -325,7 +325,7 @@
                 @if(auth()->user()->canManageTickets())
                 <div class="flex items-center">
                     <div class="flex items-center h-5">
-                        <input type="checkbox" id="is_internal" name="is_internal" value="1" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                        <input type="checkbox" id="is_internal" name="is_internal" value="1" class="h-4 w-4 text-roxo focus:ring-roxo border-gray-300 rounded">
                     </div>
                     <div class="ml-3 text-sm">
                         <label for="is_internal" class="font-medium text-gray-700">
@@ -339,7 +339,7 @@
             <div>
                 <label for="attachments" class="block text-sm font-medium text-gray-700 mb-2">Anexos</label>
                 <input type="file" id="attachments" name="attachments[]" multiple 
-                       class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                       class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-roxo file:bg-opacity-10 file:text-roxo hover:file:bg-roxo hover:file:bg-opacity-20">
                 <p class="mt-1 text-sm text-gray-500">Formatos aceitos: PDF, JPG, PNG, ZIP, LOG. Máximo 25MB por arquivo.</p>
             </div>
 

@@ -261,7 +261,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 labels: ['Abertos', 'Em Andamento', 'Resolvidos', 'Fechados'],
                 datasets: [{
                     data: [{{ $charts['status'] ?? '0,0,0,0' }}],
-                    backgroundColor: ['#fbbf24', '#3b82f6', '#10b981', '#6b7280'],
+                    backgroundColor: ['#fbbf24', '#7c55c3', '#10b981', '#6b7280'],
                     borderWidth: 0
                 }]
             },

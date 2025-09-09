@@ -9,30 +9,33 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: {
-          50: '#f3f0ff',
-          100: '#e9e3ff',
-          200: '#d4c7ff',
-          300: '#b8a3ff',
-          400: '#9c7fff',
-          500: '#4d2f6f',
-          600: '#452a63',
-          700: '#3d2557',
-          800: '#35204b',
-          900: '#2d1b3f',
-        },
-        gray: {
-          50: '#f9f9f9',
-          100: '#f1f5f9',
-          200: '#e2e8f0',
-          300: '#cbd5e1',
-          400: '#94a3b8',
-          500: '#64748b',
-          600: '#475569',
-          700: '#334155',
-          800: '#1e293b',
-          900: '#0f172a',
-        },
+        // Sistema de Cores Simplificado - 12 Cores Essenciais
+        primary: '#3d235a',           // Cor principal (roxo-mate)
+        primaryHover: '#4d2f6f',      // Hover principal (roxo-mate-2)
+        accent: '#f0ba00',            // Cor de destaque (amarelo)
+        success: '#55c38e',           // Alerta verde
+        error: '#c35555',             // Alerta vermelho
+        info: '#7c55c3',              // Alerta confirmação/detalhes (roxo-det)
+        text: '#5a5a5a',              // Texto principal (cinza)
+        textSecondary: '#a0a0a0',     // Texto secundário (cinza-claro)
+        textHover: '#ffffff',         // Texto hover (branco)
+        bgSite: '#f9f9f9',            // Fundo do site (creme)
+        bgDiv: '#ffffff',             // Fundo das divs (branco)
+        textTertiary: '#ffffff',      // Texto terciário (branco)
+        
+        // Cores customizadas para compatibilidade com CSS existente
+        roxo: '#3d235a',              // Cor principal (roxo-mate)
+        'roxo-claro': '#4d2f6f',      // Hover principal (roxo-mate-2)
+        'roxo-det': '#7c55c3',        // Alerta confirmação (roxo-det)
+        cinza: '#5a5a5a',             // Texto principal (cinza)
+        'cinza-claro': '#a0a0a0',     // Texto secundário (cinza-claro)
+        amarelo: '#f0ba00',           // Cor de destaque (amarelo)
+        verde: '#55c38e',             // Alerta verde
+        vermelho: '#c35555',          // Alerta vermelho
+        branco: '#ffffff',            // Fundo das divs e texto (branco)
+        creme: '#f9f9f9',             // Fundo do site (creme)
+        
+        // Cores da Sidebar (mantendo compatibilidade)
         sidebar: {
           DEFAULT: '#3d235a',
           hover: '#4d2f6f',

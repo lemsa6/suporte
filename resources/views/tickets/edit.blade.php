@@ -128,7 +128,7 @@
                     <div class="flex items-center">
                         <div class="flex items-center h-5">
                             <input type="checkbox" id="is_urgent" name="is_urgent" value="1" 
-                                   class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                   class="h-4 w-4 text-roxo focus:ring-roxo border-gray-300 rounded"
                                    {{ old('is_urgent', $ticket->is_urgent) ? 'checked' : '' }}>
                         </div>
                         <div class="ml-3 text-sm">

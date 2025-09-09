@@ -4,18 +4,26 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
+use App\Services\AuditService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
 class LoginController extends Controller
 {
+    protected $auditService;
+
     /**
      * Where to redirect users after login.
      *
      * @var string
      */
     protected $redirectTo = RouteServiceProvider::HOME;
+
+    public function __construct(AuditService $auditService)
+    {
+        $this->auditService = $auditService;
+    }
 
     /**
      * Show the application's login form.
@@ -59,6 +67,17 @@ class LoginController extends Controller
      */
     protected function authenticated(Request $request, $user)
     {
+        // Registrar auditoria de login bem-sucedido
+        $this->auditService->log(
+            'login_success',
+            $user,
+            $user,
+            $request,
+            [],
+            ['email' => $user->email, 'role' => $user->role],
+            'Login realizado com sucesso'
+        );
+
         // Redirecionar baseado no perfil do usuário
         if ($user->isAdmin()) {
             return redirect()->route('dashboard')->with('success', 'Bem-vindo, Administrador!');
@@ -77,6 +96,21 @@ class LoginController extends Controller
      */
     public function logout(Request $request)
     {
+        $user = $this->guard()->user();
+
+        // Registrar auditoria de logout
+        if ($user) {
+            $this->auditService->log(
+                'logout',
+                $user,
+                $user,
+                $request,
+                [],
+                ['email' => $user->email, 'role' => $user->role],
+                'Logout realizado'
+            );
+        }
+
         $this->guard()->logout();
 
         $request->session()->invalidate();
@@ -162,6 +196,17 @@ class LoginController extends Controller
      */
     protected function sendFailedLoginResponse(Request $request)
     {
+        // Registrar auditoria de tentativa de login falhada
+        $this->auditService->log(
+            'login_failed',
+            new \App\Models\User(), // Usar um modelo vazio para tentativas falhadas
+            null, // Sem usuário para tentativas falhadas
+            $request,
+            [],
+            ['email' => $request->input($this->username())],
+            'Tentativa de login falhada'
+        );
+
         throw ValidationException::withMessages([
             $this->username() => [trans('auth.failed')],
         ]);

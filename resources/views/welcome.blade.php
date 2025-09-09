@@ -12,7 +12,7 @@
     <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700" rel="stylesheet" />
 
     <!-- Vite CSS & JS -->
-    @vite(['resources/css/app.css', 'resources/scss/app.scss', 'resources/js/app.js'])
+    @vite(['resources/js/app.js'])
 </head>
 <body class="bg-light">
     <div class="d-flex flex-column justify-content-center min-vh-100 py-5">

@@ -1,5 +1,7 @@
 # 🚀 Guia de Instalação - Sistema de Suporte v1.2
 
+> **📚 Para documentação completa, consulte o [Compêndio do Sistema](COMPENDIO_SISTEMA_SUPORTE.md)**
+
 ## **Pré-requisitos**
 
 ### **Sistema Operacional**

@@ -1,5 +1,7 @@
 # Sistema de Componentes Blade - Documentação
 
+> **📚 Para documentação completa, consulte o [Compêndio do Sistema](COMPENDIO_SISTEMA_SUPORTE.md)**
+
 ## Visão Geral
 
 Este sistema utiliza **Tailwind CSS** como framework CSS principal e **Componentes Blade** personalizados para criar uma interface consistente e reutilizável.

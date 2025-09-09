@@ -1,5 +1,7 @@
 # 📖 Guia de Uso - Sistema de Suporte v1.2
 
+> **📚 Para documentação completa, consulte o [Compêndio do Sistema](COMPENDIO_SISTEMA_SUPORTE.md)**
+
 ## **Visão Geral**
 
 O Sistema de Suporte e Tickets é uma plataforma completa para gerenciamento de atendimento ao cliente, desenvolvida para empresas que precisam de um sistema robusto e escalável.

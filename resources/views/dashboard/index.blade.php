@@ -265,7 +265,7 @@
                         ],
                         backgroundColor: [
                             '#f59e0b', // Warning - Open
-                            '#3b82f6', // Primary - In Progress
+                            '#7c55c3', // Primary - In Progress
                             '#10b981', // Success - Resolved
                             '#64748b'  // Secondary - Closed
                         ],
@@ -320,10 +320,10 @@
                         label: 'Tickets',
                         data: data,
                         backgroundColor: [
-                            '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#84cc16', '#f97316'
+                            '#7c55c3', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#84cc16', '#f97316'
                         ],
                         borderColor: [
-                            '#2563eb', '#059669', '#d97706', '#dc2626', '#7c3aed', '#0891b2', '#65a30d', '#ea580c'
+                            '#3d235a', '#059669', '#d97706', '#dc2626', '#7c3aed', '#0891b2', '#65a30d', '#ea580c'
                         ],
                         borderWidth: 1,
                         borderRadius: 4,

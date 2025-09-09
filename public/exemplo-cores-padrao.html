@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Cores Padrão - Exemplo</title>
+    <link href="/build/assets/tailwind-ba3f1960.css" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Lato', sans-serif; 
+            padding: 2rem; 
+            background: var(--creme);
+        }
+        .exemplo { 
+            background: white; 
+            padding: 1.5rem; 
+            margin: 1rem 0; 
+            border-radius: 8px; 
+            border: 1px solid var(--cinza-claro);
+        }
+        .exemplo h3 { 
+            margin-top: 0; 
+            color: var(--roxo); 
+        }
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+            gap: 1rem; 
+            margin: 1rem 0; 
+        }
+    </style>
+</head>
+<body>
+    <h1>Sistema de Cores Padrão - Exemplo Prático</h1>
+    <p>Este exemplo demonstra como o sistema aplica cores padrão automaticamente.</p>
+
+    <div class="grid">
+        <!-- Exemplo 1: Botões -->
+        <div class="exemplo">
+            <h3>1. Botões (sem classes específicas)</h3>
+            <p>Estes botões usam automaticamente a cor roxa padrão:</p>
+            <button onclick="alert('Botão padrão!')">Botão Padrão</button>
+            <button onclick="alert('Outro botão!')">Outro Botão</button>
+            
+            <h4>Botões com classes específicas:</h4>
+            <button class="btn-danger" onclick="alert('Perigo!')">Excluir</button>
+            <button class="btn-success" onclick="alert('Sucesso!')">Aprovar</button>
+        </div>
+
+        <!-- Exemplo 2: Links -->
+        <div class="exemplo">
+            <h3>2. Links (sem classes específicas)</h3>
+            <p>Estes links usam automaticamente a cor roxa padrão:</p>
+            <a href="#dashboard">Dashboard</a><br>
+            <a href="#tickets">Tickets</a><br>
+            <a href="#relatorios">Relatórios</a><br>
+            
+            <h4>Links com classes específicas:</h4>
+            <a href="#logout" class="text-vermelho">Sair</a><br>
+            <a href="#ajuda" class="text-verde">Ajuda</a>
+        </div>
+
+        <!-- Exemplo 3: Formulário -->
+        <div class="exemplo">
+            <h3>3. Formulário (inputs sem classes)</h3>
+            <form>
+                <p>Estes inputs usam borda padrão e roxa no focus:</p>
+                <input type="text" placeholder="Nome completo" style="width: 100%; margin: 0.5rem 0; padding: 0.5rem; border-radius: 4px; border: 1px solid var(--cinza-claro);">
+                <input type="email" placeholder="E-mail" style="width: 100%; margin: 0.5rem 0; padding: 0.5rem; border-radius: 4px; border: 1px solid var(--cinza-claro);">
+                
+                <h4>Input com classe específica:</h4>
+                <input type="text" placeholder="Telefone" class="border-verde" style="width: 100%; margin: 0.5rem 0; padding: 0.5rem; border-radius: 4px; border: 1px solid var(--verde);">
+                
+                <button type="submit" style="margin-top: 1rem;">Enviar Formulário</button>
+            </form>
+        </div>
+
+        <!-- Exemplo 4: Textos -->
+        <div class="exemplo">
+            <h3>4. Textos (sem classes específicas)</h3>
+            <p>Este parágrafo usa automaticamente a cor cinza padrão.</p>
+            <span>Este span também usa a cor padrão.</span>
+            
+            <h4>Textos com classes específicas:</h4>
+            <p class="text-verde">Este parágrafo é verde.</p>
+            <span class="text-vermelho">Este span é vermelho.</span>
+        </div>
+
+        <!-- Exemplo 5: Cards -->
+        <div class="exemplo">
+            <h3>5. Cards (sem classes específicas)</h3>
+            <div class="card" style="padding: 1rem; margin: 0.5rem 0;">
+                <h4>Card Padrão</h4>
+                <p>Este card usa fundo e borda padrão automaticamente.</p>
+            </div>
+            
+            <h4>Card com classe específica:</h4>
+            <div class="card bg-verde" style="padding: 1rem; margin: 0.5rem 0; background-color: var(--verde); color: white;">
+                <h4>Card Verde</h4>
+                <p>Este card tem fundo verde específico.</p>
+            </div>
+        </div>
+
+        <!-- Exemplo 6: Classes Utilitárias -->
+        <div class="exemplo">
+            <h3>6. Classes Utilitárias</h3>
+            <p>Use estas classes para aplicar cores padrão facilmente:</p>
+            
+            <div class="bg-padrao" style="padding: 0.5rem; margin: 0.5rem 0; color: white; border-radius: 4px;">
+                .bg-padrao - Fundo roxo padrão
+            </div>
+            
+            <p class="text-padrao">.text-padrao - Texto cinza padrão</p>
+            <p class="text-padrao-secundario">.text-padrao-secundario - Texto cinza claro</p>
+            
+            <div class="border-padrao" style="padding: 0.5rem; margin: 0.5rem 0; border: 2px solid; border-radius: 4px;">
+                .border-padrao - Borda cinza claro
+            </div>
+            
+            <button class="hover-padrao" style="padding: 0.5rem 1rem; border: none; border-radius: 4px; background-color: var(--roxo); color: white;">
+                .hover-padrao - Hover roxo claro
+            </button>
+        </div>
+    </div>
+
+    <div class="exemplo">
+        <h3>🎯 Resumo do Sistema</h3>
+        <ul>
+            <li><strong>Automático:</strong> Elementos sem classes específicas usam cores padrão</li>
+            <li><strong>Flexível:</strong> Classes específicas sempre sobrescrevem o padrão</li>
+            <li><strong>Consistente:</strong> Toda a interface segue o mesmo padrão visual</li>
+            <li><strong>Manutenível:</strong> Altere as variáveis CSS para mudanças globais</li>
+        </ul>
+    </div>
+
+    <script>
+        // Adicionar interatividade aos exemplos
+        document.querySelectorAll('button').forEach(btn => {
+            btn.style.padding = '0.5rem 1rem';
+            btn.style.margin = '0.25rem';
+            btn.style.borderRadius = '4px';
+            btn.style.border = 'none';
+            btn.style.cursor = 'pointer';
+        });
+    </script>
+</body>
+</html>
