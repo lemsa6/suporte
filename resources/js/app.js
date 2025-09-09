@@ -1,3 +1,5 @@
 import './bootstrap';
+import Chart from 'chart.js/auto';
 
-// Bootstrap JS será carregado via CDN otimizado no layout
+// Disponibilizar Chart.js globalmente
+window.Chart = Chart;

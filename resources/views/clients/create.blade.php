@@ -6,12 +6,12 @@
 <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-md-between">
     <div class="flex-grow-1">
         <div class="d-flex align-items-center mb-2">
-            <a href="{{ route('clients.index') }}" class="btn btn-outline-secondary btn-sm me-3">
-                <svg class="me-1" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <x-button variant="outline" size="sm" tag="a" href="{{ route('clients.index') }}" class="me-3">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                 </svg>
                 Voltar
-            </a>
+            </x-button>
             <h2 class="fs-2 fw-bold text-dark mb-0">
                 Novo Cliente
             </h2>
@@ -139,12 +139,12 @@
                 <div class="card-header bg-white border-0">
                     <div class="d-flex align-items-center justify-content-between">
                         <h5 class="mb-0 fw-semibold">Contatos</h5>
-                        <button type="button" onclick="addContact()" class="btn btn-outline-primary btn-sm">
-                            <svg class="me-1" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <x-button variant="outline" size="sm" type="button" onclick="addContact()">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                             </svg>
                             Adicionar Contato
-                        </button>
+                        </x-button>
                     </div>
                 </div>
                 <div class="card-body">
@@ -214,19 +214,19 @@
 
             <!-- Botões de Ação -->
             <div class="d-flex justify-content-end gap-2">
-                <a href="{{ route('clients.index') }}" class="btn btn-outline-secondary">
-                    <svg class="me-1" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <x-button variant="outline" tag="a" href="{{ route('clients.index') }}">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                     Cancelar
-                </a>
+                </x-button>
                 
-                <button type="submit" class="btn btn-primary">
-                    <svg class="me-1" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <x-button variant="primary" type="submit">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                     </svg>
                     Criar Cliente
-                </button>
+                </x-button>
             </div>
         </form>
     </div>
@@ -246,7 +246,7 @@
             <div class="d-flex align-items-center justify-content-between mb-3">
                 <h6 class="mb-0 fw-medium text-dark">Contato Adicional</h6>
                 <button type="button" onclick="removeContact(this)" 
-                    class="btn btn-outline-danger btn-sm">
+                    variant="outline" size="sm" class="btn-outline-danger">
                     <svg class="me-1" width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>

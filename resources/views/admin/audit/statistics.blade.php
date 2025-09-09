@@ -69,7 +69,7 @@
         <div class="col-12 col-md-3">
             <div class="card border-0 shadow-sm">
                 <div class="card-body text-center">
-                    <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                    <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3 icon-circle-md">
                         <svg class="text-primary" width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                         </svg>
@@ -83,7 +83,7 @@
         <div class="col-12 col-md-3">
             <div class="card border-0 shadow-sm">
                 <div class="card-body text-center">
-                    <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                    <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3 icon-circle-md">
                         <svg class="text-success" width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
                         </svg>
@@ -97,7 +97,7 @@
         <div class="col-12 col-md-3">
             <div class="card border-0 shadow-sm">
                 <div class="card-body text-center">
-                    <div class="bg-warning bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                    <div class="bg-warning bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3 icon-circle-md">
                         <svg class="text-warning" width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                         </svg>
@@ -111,7 +111,7 @@
         <div class="col-12 col-md-3">
             <div class="card border-0 shadow-sm">
                 <div class="card-body text-center">
-                    <div class="bg-info bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                    <div class="bg-info bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3 icon-circle-md">
                         <svg class="text-info" width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -139,9 +139,9 @@
                                 <div class="d-flex justify-content-between align-items-center">
                                     <span class="fw-medium">{{ ucfirst($eventType) }}</span>
                                     <div class="d-flex align-items-center gap-2">
-                                        <div class="progress" style="width: 100px; height: 8px;">
-                                            <div class="progress-bar" role="progressbar" 
-                                                 style="width: {{ ($count / $statistics['total_logs']) * 100 }}%"
+                                        <div class="progress progress-sm">
+                                            <div class="progress-bar progress-bar-dynamic" role="progressbar" 
+                                                 style="--progress-width: {{ ($count / $statistics['total_logs']) * 100 }}%"
                                                  aria-valuenow="{{ $count }}" 
                                                  aria-valuemin="0" 
                                                  aria-valuemax="{{ $statistics['total_logs'] }}">
@@ -172,9 +172,9 @@
                                 <div class="d-flex justify-content-between align-items-center">
                                     <span class="fw-medium">{{ $userName }}</span>
                                     <div class="d-flex align-items-center gap-2">
-                                        <div class="progress" style="width: 100px; height: 8px;">
-                                            <div class="progress-bar bg-success" role="progressbar" 
-                                                 style="width: {{ ($count / $statistics['by_user']->max()) * 100 }}%"
+                                        <div class="progress progress-sm">
+                                            <div class="progress-bar bg-success progress-bar-dynamic" role="progressbar" 
+                                                 style="--progress-width: {{ ($count / $statistics['by_user']->max()) * 100 }}%"
                                                  aria-valuenow="{{ $count }}" 
                                                  aria-valuemin="0" 
                                                  aria-valuemax="{{ $statistics['by_user']->max() }}">

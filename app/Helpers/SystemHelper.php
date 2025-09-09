@@ -9,7 +9,13 @@ class SystemHelper
      */
     public static function name(): string
     {
-        return config('system.name', '8BITS | SUPORTE');
+        try {
+            $setting = \App\Models\Setting::where('key', 'system_name')->first();
+            return $setting ? $setting->value : config('system.name', '8BITS | SUPORTE');
+        } catch (\Exception $e) {
+            // Se não conseguir acessar o banco, retorna o valor padrão
+            return config('system.name', '8BITS | SUPORTE');
+        }
     }
     
     /**

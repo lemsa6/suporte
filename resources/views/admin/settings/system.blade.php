@@ -3,152 +3,122 @@
 @section('title', 'Configurações do Sistema')
 
 @section('header')
-<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-md-between">
-    <div class="flex-grow-1">
-        <h2 class="fs-2 fw-bold text-dark mb-1">
-            Configurações do Sistema
-        </h2>
-        <p class="text-muted">
-            Configure as informações básicas do sistema e da empresa
-        </p>
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+    <div class="mb-4 sm:mb-0">
+        <span class="text-sm text-gray-500">Administração</span>
+        <h1 class="page-title mt-1">Configurações do Sistema</h1>
+        <p class="text-gray-600 mt-2">Configure as informações básicas do sistema e da empresa</p>
     </div>
-    <div class="mt-3 mt-md-0">
-        <a href="{{ route('admin.settings.index') }}" class="btn btn-outline-secondary d-inline-flex align-items-center">
-            <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-            </svg>
-            Voltar
-        </a>
-    </div>
+    <x-button variant="outline" tag="a" href="{{ route('admin.settings.index') }}">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        </svg>
+        Voltar
+    </x-button>
 </div>
 @endsection
 
 @section('content')
-<div class="row g-4">
-    <div class="col-12 col-lg-8">
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white border-0">
-                <h5 class="mb-0 fw-semibold">Informações Básicas</h5>
-            </div>
-            <div class="card-body">
-                <form method="POST" action="{{ route('admin.settings.system.update') }}" class="d-flex flex-column gap-4">
-                    @csrf
-                    @method('PUT')
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2">
+        <h2 class="section-title mb-4">Informações Básicas</h2>
+        <x-card>
+            <form method="POST" action="{{ route('admin.settings.system.update') }}" class="space-y-6">
+                @csrf
+                @method('PUT')
 
-                    <div class="row g-3">
-                        <!-- Nome do Sistema -->
-                        <div class="col-12">
-                            <label for="system_name" class="form-label fw-medium text-dark">Nome do Sistema *</label>
-                            <input type="text" id="system_name" name="system_name" 
-                                class="form-control @error('system_name') is-invalid @enderror"
-                                value="{{ old('system_name', $settings['system_name']) }}" required>
-                            @error('system_name')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+                <div class="space-y-4">
+                    <!-- Nome do Sistema -->
+                    <x-input 
+                        label="Nome do Sistema" 
+                        name="system_name" 
+                        value="{{ old('system_name', $settings['system_name']) }}"
+                        required
+                        error="{{ $errors->first('system_name') }}"
+                    />
 
-                        <!-- Nome da Empresa -->
-                        <div class="col-12 col-md-6">
-                            <label for="company_name" class="form-label fw-medium text-dark">Nome da Empresa *</label>
-                            <input type="text" id="company_name" name="company_name" 
-                                class="form-control @error('company_name') is-invalid @enderror"
-                                value="{{ old('company_name', $settings['company_name']) }}" required>
-                            @error('company_name')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+                    <!-- Nome da Empresa -->
+                    <x-input 
+                        label="Nome da Empresa" 
+                        name="company_name" 
+                        value="{{ old('company_name', $settings['company_name']) }}"
+                        required
+                        error="{{ $errors->first('company_name') }}"
+                    />
 
-                        <!-- Email da Empresa -->
-                        <div class="col-12 col-md-6">
-                            <label for="company_email" class="form-label fw-medium text-dark">Email da Empresa *</label>
-                            <input type="email" id="company_email" name="company_email" 
-                                class="form-control @error('company_email') is-invalid @enderror"
-                                value="{{ old('company_email', $settings['company_email']) }}" required>
-                            @error('company_email')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+                    <!-- Email da Empresa -->
+                    <x-input 
+                        label="Email da Empresa" 
+                        name="company_email" 
+                        type="email"
+                        value="{{ old('company_email', $settings['company_email']) }}"
+                        required
+                        error="{{ $errors->first('company_email') }}"
+                    />
 
-                        <!-- Telefone da Empresa -->
-                        <div class="col-12 col-md-6">
-                            <label for="company_phone" class="form-label fw-medium text-dark">Telefone da Empresa *</label>
-                            <input type="text" id="company_phone" name="company_phone" 
-                                class="form-control @error('company_phone') is-invalid @enderror"
-                                value="{{ old('company_phone', $settings['company_phone']) }}" required>
-                            @error('company_phone')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+                    <!-- Telefone da Empresa -->
+                    <x-input 
+                        label="Telefone da Empresa" 
+                        name="company_phone" 
+                        value="{{ old('company_phone', $settings['company_phone']) }}"
+                        required
+                        error="{{ $errors->first('company_phone') }}"
+                    />
 
-                        <!-- Fuso Horário -->
-                        <div class="col-12 col-md-6">
-                            <label for="timezone" class="form-label fw-medium text-dark">Fuso Horário *</label>
-                            <select id="timezone" name="timezone" 
-                                class="form-select @error('timezone') is-invalid @enderror" required>
-                                <option value="America/Sao_Paulo" {{ old('timezone', $settings['timezone']) == 'America/Sao_Paulo' ? 'selected' : '' }}>
-                                    América/São_Paulo (GMT-3)
-                                </option>
-                                <option value="America/New_York" {{ old('timezone', $settings['timezone']) == 'America/New_York' ? 'selected' : '' }}>
-                                    América/New_York (GMT-5)
-                                </option>
-                                <option value="Europe/London" {{ old('timezone', $settings['timezone']) == 'Europe/London' ? 'selected' : '' }}>
-                                    Europa/Londres (GMT+0)
-                                </option>
-                                <option value="Asia/Tokyo" {{ old('timezone', $settings['timezone']) == 'Asia/Tokyo' ? 'selected' : '' }}>
-                                    Ásia/Tóquio (GMT+9)
-                                </option>
-                            </select>
-                            @error('timezone')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+                    <!-- Fuso Horário -->
+                    <x-select 
+                        label="Fuso Horário" 
+                        name="timezone"
+                        :options="[
+                            'America/Sao_Paulo' => 'América/São_Paulo (GMT-3)',
+                            'America/New_York' => 'América/New_York (GMT-5)',
+                            'Europe/London' => 'Europa/Londres (GMT+0)',
+                            'Asia/Tokyo' => 'Ásia/Tóquio (GMT+9)'
+                        ]"
+                        :selected="old('timezone', $settings['timezone'])"
+                        required
+                        error="{{ $errors->first('timezone') }}"
+                    />
 
-                        <!-- Endereço da Empresa -->
-                        <div class="col-12">
-                            <label for="company_address" class="form-label fw-medium text-dark">Endereço da Empresa</label>
-                            <textarea id="company_address" name="company_address" rows="3"
-                                class="form-control @error('company_address') is-invalid @enderror">{{ old('company_address', $settings['company_address']) }}</textarea>
-                            @error('company_address')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+                    <!-- Endereço da Empresa -->
+                    <x-textarea 
+                        label="Endereço da Empresa" 
+                        name="company_address" 
+                        rows="3"
+                        value="{{ old('company_address', $settings['company_address']) }}"
+                        error="{{ $errors->first('company_address') }}"
+                    />
 
-                        <!-- Website da Empresa -->
-                        <div class="col-12 col-md-6">
-                            <label for="company_website" class="form-label fw-medium text-dark">Website da Empresa</label>
-                            <input type="url" id="company_website" name="company_website" 
-                                class="form-control @error('company_website') is-invalid @enderror"
-                                value="{{ old('company_website', $settings['company_website']) }}"
-                                placeholder="https://www.empresa.com.br">
-                            @error('company_website')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+                    <!-- Website da Empresa -->
+                    <x-input 
+                        label="Website da Empresa" 
+                        name="company_website" 
+                        type="url"
+                        value="{{ old('company_website', $settings['company_website']) }}"
+                        placeholder="https://www.empresa.com.br"
+                        error="{{ $errors->first('company_website') }}"
+                    />
 
-                        <!-- Horário de Atendimento -->
-                        <div class="col-12 col-md-6">
-                            <label for="company_working_hours" class="form-label fw-medium text-dark">Horário de Atendimento</label>
-                            <input type="text" id="company_working_hours" name="company_working_hours" 
-                                class="form-control @error('company_working_hours') is-invalid @enderror"
-                                value="{{ old('company_working_hours', $settings['company_working_hours']) }}"
-                                placeholder="Segunda a Sexta, 8h às 18h">
-                            @error('company_working_hours')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
+                    <!-- Horário de Atendimento -->
+                    <x-input 
+                        label="Horário de Atendimento" 
+                        name="company_working_hours" 
+                        value="{{ old('company_working_hours', $settings['company_working_hours']) }}"
+                        placeholder="Segunda a Sexta, 8h às 18h"
+                        error="{{ $errors->first('company_working_hours') }}"
+                    />
+                </div>
 
-                    <div class="d-flex justify-content-end">
-                        <button type="submit" class="btn btn-primary d-inline-flex align-items-center">
-                            <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                            Salvar Configurações
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
+                <div class="flex justify-end">
+                    <x-button variant="primary" type="submit">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Salvar Configurações
+                    </x-button>
+                </div>
+            </form>
+        </x-card>
     </div>
 
     <div class="col-12 col-lg-4">
@@ -192,18 +162,18 @@
             </div>
             <div class="card-body">
                 <div class="d-grid gap-2">
-                    <a href="{{ route('admin.settings.email') }}" class="btn btn-outline-primary btn-sm">
-                        <svg class="me-2" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <x-button variant="outline" size="sm" tag="a" href="{{ route('admin.settings.email') }}">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                         </svg>
                         Configurar Email
-                    </a>
-                    <a href="{{ route('admin.settings.templates') }}" class="btn btn-outline-warning btn-sm">
-                        <svg class="me-2" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    </x-button>
+                    <x-button variant="outline" size="sm" tag="a" href="{{ route('admin.settings.templates') }}">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                         </svg>
                         Editar Templates
-                    </a>
+                    </x-button>
                 </div>
             </div>
         </div>

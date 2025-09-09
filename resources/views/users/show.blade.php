@@ -3,28 +3,25 @@
 @section('title', 'Detalhes do Usuário')
 
 @section('header')
-<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-md-between">
-    <div class="flex-grow-1">
-        <h2 class="fs-2 fw-bold text-dark mb-1">
-            Detalhes do Usuário
-        </h2>
-        <p class="text-muted">
-            Informações completas do usuário
-        </p>
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+    <div class="mb-4 sm:mb-0">
+        <span class="text-sm text-gray-500">Usuários</span>
+        <h1 class="page-title mt-1">Detalhes do Usuário</h1>
+        <p class="text-gray-600 mt-2">Informações completas do usuário</p>
     </div>
-    <div class="mt-3 mt-md-0 d-flex gap-2">
-        <a href="{{ route('users.edit', $user) }}" class="btn btn-warning d-inline-flex align-items-center">
-            <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="flex gap-2">
+        <x-button variant="warning" tag="a" href="{{ route('users.edit', $user) }}">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
             </svg>
             Editar
-        </a>
-        <a href="{{ route('settings.users') }}" class="btn btn-outline-secondary d-inline-flex align-items-center">
-            <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        </x-button>
+        <x-button variant="outline" tag="a" href="{{ route('settings.users') }}">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
             </svg>
             Voltar
-        </a>
+        </x-button>
     </div>
 </div>
 @endsection
@@ -35,7 +32,7 @@
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-white border-0">
             <div class="d-flex align-items-center">
-                <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 60px; height: 60px;">
+                <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3 icon-circle-md">
                     <span class="fw-bold text-primary fs-4">{{ substr($user->name, 0, 1) }}</span>
                 </div>
                 <div>
@@ -127,7 +124,7 @@
         <div class="col-12 col-md-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-body text-center">
-                    <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                    <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3 icon-circle-md">
                         <svg class="text-primary" width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                         </svg>
@@ -141,7 +138,7 @@
         <div class="col-12 col-md-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-body text-center">
-                    <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                    <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3 icon-circle-md">
                         <svg class="text-success" width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
                         </svg>
@@ -155,7 +152,7 @@
         <div class="col-12 col-md-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-body text-center">
-                    <div class="bg-info bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                    <div class="bg-info bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3 icon-circle-md">
                         <svg class="text-info" width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>

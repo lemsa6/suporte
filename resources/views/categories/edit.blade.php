@@ -5,16 +5,16 @@
 @section('header')
 <div class="d-flex align-items-center justify-content-between">
     <div class="d-flex align-items-center">
-        <a href="{{ route('categories.index') }}" class="btn btn-outline-secondary btn-sm me-3">
-            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <x-button variant="outline" size="sm" tag="a" href="{{ route('categories.index') }}" class="me-3">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
             </svg>
             Voltar
-        </a>
+        </x-button>
         <div>
-            <h2 class="h4 mb-0 fw-bold text-dark">
+            <h1 class="page-title mb-0">
                 Editar Categoria
-            </h2>
+            </h1>
             <p class="text-muted mb-0">
                 Edite as informações da categoria "{{ $category->name }}"
             </p>
@@ -31,11 +31,8 @@
             @method('PUT')
             
             <!-- Informações da Categoria -->
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="h5 mb-0 fw-medium text-dark">Informações da Categoria</h3>
-                </div>
-                <div class="card-body">
+            <h2 class="section-title mb-4">Informações da Categoria</h2>
+            <x-card>
                     <div class="row g-3">
                         <!-- Nome -->
                         <div class="col-12">
@@ -162,26 +159,24 @@
                                 <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
                         </div>
-                    </div>
                 </div>
-            </div>
+            </x-card>
 
             <!-- Botões de Ação -->
             <div class="d-flex justify-content-end gap-3 mt-4">
-                <a href="{{ route('categories.index') }}" 
-                    class="btn btn-outline-secondary">
-                    <svg class="me-2" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <x-button variant="outline" tag="a" href="{{ route('categories.index') }}">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                     Cancelar
-                </a>
+                </x-button>
                 
-                <button type="submit" class="btn btn-primary">
-                    <svg class="me-2" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <x-button variant="primary" type="submit">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                     </svg>
                     Atualizar Categoria
-                </button>
+                </x-button>
             </div>
         </form>
     </div>

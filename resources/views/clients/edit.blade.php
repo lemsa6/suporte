@@ -5,13 +5,13 @@
 @section('header')
 <div class="d-flex align-items-center justify-content-between">
     <div class="d-flex align-items-center">
-        <a href="{{ route('clients.show', $client) }}" class="btn btn-outline-secondary btn-sm me-3">
-            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <x-button variant="outline" size="sm" tag="a" href="{{ route('clients.show', $client) }}" class="me-3">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
             </svg>
-        </a>
+        </x-button>
         <div>
-            <h4 class="mb-0 fw-bold text-dark">Editar Cliente</h4>
+            <h1 class="page-title mb-0">Editar Cliente</h1>
             <p class="text-muted mb-0">{{ $client->company_name }}</p>
         </div>
     </div>
@@ -26,12 +26,9 @@
             @method('PUT')
             
             <!-- Informações da Empresa -->
-            <div class="card border-0 mb-4">
-                <div class="card-header">
-                    <h5 class="mb-0 fw-bold">Informações da Empresa</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row g-3">
+            <h2 class="section-title mb-4">Informações da Empresa</h2>
+            <x-card>
+                <div class="row g-3">
                         <!-- Nome da Empresa -->
                         <div class="col-12">
                             <label for="company_name" class="form-label">Nome da Empresa *</label>
@@ -128,20 +125,19 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                    </div>
                 </div>
-            </div>
+            </x-card>
 
             <!-- Contatos Existentes -->
-            <div class="card border-0 mb-4">
-                <div class="card-header d-flex align-items-center justify-content-between">
-                    <h5 class="mb-0 fw-bold">Contatos Existentes</h5>
-                    <button type="button" onclick="showAddContactModal()" class="btn btn-primary btn-sm">
-                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <h2 class="section-title mb-4">Contatos Existentes</h2>
+            <x-card>
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <x-button variant="primary" size="sm" type="button" onclick="showAddContactModal()">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                         </svg>
                         Adicionar Contato
-                    </button>
+                    </x-button>
                 </div>
                 <div class="card-body">
                     @if($client->contacts->count() > 0)
@@ -237,24 +233,23 @@
                             <p class="text-muted mb-0">Adicione pelo menos um contato para esta empresa.</p>
                         </div>
                     @endif
-                </div>
-            </div>
+            </x-card>
 
             <!-- Botões de Ação -->
             <div class="d-flex justify-content-end gap-2">
-                <a href="{{ route('clients.show', $client) }}" class="btn btn-outline-secondary">
-                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <x-button variant="outline" tag="a" href="{{ route('clients.show', $client) }}">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                     Cancelar
-                </a>
+                </x-button>
                 
-                <button type="submit" class="btn btn-primary">
-                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <x-button variant="primary" type="submit">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                     </svg>
                     Atualizar Cliente
-                </button>
+                </x-button>
             </div>
         </form>
     </div>

@@ -3,23 +3,18 @@
 @section('title', 'Templates de Notificação')
 
 @section('header')
-<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-md-between">
-    <div class="flex-grow-1">
-        <h2 class="fs-2 fw-bold text-dark mb-1">
-            Templates de Notificação
-        </h2>
-        <p class="text-muted">
-            Edite e personalize os templates de email para notificações do sistema
-        </p>
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+    <div class="mb-4 sm:mb-0">
+        <span class="text-sm text-gray-500">Administração</span>
+        <h1 class="page-title mt-1">Templates de Notificação</h1>
+        <p class="text-gray-600 mt-2">Edite e personalize os templates de email para notificações do sistema</p>
     </div>
-    <div class="mt-3 mt-md-0">
-        <a href="{{ route('admin.settings.index') }}" class="btn btn-outline-secondary d-inline-flex align-items-center">
-            <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-            </svg>
-            Voltar
-        </a>
-    </div>
+    <x-button variant="outline" tag="a" href="{{ route('admin.settings.index') }}">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        </svg>
+        Voltar
+    </x-button>
 </div>
 @endsection
 
@@ -142,7 +137,7 @@
                                 </label>
                                 <textarea name="template_content" id="template_content_{{ $template }}" 
                                     class="form-control font-monospace" rows="20" 
-                                    style="font-size: 13px; line-height: 1.4;">{{ $templates[$template] }}</textarea>
+                                    class="text-xs leading-tight">{{ $templates[$template] }}</textarea>
                             </div>
                         </div>
 

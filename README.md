@@ -68,6 +68,14 @@ Sistema completo de gerenciamento de tickets de suporte desenvolvido em Laravel 
 - Gráficos e métricas interativas
 - Interface totalmente responsiva
 
+### ✅ **Sistema de Componentes Blade** 🆕
+- **10+ Componentes Reutilizáveis**: Button, Card, Table, Input, Select, etc.
+- **Tailwind CSS**: Framework CSS utilitário moderno
+- **Fonte Lato**: Sistema tipográfico consistente
+- **Design System**: Classes semânticas para manutenção fácil
+- **Responsividade**: Mobile-first design
+- **Acessibilidade**: Padrões WCAG 2.1
+
 ## 🛠 **Tecnologias Utilizadas**
 
 ### **Backend**
@@ -77,10 +85,12 @@ Sistema completo de gerenciamento de tickets de suporte desenvolvido em Laravel 
 - **Docker** - Containerização completa
 
 ### **Frontend**
-- **Bootstrap 5** - Framework CSS responsivo
-- **SCSS** - Pré-processador CSS
+- **Tailwind CSS** - Framework CSS utilitário moderno
+- **Componentes Blade** - Sistema de componentes reutilizáveis
+- **Lato Font** - Fonte principal do sistema (local)
 - **JavaScript Vanilla** - Interatividade sem dependências
 - **AJAX** - Requisições assíncronas
+- **Vite** - Build tool moderno para assets
 
 ### **Infraestrutura**
 - **Docker Compose** - Orquestração de containers
@@ -132,6 +142,67 @@ docker-compose exec app npm run build
 - **URL**: http://localhost:9000
 - **Login padrão**: admin@admin.com / password
 
+## 🚀 **Deploy em Produção**
+
+### **1. Deploy automático (Recomendado):**
+```bash
+# Linux/Mac
+chmod +x deploy.sh
+./deploy.sh
+
+# Windows
+deploy.bat
+```
+
+### **1.1. Deploy manual:**
+```bash
+# Instale as dependências PHP
+composer install --optimize-autoloader --no-dev
+
+# Instale as dependências Node.js
+npm install
+
+# Compile os assets para produção
+npm run build
+
+# Configure as permissões (Linux/Mac)
+chmod -R 755 storage bootstrap/cache
+chown -R www-data:www-data storage bootstrap/cache
+```
+
+### **2. Configurações importantes:**
+- ✅ **Chart.js**: Instalado localmente (não usa CDN)
+- ✅ **Tailwind CSS**: Compilado via Vite
+- ✅ **Fontes Lato**: Carregadas localmente
+- ✅ **Sem CDN**: Sistema 100% offline
+
+### **3. Verificação pós-deploy:**
+```bash
+# Verifique se os assets foram compilados
+ls -la public/build/assets/
+
+# Deve conter:
+# - tailwind-[hash].css
+# - app-[hash].js (incluindo Chart.js)
+# - manifest.json
+```
+
+### **4. Dependências importantes:**
+```json
+{
+  "dependencies": {
+    "chart.js": "^4.5.0",  // Gráficos (instalado localmente)
+    "bootstrap": "^5.3.2"   // Componentes (não carregado via CDN)
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.17",  // CSS Framework
+    "vite": "^4.0.0"           // Build tool
+  }
+}
+```
+
+> ⚠️ **IMPORTANTE**: O sistema não usa CDN. Todas as dependências são instaladas localmente e compiladas via Vite.
+
 ## 📱 **Responsividade**
 
 O sistema é totalmente responsivo e otimizado para:
@@ -163,6 +234,50 @@ O sistema inclui presets para:
 - Mailgun
 - Amazon SES
 
+## 🧩 **Sistema de Componentes**
+
+### **Componentes Disponíveis**
+- `<x-button>` - Botões com variantes e tamanhos
+- `<x-card>` - Cards/containers flexíveis
+- `<x-stat-card>` - Cards de estatísticas
+- `<x-table>` - Tabelas responsivas
+- `<x-input>` - Campos de entrada
+- `<x-select>` - Seletores dropdown
+- `<x-textarea>` - Áreas de texto
+- `<x-alert>` - Alertas/notificações
+- `<x-badge>` - Badges/etiquetas
+- `<x-menu-item>` - Itens de menu
+
+### **Exemplo de Uso**
+```blade
+<!-- Dashboard com componentes -->
+<x-card title="Minha Página">
+    <x-button variant="primary" size="lg">
+        Ação Principal
+    </x-button>
+    
+    <x-table striped hover>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>João</td>
+                <td><x-badge variant="success">Ativo</x-badge></td>
+            </tr>
+        </tbody>
+    </x-table>
+</x-card>
+```
+
+### **Documentação Completa**
+- 📖 **[Componentes do Sistema](docs/COMPONENTES_SISTEMA.md)** - Guia completo
+- 🎨 **Tailwind CSS** - Framework CSS utilitário
+- 🔤 **Fonte Lato** - Sistema tipográfico consistente
+
 ## 📊 **Estrutura do Projeto**
 
 ```
@@ -181,11 +296,14 @@ suporte/
 │   └── seeders/            # Seeders para dados iniciais
 ├── resources/
 │   ├── views/              # Templates Blade organizados
+│   │   ├── components/     # Componentes Blade reutilizáveis
 │   │   ├── admin/          # Views administrativas
 │   │   ├── emails/         # Templates de e-mail
 │   │   └── layouts/        # Layouts base
-│   ├── scss/               # Estilos SCSS
+│   ├── css/                # Estilos Tailwind CSS
 │   └── js/                 # JavaScript modular
+├── public/
+│   └── fonts/              # Fontes Lato locais
 ├── docker/                 # Configurações Docker
 └── docs/                   # Documentação técnica
 ```
@@ -353,6 +471,17 @@ Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalh
 - ✅ Configuração de domínio para produção
 
 ## 📋 **Changelog**
+
+### **v1.3 - Sistema de Componentes e Tailwind CSS** (08/09/2025)
+- 🆕 **Sistema de Componentes Blade**: 10+ componentes reutilizáveis
+- 🆕 **Tailwind CSS**: Framework CSS utilitário moderno
+- 🆕 **Fonte Lato**: Sistema tipográfico consistente e local
+- 🆕 **Design System**: Classes semânticas para manutenção fácil
+- 🆕 **Menu Refatorado**: Uso de componentes x-menu-item
+- 🆕 **Dashboard Modernizado**: Interface completamente refatorada
+- 🆕 **Documentação Completa**: Guia de componentes e uso
+- 🆕 **Vite**: Build tool moderno para assets
+- 🆕 **Responsividade**: Mobile-first design aprimorado
 
 ### **v1.2 - Sistema de Auditoria Completo** (06/09/2025)
 - 🆕 **Sistema de Auditoria**: Rastreamento automático de todas as ações

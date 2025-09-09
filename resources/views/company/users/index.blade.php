@@ -187,7 +187,7 @@
                                 <tr>
                                     <td class="align-middle">
                                         <div class="d-flex align-items-center">
-                                            <div class="d-flex align-items-center justify-content-center bg-light rounded-circle me-2" style="width: 40px; height: 40px;">
+                                            <div class="d-flex align-items-center justify-content-center bg-light rounded-circle me-2 user-avatar">
                                                 <span class="fw-medium text-primary">{{ substr($user->name, 0, 1) }}</span>
                                             </div>
                                             <div>

@@ -27,7 +27,7 @@
             </p>
             
             <!-- Informações Adicionais -->
-            <div class="alert alert-secondary border-0 bg-light mb-4 mx-auto" style="max-width: 500px;">
+            <div class="alert alert-secondary border-0 bg-light mb-4 mx-auto error-alert">
                 <div class="d-flex align-items-center">
                     <svg class="me-3" width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -44,7 +44,7 @@
             </div>
             
             <!-- Tempo Estimado -->
-            <div class="card border-0 bg-primary bg-opacity-10 mb-4 mx-auto" style="max-width: 400px;">
+            <div class="card border-0 bg-primary bg-opacity-10 mb-4 mx-auto error-card">
                 <div class="card-body text-center">
                     <h6 class="card-title text-primary fw-bold">Tempo Estimado</h6>
                     <p class="card-text text-muted mb-0">

@@ -1,100 +1,101 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-            <title>{{ \App\Helpers\SystemHelper::name() }} - @yield('title', 'Dashboard')</title>
+    <title>@yield('title') - {{ \App\Helpers\SystemHelper::name() }}</title>
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700" rel="stylesheet" />
+    <!-- Fonts - Lato Local -->
+    <link rel="stylesheet" href="{{ asset('fonts/lato/lato.css') }}">
 
-    <!-- Bootstrap 5 via CDN (sem warnings de deprecação) -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- CSS compilado diretamente -->
-    <link rel="stylesheet" href="{{ asset('build/assets/app-4456f621.css') }}">
-    <link rel="stylesheet" href="{{ asset('build/assets/app-9d8fa3fc.css') }}">
-    <script src="{{ asset('build/assets/app-478fd0a3.js') }}" defer></script>
+    <!-- CSS do Tailwind via Vite -->
+    @vite(['resources/css/tailwind.css', 'resources/js/app.js'])
 </head>
-<body class="bg-light">
-    <div class="d-flex">
+<body class="bg-gray-50 antialiased">
+    <div class="flex h-screen">
         <!-- Sidebar -->
-        <div class="sidebar d-flex flex-column flex-shrink-0" id="sidebar">
+        <div class="sidebar" id="sidebar">
             <!-- Logo -->
-            <div class="d-flex align-items-center justify-content-between p-3 border-bottom">
-                <a href="{{ route('dashboard') }}" class="d-flex align-items-center text-decoration-none">
-                    <div class="sidebar-logo-container">
-                        <svg class="text-dark" width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flex items-center justify-between p-6">
+                <a href="{{ route('dashboard') }}" class="flex items-center text-decoration-none">
+                    <div class="sidebar-logo">
+                        <svg class="text-white" width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                         </svg>
                     </div>
-                    <span class="ms-2 fs-5 fw-semibold text-dark">{{ \App\Helpers\SystemHelper::name() }}</span>
+                    <span class="ml-3 text-xl font-light text-white">{{ \App\Helpers\SystemHelper::name() }}</span>
                 </a>
                 
                 <!-- Botão fechar sidebar (mobile) -->
-                <button type="button" class="btn-close d-lg-none" aria-label="Close" onclick="toggleSidebar()"></button>
+                <button type="button" class="sidebar-close-btn" onclick="toggleSidebar()">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
             </div>
 
             <!-- Navigation Menu -->
-            <nav class="mt-3">
-                <div class="nav flex-column nav-pills px-3">
-                    <a href="{{ route('dashboard') }}" class="nav-link d-flex align-items-center mb-2 {{ request()->routeIs('dashboard') ? 'active' : 'text-dark' }}">
-                        <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z"></path>
-                        </svg>
+            <nav class="mt-6 px-4">
+                <div class="space-y-2">
+                    <x-menu-item 
+                        href="{{ route('dashboard') }}" 
+                        :active="request()->routeIs('dashboard')"
+                        icon='<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z"></path>'
+                    >
                         Dashboard
-                    </a>
+                    </x-menu-item>
 
-                    <a href="{{ route('tickets.index') }}" class="nav-link d-flex align-items-center mb-2 {{ request()->routeIs('tickets.*') ? 'active' : 'text-dark' }}">
-                        <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                        </svg>
+                    <x-menu-item 
+                        href="{{ route('tickets.index') }}" 
+                        :active="request()->routeIs('tickets.*')"
+                        icon='<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>'
+                    >
                         Tickets
-                    </a>
+                    </x-menu-item>
 
                     @if(auth()->user()->canManageClients())
-                    <a href="{{ route('clients.index') }}" class="nav-link d-flex align-items-center mb-2 {{ request()->routeIs('clients.*') ? 'active' : 'text-dark' }}">
-                        <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                        </svg>
+                    <x-menu-item 
+                        href="{{ route('clients.index') }}" 
+                        :active="request()->routeIs('clients.*')"
+                        icon='<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>'
+                    >
                         Clientes
-                    </a>
+                    </x-menu-item>
                     @endif
 
                     @if(auth()->user()->canManageClients())
-                    <a href="{{ route('categories.index') }}" class="nav-link d-flex align-items-center mb-2 {{ request()->routeIs('categories.*') ? 'active' : 'text-dark' }}">
-                        <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-                        </svg>
+                    <x-menu-item 
+                        href="{{ route('categories.index') }}" 
+                        :active="request()->routeIs('categories.*')"
+                        icon='<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>'
+                    >
                         Categorias
-                    </a>
+                    </x-menu-item>
                     @endif
 
                     @if(auth()->user()->canManageClients())
-                    <a href="{{ route('reports.index') }}" class="nav-link d-flex align-items-center mb-2 {{ request()->routeIs('reports.*') ? 'active' : 'text-dark' }}">
-                        <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                        </svg>
+                    <x-menu-item 
+                        href="{{ route('reports.index') }}" 
+                        :active="request()->routeIs('reports.*')"
+                        icon='<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>'
+                    >
                         Relatórios
-                    </a>
+                    </x-menu-item>
                     @endif
 
                     @if(auth()->user()->isAdmin())
-                    <a href="{{ route('admin.settings.index') }}" class="nav-link d-flex align-items-center mb-2 {{ request()->routeIs('admin.settings.*') ? 'active' : 'text-dark' }}">
-                        <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <a href="{{ route('admin.settings.index') }}" class="nav-link {{ request()->routeIs('admin.settings.*') ? 'nav-link-active' : '' }}">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                         </svg>
                         Configurações
                     </a>
                     
-                    <a href="{{ route('admin.audit.index') }}" class="nav-link d-flex align-items-center mb-2 {{ request()->routeIs('admin.audit.*') ? 'active' : 'text-dark' }}">
-                        <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <a href="{{ route('admin.audit.index') }}" class="nav-link {{ request()->routeIs('admin.audit.*') ? 'nav-link-active' : '' }}">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                         </svg>
                         Auditoria
@@ -102,8 +103,8 @@
                     @endif
 
                     @if(auth()->user()->isClienteGestor())
-                    <a href="{{ route('company.users.index') }}" class="nav-link d-flex align-items-center mb-2 {{ request()->routeIs('company.users.*') ? 'active' : 'text-dark' }}">
-                        <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <a href="{{ route('company.users.index') }}" class="nav-link {{ request()->routeIs('company.users.*') ? 'nav-link-active' : '' }}">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                         </svg>
                         Funcionários da Empresa
@@ -113,142 +114,126 @@
             </nav>
 
             <!-- User Profile Section -->
-            <div class="mt-auto p-3 border-top">
-                <div class="dropdown">
-                    <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="user-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <div class="absolute bottom-0 left-0 right-0 p-4">
+                <div class="relative">
+                    <button class="sidebar-user-btn" onclick="toggleUserMenu()">
                         <div class="sidebar-user-avatar">
-                            <span class="fw-medium text-primary">{{ substr(auth()->user()->name, 0, 1) }}</span>
+                            {{ substr(auth()->user()->name, 0, 1) }}
                         </div>
-                        <div class="ms-2">
-                            <p class="mb-0 text-dark fw-medium">{{ auth()->user()->name }}</p>
-                            <p class="mb-0 text-muted small">{{ auth()->user()->email }}</p>
+                        <div class="sidebar-user-info">
+                            <p class="sidebar-user-name">{{ auth()->user()->name }}</p>
+                            <p class="sidebar-user-email">{{ auth()->user()->email }}</p>
                         </div>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="user-dropdown">
-                        <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Perfil</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="dropdown-item">Sair</button>
-                            </form>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <!-- Main Content Wrapper -->
-        <div class="main-content">
-            <!-- Top bar (mobile) -->
-            <div class="d-lg-none sticky-top bg-white border-bottom">
-                <div class="d-flex align-items-center justify-content-between p-3">
-                    <button type="button" class="btn btn-outline-secondary" onclick="toggleSidebar()">
-                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        <svg class="sidebar-user-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                         </svg>
                     </button>
-                    <div class="d-flex align-items-center">
-                        <div class="d-flex align-items-center justify-content-center bg-light rounded-circle me-2" style="width: 32px; height: 32px;">
-                            <span class="fw-medium text-primary">{{ substr(auth()->user()->name, 0, 1) }}</span>
+                    
+                    <!-- User Dropdown Menu -->
+                    <div id="userMenu" class="sidebar-user-menu hidden">
+                        <div class="py-1">
+                            <a href="{{ route('profile.edit') }}" class="sidebar-user-menu-item">Perfil</a>
+                            <hr class="sidebar-user-menu-divider">
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="sidebar-user-menu-item">Sair</button>
+                            </form>
                         </div>
-                        <span class="fw-medium">{{ auth()->user()->name }}</span>
                     </div>
                 </div>
             </div>
+        </div>
 
+        <!-- Main Content -->
+        <div class="main-content">
             <!-- Page Content -->
-            <main class="py-4">
-                <div class="container">
-                    <!-- Flash Messages -->
-                    @if(session('success'))
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            {{ session('success') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    @endif
+            <div class="main-content-container">
+                <main class="py-6">
+                <!-- Flash Messages -->
+                @if(session('success'))
+                    <x-alert type="success" dismissible>
+                        <strong>Sucesso!</strong> {{ session('success') }}
+                    </x-alert>
+                @endif
 
-                    @if(session('error'))
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            {{ session('error') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    @endif
+                @if(session('error'))
+                    <x-alert type="error" dismissible>
+                        <strong>Erro!</strong> {{ session('error') }}
+                    </x-alert>
+                @endif
 
-                    @if(session('warning'))
-                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                            {{ session('warning') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    @endif
+                @if(session('warning'))
+                    <x-alert type="warning" dismissible>
+                        <strong>Aviso!</strong> {{ session('warning') }}
+                    </x-alert>
+                @endif
 
-                    @if(session('info'))
-                        <div class="alert alert-info alert-dismissible fade show" role="alert">
-                            {{ session('info') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    @endif
+                @if(session('info'))
+                    <x-alert type="info" dismissible>
+                        <strong>Informação!</strong> {{ session('info') }}
+                    </x-alert>
+                @endif
 
-                    <!-- Page Header -->
-                    @hasSection('header')
-                        <div class="mb-4">
-                            @yield('header')
-                        </div>
-                    @endif
+                <!-- Page Header -->
+                @hasSection('header')
+                    <div class="mb-8">
+                        @yield('header')
+                    </div>
+                @endif
 
-                    <!-- Content -->
-                    @yield('content')
-                </div>
+                @yield('content')
             </main>
+            </div>
         </div>
     </div>
 
-    <!-- JavaScript -->
     <script>
-        // Toggle sidebar (mobile)
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
-            const mainContent = document.querySelector('.main-content');
-            
-            if (window.innerWidth < 992) {
-                sidebar.classList.toggle('show');
-                
-                if (sidebar.classList.contains('show')) {
-                    mainContent.style.marginLeft = '0';
-                    mainContent.style.width = '100%';
-                } else {
-                    mainContent.style.marginLeft = '0';
-                    mainContent.style.width = '100%';
-                }
-            }
+            sidebar.classList.toggle('-translate-x-full');
         }
 
-        // Handle window resize
+        function toggleUserMenu() {
+            const userMenu = document.getElementById('userMenu');
+            userMenu.classList.toggle('hidden');
+        }
+
+        // Fechar sidebar ao clicar fora em telas pequenas
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const toggleButton = document.querySelector('.lg\\:hidden button');
+            const isClickInsideSidebar = sidebar.contains(event.target);
+            const isClickOnToggleButton = toggleButton && toggleButton.contains(event.target);
+
+            if (!isClickInsideSidebar && !isClickOnToggleButton && !sidebar.classList.contains('-translate-x-full') && window.innerWidth < 1024) {
+                sidebar.classList.add('-translate-x-full');
+            }
+        });
+
+        // Fechar user menu ao clicar fora
+        document.addEventListener('click', function(event) {
+            const userMenu = document.getElementById('userMenu');
+            const userButton = event.target.closest('button[onclick="toggleUserMenu()"]');
+            
+            if (!userButton && !userMenu.contains(event.target)) {
+                userMenu.classList.add('hidden');
+            }
+        });
+
+        // Ajustar layout em resize
         window.addEventListener('resize', function() {
             const sidebar = document.getElementById('sidebar');
             const mainContent = document.querySelector('.main-content');
             
-            if (window.innerWidth >= 992) {
-                sidebar.classList.remove('show');
-                mainContent.style.marginLeft = '280px';
-                mainContent.style.width = 'calc(100% - 280px)';
+            if (window.innerWidth >= 1024) {
+                sidebar.classList.remove('-translate-x-full');
+                // Removido: mainContent.style.width para não sobrescrever CSS
             } else {
-                sidebar.classList.remove('show');
-                mainContent.style.marginLeft = '0';
-                mainContent.style.width = '100%';
-            }
-        });
-
-        // Initialize sidebar state on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            if (window.innerWidth < 992) {
-                document.getElementById('sidebar').classList.remove('show');
-                document.querySelector('.main-content').style.marginLeft = '0';
-                document.querySelector('.main-content').style.width = '100%';
+                // Removido: mainContent.style.width para não sobrescrever CSS
             }
         });
     </script>
-    
+
     @stack('scripts')
 </body>
 </html>

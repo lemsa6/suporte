@@ -3,54 +3,45 @@
 @section('title', 'Editar Perfil')
 
 @section('header')
-<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-md-between">
-    <div class="flex-grow-1">
-        <h2 class="fs-2 fw-bold text-dark mb-1">
-            Editar Perfil
-        </h2>
-        <p class="text-muted">
-            Atualize suas informações pessoais e configurações da conta
-        </p>
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+    <div class="mb-4 sm:mb-0">
+        <span class="text-sm text-gray-500">Perfil</span>
+        <h1 class="page-title mt-1">Editar Perfil</h1>
+        <p class="text-gray-600 mt-2">Atualize suas informações pessoais e configurações da conta</p>
     </div>
 </div>
 @endsection
 
 @section('content')
-<div class="d-flex flex-column gap-4">
+<div class="space-y-6">
     <!-- Navegação por Abas -->
-    <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white border-0">
-            <ul class="nav nav-tabs nav-tabs-custom border-0" id="profileTabs" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link {{ !request('tab') || request('tab') === 'profile' ? 'active' : '' }}" 
-                            id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab">
-                        <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                        </svg>
-                        Perfil
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link {{ request('tab') === 'notifications' ? 'active' : '' }}" 
-                            id="notifications-tab" data-bs-toggle="tab" data-bs-target="#notifications" type="button" role="tab">
-                        <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4 19h6v-6H4v6zM4 5h6V1H4v4zM15 3h5l-5-5v5z"></path>
-                        </svg>
-                        Notificações
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link {{ request('tab') === 'security' ? 'active' : '' }}" 
-                            id="security-tab" data-bs-toggle="tab" data-bs-target="#security" type="button" role="tab">
-                        <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                        </svg>
-                        Segurança
-                    </button>
-                </li>
-            </ul>
+    <x-card>
+        <div class="border-b border-gray-200">
+            <nav class="-mb-px flex space-x-8">
+                <a href="{{ route('profile.edit', ['tab' => 'profile']) }}" 
+                   class="tab-link {{ !request('tab') || request('tab') === 'profile' ? 'active' : '' }}">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                    Perfil
+                </a>
+                <a href="{{ route('profile.edit', ['tab' => 'notifications']) }}" 
+                   class="tab-link {{ request('tab') === 'notifications' ? 'active' : '' }}">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4 19h6v-6H4v6zM4 5h6V1H4v4zM15 3h5l-5-5v5z"></path>
+                    </svg>
+                    Notificações
+                </a>
+                <a href="{{ route('profile.edit', ['tab' => 'security']) }}" 
+                   class="tab-link {{ request('tab') === 'security' ? 'active' : '' }}">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    </svg>
+                    Segurança
+                </a>
+            </nav>
         </div>
-    </div>
+    </x-card>
 
     <!-- Conteúdo das Abas -->
     <div class="tab-content" id="profileTabsContent">
@@ -117,12 +108,12 @@
                         </div>
 
                         <div class="d-flex justify-content-end">
-                            <button type="submit" class="btn btn-primary d-inline-flex align-items-center">
-                                <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <x-button variant="primary" type="submit">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                 </svg>
                                 Salvar Perfil
-                            </button>
+                            </x-button>
                         </div>
                     </form>
                 </div>
@@ -204,12 +195,12 @@
                 </div>
 
                 <div class="d-flex justify-content-end">
-                    <button type="submit" class="btn btn-primary d-inline-flex align-items-center">
-                        <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <x-button variant="primary" type="submit">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                         </svg>
-                                Salvar Preferências
-                    </button>
+                        Salvar Preferências
+                    </x-button>
                 </div>
             </form>
                 </div>
@@ -235,12 +226,12 @@
                         <div class="input-group">
                             <input type="password" name="current_password" id="current_password" 
                                 class="form-control @error('current_password') is-invalid @enderror" required>
-                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('current_password')">
-                                        <svg class="password-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                </svg>
-                            </button>
+                                    <x-button variant="outline" size="sm" type="button" onclick="togglePassword('current_password')">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                        </svg>
+                                    </x-button>
                             @error('current_password')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -285,12 +276,12 @@
                 </div>
 
                 <div class="d-flex justify-content-end">
-                            <button type="submit" class="btn btn-primary d-inline-flex align-items-center">
-                        <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                        </svg>
-                        Alterar Senha
-                    </button>
+                            <x-button variant="primary" type="submit">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                </svg>
+                                Alterar Senha
+                            </x-button>
                 </div>
             </form>
         </div>

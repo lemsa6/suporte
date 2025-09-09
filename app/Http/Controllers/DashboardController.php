@@ -6,6 +6,7 @@ use App\Models\Ticket;
 use App\Models\Client;
 use App\Models\Category;
 use App\Models\User;
+use App\Models\AuditLog;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -41,6 +42,9 @@ class DashboardController extends Controller
         // Tickets não atribuídos (apenas para técnicos/admin)
         $unassignedTickets = $user->canManageTickets() ? $this->getUnassignedTickets() : collect();
         
+        // Últimos logins (apenas para admin)
+        $recentLogins = $user->isAdmin() ? $this->getRecentLogins() : collect();
+        
         return view('dashboard.index', compact(
             'stats',
             'ticketsByStatus',
@@ -48,7 +52,8 @@ class DashboardController extends Controller
             'ticketsByCategory',
             'recentTickets',
             'urgentTickets',
-            'unassignedTickets'
+            'unassignedTickets',
+            'recentLogins'
         ));
     }
 
@@ -83,6 +88,7 @@ class DashboardController extends Controller
         $inProgressTickets = (clone $query)->inProgress()->count();
         $resolvedTickets = (clone $query)->resolved()->count();
         $closedTickets = (clone $query)->closed()->count();
+        $urgentTickets = (clone $query)->urgent()->count();
         
         return [
             'total' => $totalTickets,
@@ -90,6 +96,7 @@ class DashboardController extends Controller
             'in_progress' => $inProgressTickets,
             'resolved' => $resolvedTickets,
             'closed' => $closedTickets,
+            'urgent' => $urgentTickets,
             'active' => $openTickets + $inProgressTickets,
         ];
     }
@@ -245,6 +252,19 @@ class DashboardController extends Controller
             ->active()
             ->latest('opened_at')
             ->limit(10)
+            ->get();
+    }
+
+    /**
+     * Obtém últimos logins (apenas para admin)
+     */
+    private function getRecentLogins(): \Illuminate\Database\Eloquent\Collection
+    {
+        return AuditLog::with('user')
+            ->where('event_type', 'login')
+            ->orWhere('event_type', 'logout')
+            ->latest()
+            ->limit(8)
             ->get();
     }
 }

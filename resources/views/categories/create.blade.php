@@ -6,12 +6,12 @@
 <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-md-between">
     <div class="flex-grow-1">
         <div class="d-flex align-items-center mb-2">
-            <a href="{{ route('categories.index') }}" class="btn btn-outline-secondary btn-sm me-3">
-                <svg class="me-1" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <x-button variant="outline" size="sm" tag="a" href="{{ route('categories.index') }}" class="me-3">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                 </svg>
                 Voltar
-            </a>
+            </x-button>
             <h2 class="fs-2 fw-bold text-dark mb-0">
                 Nova Categoria
             </h2>
@@ -66,27 +66,27 @@
                         <div class="row g-2 mb-3">
                             <div class="col-2 col-sm-1">
                                 <button type="button" class="color-option w-100 h-12 rounded border-2 border-light hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
-                                    data-color="#3B82F6" style="background-color: #3B82F6;" title="Azul"></button>
+                                    data-color="#3B82F6" class="color-blue" title="Azul"></button>
                             </div>
                             <div class="col-2 col-sm-1">
                                 <button type="button" class="color-option w-100 h-12 rounded border-2 border-light hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
-                                    data-color="#10B981" style="background-color: #10B981;" title="Verde"></button>
+                                    data-color="#10B981" class="color-green" title="Verde"></button>
                             </div>
                             <div class="col-2 col-sm-1">
                                 <button type="button" class="color-option w-100 h-12 rounded border-2 border-light hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
-                                    data-color="#F59E0B" style="background-color: #F59E0B;" title="Amarelo"></button>
+                                    data-color="#F59E0B" class="color-yellow" title="Amarelo"></button>
                             </div>
                             <div class="col-2 col-sm-1">
                                 <button type="button" class="color-option w-100 h-12 rounded border-2 border-light hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
-                                    data-color="#EF4444" style="background-color: #EF4444;" title="Vermelho"></button>
+                                    data-color="#EF4444" class="color-red" title="Vermelho"></button>
                             </div>
                             <div class="col-2 col-sm-1">
                                 <button type="button" class="color-option w-100 h-12 rounded border-2 border-light hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
-                                    data-color="#8B5CF6" style="background-color: #8B5CF6;" title="Roxo"></button>
+                                    data-color="#8B5CF6" class="color-purple" title="Roxo"></button>
                             </div>
                             <div class="col-2 col-sm-1">
                                 <button type="button" class="color-option w-100 h-12 rounded border-2 border-light hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
-                                    data-color="#F97316" style="background-color: #F97316;" title="Laranja"></button>
+                                    data-color="#F97316" class="color-orange" title="Laranja"></button>
                             </div>
                         </div>
 
@@ -94,27 +94,27 @@
                         <div class="row g-2 mb-3">
                             <div class="col-2 col-sm-1">
                                 <button type="button" class="color-option w-100 h-12 rounded border-2 border-light hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
-                                    data-color="#06B6D4" style="background-color: #06B6D4;" title="Ciano"></button>
+                                    data-color="#06B6D4" class="color-cyan" title="Ciano"></button>
                             </div>
                             <div class="col-2 col-sm-1">
                                 <button type="button" class="color-option w-100 h-12 rounded border-2 border-light hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
-                                    data-color="#84CC16" style="background-color: #84CC16;" title="Lima"></button>
+                                    data-color="#84CC16" class="color-lime" title="Lima"></button>
                             </div>
                             <div class="col-2 col-sm-1">
                                 <button type="button" class="color-option w-100 h-12 rounded border-2 border-light hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
-                                    data-color="#EC4899" style="background-color: #EC4899;" title="Rosa"></button>
+                                    data-color="#EC4899" class="color-pink" title="Rosa"></button>
                             </div>
                             <div class="col-2 col-sm-1">
                                 <button type="button" class="color-option w-100 h-12 rounded border-2 border-light hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
-                                    data-color="#6B7280" style="background-color: #6B7280;" title="Cinza"></button>
+                                    data-color="#6B7280" class="color-gray" title="Cinza"></button>
                             </div>
                             <div class="col-2 col-sm-1">
                                 <button type="button" class="color-option w-100 h-12 rounded border-2 border-light hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
-                                    data-color="#059669" style="background-color: #059669;" title="Esmeralda"></button>
+                                    data-color="#059669" class="color-green" title="Esmeralda"></button>
                             </div>
                             <div class="col-2 col-sm-1">
                                 <button type="button" class="color-option w-100 h-12 rounded border-2 border-light hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" 
-                                    data-color="#DC2626" style="background-color: #DC2626;" title="Vermelho Escuro"></button>
+                                    data-color="#DC2626" class="color-red" title="Vermelho Escuro"></button>
                             </div>
                         </div>
 
@@ -137,7 +137,7 @@
                         <!-- Preview da Cor Selecionada -->
                         <div class="mt-3 p-3 rounded border bg-light">
                             <div class="d-flex align-items-center gap-3">
-                                <div id="color-preview" class="w-8 h-8 rounded border" style="background-color: {{ old('color', '#3B82F6') }};"></div>
+                                <div id="color-preview" class="w-8 h-8 rounded border category-color-badge" style="--category-color: {{ old('color', '#3B82F6') }};"></div>
                                 <div>
                                     <p class="mb-0 fw-medium text-dark">Preview da Cor</p>
                                     <p class="mb-0 small text-muted">Esta cor será usada para identificar visualmente a categoria</p>
@@ -166,19 +166,19 @@
 
         <!-- Botões de Ação -->
         <div class="d-flex justify-content-end gap-2">
-            <a href="{{ route('categories.index') }}" class="btn btn-outline-secondary">
-                <svg class="me-1" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <x-button variant="outline" tag="a" href="{{ route('categories.index') }}">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
                 Cancelar
-            </a>
+            </x-button>
             
-            <button type="submit" class="btn btn-primary">
-                <svg class="me-1" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <x-button variant="primary" type="submit">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                 </svg>
                 Criar Categoria
-            </button>
+            </x-button>
         </div>
     </form>
 </div>

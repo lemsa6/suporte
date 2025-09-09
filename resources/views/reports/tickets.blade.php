@@ -5,12 +5,12 @@
 @section('header')
 <div class="d-flex align-items-center justify-content-between">
     <div class="d-flex align-items-center">
-        <a href="{{ route('reports.index') }}" class="btn btn-outline-secondary btn-sm me-3">
-            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <x-button variant="outline" size="sm" tag="a" href="{{ route('reports.index') }}" class="me-3">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
             </svg>
             Voltar
-        </a>
+        </x-button>
         <div>
             <h2 class="h4 mb-0 fw-bold text-dark">
                 Relatório de Tickets
@@ -89,17 +89,16 @@
 
                 <!-- Botões -->
                 <div class="col-12 col-lg-2 d-flex align-items-end gap-2">
-                    <a href="{{ route('reports.tickets') }}" 
-                        class="btn btn-outline-secondary">
+                    <x-button variant="outline" tag="a" href="{{ route('reports.tickets') }}">
                         Limpar
-                    </a>
+                    </x-button>
                     
-                    <button type="submit" class="btn btn-primary">
-                        <svg class="me-2" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <x-button variant="primary" type="submit">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
                         Filtrar
-                    </button>
+                    </x-button>
                 </div>
             </form>
         </div>
@@ -140,7 +139,7 @@
                                 <tr class="clickable" onclick="window.location.href='{{ route('tickets.show', $ticket->ticket_number) }}'">
                                     <td class="align-middle">
                                         <div class="d-flex align-items-center">
-                                            <div class="category-color-avatar me-3" style="background-color: {{ $ticket->category->color ?? '#6B7280' }};">
+                                            <div class="category-color-avatar me-3" style="--category-color: {{ $ticket->category->color ?? '#6B7280' }};">
                                                 <span class="text-white fw-bold">#{{ $ticket->ticket_number }}</span>
                                             </div>
                                             <div>
@@ -161,7 +160,7 @@
                                     
                                     <td class="align-middle">
                                         <span class="category-color-preview" 
-                                            style="background-color: {{ $ticket->category->color ?? '#6B7280' }}20; color: {{ $ticket->category->color ?? '#6B7280' }};">
+                                            style="--category-color: {{ $ticket->category->color ?? '#6B7280' }}; background-color: var(--category-color)20; color: var(--category-color);">
                                             {{ $ticket->category->name }}
                                         </span>
                                     </td>

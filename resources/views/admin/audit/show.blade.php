@@ -5,20 +5,20 @@
 @section('header')
 <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-md-between">
     <div class="flex-grow-1">
-        <h2 class="fs-2 fw-bold text-dark mb-1">
+        <h1 class="page-title mb-1">
             Detalhes do Log de Auditoria
-        </h2>
+        </h1>
         <p class="text-muted">
             Informações completas sobre a ação registrada
         </p>
     </div>
     <div class="mt-3 mt-md-0">
-        <a href="{{ route('admin.audit.index') }}" class="btn btn-outline-secondary d-inline-flex align-items-center">
-            <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <x-button variant="outline" tag="a" href="{{ route('admin.audit.index') }}">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
             </svg>
             Voltar
-        </a>
+        </x-button>
     </div>
 </div>
 @endsection
@@ -26,11 +26,8 @@
 @section('content')
 <div class="d-flex flex-column gap-4">
     <!-- Informações Básicas -->
-    <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white border-0">
-            <h5 class="mb-0 fw-semibold">Informações Básicas</h5>
-        </div>
-        <div class="card-body">
+    <h2 class="section-title mb-4">Informações Básicas</h2>
+    <x-card>
             <div class="row g-4">
                 <div class="col-12 col-md-6">
                     <div class="d-flex flex-column gap-3">
@@ -84,15 +81,11 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+    </x-card>
 
     <!-- Informações do Navegador -->
-    <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white border-0">
-            <h5 class="mb-0 fw-semibold">Informações do Navegador</h5>
-        </div>
-        <div class="card-body">
+    <h2 class="section-title mb-4">Informações do Navegador</h2>
+    <x-card>
             <div class="row g-4">
                 <div class="col-12">
                     <div class="d-flex flex-column gap-2">
@@ -109,49 +102,36 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+    </x-card>
 
     <!-- Descrição da Ação -->
-    <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white border-0">
-            <h5 class="mb-0 fw-semibold">Descrição da Ação</h5>
-        </div>
-        <div class="card-body">
-            <p class="mb-0">{{ $auditLog->formatted_description }}</p>
-        </div>
-    </div>
+    <h2 class="section-title mb-4">Descrição da Ação</h2>
+    <x-card>
+        <p class="mb-0">{{ $auditLog->formatted_description }}</p>
+    </x-card>
 
     <!-- Valores Antigos e Novos -->
     @if($auditLog->old_values || $auditLog->new_values)
         <div class="row g-4">
             @if($auditLog->old_values)
                 <div class="col-12 col-md-6">
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-header bg-white border-0">
-                            <h5 class="mb-0 fw-semibold text-danger">Valores Anteriores</h5>
+                    <h3 class="section-title mb-4 text-danger">Valores Anteriores</h3>
+                    <x-card>
+                        <div class="bg-light p-3 rounded">
+                            <pre class="mb-0"><code>{{ json_encode($auditLog->old_values, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</code></pre>
                         </div>
-                        <div class="card-body">
-                            <div class="bg-light p-3 rounded">
-                                <pre class="mb-0"><code>{{ json_encode($auditLog->old_values, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</code></pre>
-                            </div>
-                        </div>
-                    </div>
+                    </x-card>
                 </div>
             @endif
 
             @if($auditLog->new_values)
                 <div class="col-12 col-md-6">
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-header bg-white border-0">
-                            <h5 class="mb-0 fw-semibold text-success">Valores Novos</h5>
+                    <h3 class="section-title mb-4 text-success">Valores Novos</h3>
+                    <x-card>
+                        <div class="bg-light p-3 rounded">
+                            <pre class="mb-0"><code>{{ json_encode($auditLog->new_values, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</code></pre>
                         </div>
-                        <div class="card-body">
-                            <div class="bg-light p-3 rounded">
-                                <pre class="mb-0"><code>{{ json_encode($auditLog->new_values, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</code></pre>
-                            </div>
-                        </div>
-                    </div>
+                    </x-card>
                 </div>
             @endif
         </div>
@@ -159,16 +139,12 @@
 
     <!-- Informações do Modelo Relacionado -->
     @if($auditLog->auditable)
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white border-0">
-                <h5 class="mb-0 fw-semibold">Informações do Modelo Relacionado</h5>
+        <h2 class="section-title mb-4">Informações do Modelo Relacionado</h2>
+        <x-card>
+            <div class="bg-light p-3 rounded">
+                <pre class="mb-0"><code>{{ json_encode($auditLog->auditable->toArray(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</code></pre>
             </div>
-            <div class="card-body">
-                <div class="bg-light p-3 rounded">
-                    <pre class="mb-0"><code>{{ json_encode($auditLog->auditable->toArray(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</code></pre>
-                </div>
-            </div>
-        </div>
+        </x-card>
     @endif
 </div>
 @endsection

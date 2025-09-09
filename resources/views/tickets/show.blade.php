@@ -3,367 +3,356 @@
 @section('title', 'Ticket #' . $ticket->ticket_number)
 
 @section('header')
-<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-md-between">
-    <div class="flex-grow-1">
-        <div class="d-flex align-items-center">
-            <a href="{{ route('tickets.index') }}" class="btn btn-outline-secondary me-3">
-                <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+    <div class="mb-4 sm:mb-0">
+        <div class="flex items-center">
+            <x-button variant="outline" tag="a" href="{{ route('tickets.index') }}" class="mr-3">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                 </svg>
                 Voltar
-            </a>
+            </x-button>
             <div>
-                <h2 class="fs-2 fw-bold text-dark mb-1">
-                    Ticket #{{ $ticket->ticket_number }}
-                </h2>
-                <p class="text-muted mb-0">
-                    {{ $ticket->title }}
-                </p>
+                <span class="text-sm text-gray-500">Ticket</span>
+                <h1 class="page-title mt-1">#{{ $ticket->ticket_number }}</h1>
+                <p class="text-gray-600 mt-2">{{ $ticket->title }}</p>
             </div>
         </div>
     </div>
-    <div class="mt-3 mt-md-0 d-flex gap-2">
+    <div class="flex gap-2">
         @if(auth()->user()->isAdmin() || auth()->user()->isTecnico())
-            <a href="{{ route('admin.audit.ticket', $ticket->ticket_number) }}" class="btn btn-outline-info">
-                <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <x-button variant="outline" tag="a" href="{{ route('admin.audit.ticket', $ticket->ticket_number) }}">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                 </svg>
                 Auditoria
-            </a>
+            </x-button>
         @endif
-        <a href="{{ route('tickets.edit', $ticket->ticket_number) }}" class="btn btn-outline-primary">
-            <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <x-button variant="outline" tag="a" href="{{ route('tickets.edit', $ticket->ticket_number) }}">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
             </svg>
             Editar
-        </a>
+        </x-button>
         @if($ticket->status !== 'fechado')
-            <button type="button" onclick="changeStatus('{{ $ticket->ticket_number }}', 'fechado')" class="btn btn-success">
-                <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <x-button variant="success" onclick="changeStatus('{{ $ticket->ticket_number }}', 'fechado')">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
                 Fechar Ticket
-            </button>
+            </x-button>
         @else
-            <button type="button" onclick="reopenTicket('{{ $ticket->ticket_number }}')" class="btn btn-primary">
-                <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <x-button variant="primary" onclick="reopenTicket('{{ $ticket->ticket_number }}')">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                 </svg>
                 Reabrir Ticket
-            </button>
+            </x-button>
         @endif
     </div>
 </div>
 @endsection
 
 @section('content')
-<div class="d-flex flex-column gap-4">
+<div class="space-y-6">
     <!-- Informações do Ticket -->
-    <div class="card border-0">
-        <div class="card-header">
-            <h5 class="mb-0 fw-semibold">Informações do Ticket</h5>
-        </div>
-        <div class="card-body">
-            <div class="row g-4">
-                <!-- Informações Principais -->
-                <div class="col-12 col-lg-6">
-                    <div class="d-flex flex-column gap-3">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <span class="fw-medium text-muted">Status:</span>
-                            <span class="badge 
-                                @if($ticket->status === 'aberto') bg-warning text-dark
-                                @elseif($ticket->status === 'em_andamento') bg-info text-white
-                                @elseif($ticket->status === 'resolvido') bg-success text-white
-                                @else bg-secondary text-white
-                                @endif">
-                                {{ ucfirst($ticket->status) }}
-                            </span>
-                        </div>
-                        <div class="d-flex align-items-center justify-content-between">
-                            <span class="fw-medium text-muted">Prioridade:</span>
-                            <span class="badge 
-                                @if($ticket->priority === 'alta') bg-danger text-white
-                                @elseif($ticket->priority === 'média') bg-warning text-dark
-                                @else bg-success text-white
-                                @endif">
-                                {{ ucfirst($ticket->priority) }}
-                            </span>
-                        </div>
-                        <div class="d-flex align-items-center justify-content-between">
-                            <span class="fw-medium text-muted">Categoria:</span>
-                            <span class="text-dark">{{ $ticket->category->name }}</span>
-                        </div>
-                        <div class="d-flex align-items-center justify-content-between">
-                            <span class="fw-medium text-muted">Urgente:</span>
-                            <span class="text-dark">{{ $ticket->is_urgent ? 'Sim' : 'Não' }}</span>
-                        </div>
+    <x-card>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Informações Principais -->
+            <div class="space-y-4">
+                <h3 class="section-title mb-4">Informações Principais</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between py-2 border-b border-gray-100">
+                        <span class="text-sm font-medium text-gray-600">Status:</span>
+                        <x-badge variant="
+                            @if($ticket->status === 'aberto') warning
+                            @elseif($ticket->status === 'em_andamento') info
+                            @elseif($ticket->status === 'resolvido') success
+                            @else secondary
+                            @endif">
+                            {{ ucfirst($ticket->status) }}
+                        </x-badge>
                     </div>
-                </div>
-
-                <!-- Informações Adicionais -->
-                <div class="col-12 col-lg-6">
-                    <div class="d-flex flex-column gap-3">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <span class="fw-medium text-muted">Responsável:</span>
-                            <span class="text-dark">
-                                @if($ticket->assignedTo)
-                                    {{ $ticket->assignedTo->name }}
-                                @else
-                                    <span class="text-muted">Não atribuído</span>
-                                @endif
-                            </span>
-                        </div>
-                        <div class="d-flex align-items-center justify-content-between">
-                            <span class="fw-medium text-muted">Aberto em:</span>
-                            <span class="text-dark">{{ $ticket->opened_at->format('d/m/Y H:i') }}</span>
-                        </div>
-                        <div class="d-flex align-items-center justify-content-between">
-                            <span class="fw-medium text-muted">Tempo aberto:</span>
-                            <span class="text-dark">{{ $ticket->days_open }} dias</span>
-                        </div>
-                        @if($ticket->resolved_at)
-                        <div class="d-flex align-items-center justify-content-between">
-                            <span class="fw-medium text-muted">Resolvido em:</span>
-                            <span class="text-dark">{{ $ticket->resolved_at->format('d/m/Y H:i') }}</span>
-                        </div>
-                        @endif
-                        @if($ticket->closed_at)
-                        <div class="d-flex align-items-center justify-content-between">
-                            <span class="fw-medium text-muted">Fechado em:</span>
-                            <span class="text-dark">{{ $ticket->closed_at->format('d/m/Y H:i') }}</span>
-                        </div>
-                        @endif
+                    <div class="flex items-center justify-between py-2 border-b border-gray-100">
+                        <span class="text-sm font-medium text-gray-600">Prioridade:</span>
+                        <x-badge variant="
+                            @if($ticket->priority === 'alta') danger
+                            @elseif($ticket->priority === 'média') warning
+                            @else success
+                            @endif">
+                            {{ ucfirst($ticket->priority) }}
+                        </x-badge>
+                    </div>
+                    <div class="flex items-center justify-between py-2 border-b border-gray-100">
+                        <span class="text-sm font-medium text-gray-600">Categoria:</span>
+                        <span class="text-gray-900 font-medium">{{ $ticket->category->name }}</span>
+                    </div>
+                    <div class="flex items-center justify-between py-2 border-b border-gray-100">
+                        <span class="text-sm font-medium text-gray-600">Urgente:</span>
+                        <x-badge variant="{{ $ticket->is_urgent ? 'danger' : 'secondary' }}">
+                            {{ $ticket->is_urgent ? 'Sim' : 'Não' }}
+                        </x-badge>
                     </div>
                 </div>
             </div>
 
-            <!-- Cliente -->
-            <div class="mt-4">
-                <h6 class="fw-semibold text-dark mb-3">Cliente</h6>
-                <div class="row g-3">
-                    <div class="col-12 col-sm-6">
-                        <div class="d-flex justify-content-between">
-                            <span class="fw-medium text-muted">Empresa:</span>
-                            <span class="text-dark">{{ $ticket->client->company_name }}</span>
-                        </div>
+            <!-- Informações Adicionais -->
+            <div class="space-y-4">
+                <h3 class="section-title mb-4">Detalhes do Ticket</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between py-2 border-b border-gray-100">
+                        <span class="text-sm font-medium text-gray-600">Responsável:</span>
+                        <span class="text-gray-900 font-medium">
+                            @if($ticket->assignedTo)
+                                {{ $ticket->assignedTo->name }}
+                            @else
+                                <span class="text-gray-400">Não atribuído</span>
+                            @endif
+                        </span>
                     </div>
-                    <div class="col-12 col-sm-6">
-                        <div class="d-flex justify-content-between">
-                            <span class="fw-medium text-muted">CNPJ:</span>
-                            <span class="text-dark">{{ $ticket->client->formatted_cnpj }}</span>
-                        </div>
+                    <div class="flex items-center justify-between py-2 border-b border-gray-100">
+                        <span class="text-sm font-medium text-gray-600">Aberto em:</span>
+                        <span class="text-gray-900 font-medium">{{ $ticket->opened_at->format('d/m/Y H:i') }}</span>
                     </div>
-                    <div class="col-12 col-sm-6">
-                        <div class="d-flex justify-content-between">
-                            <span class="fw-medium text-muted">Contato:</span>
-                            <span class="text-dark">{{ $ticket->contact->name }}</span>
-                        </div>
+                    <div class="flex items-center justify-between py-2 border-b border-gray-100">
+                        <span class="text-sm font-medium text-gray-600">Tempo aberto:</span>
+                        <span class="text-gray-900 font-medium">{{ $ticket->days_open }} dias</span>
                     </div>
-                    <div class="col-12 col-sm-6">
-                        <div class="d-flex justify-content-between">
-                            <span class="fw-medium text-muted">Email:</span>
-                            <span class="text-dark">{{ $ticket->contact->email }}</span>
-                        </div>
+                    @if($ticket->resolved_at)
+                    <div class="flex items-center justify-between py-2 border-b border-gray-100">
+                        <span class="text-sm font-medium text-gray-600">Resolvido em:</span>
+                        <span class="text-gray-900 font-medium">{{ $ticket->resolved_at->format('d/m/Y H:i') }}</span>
                     </div>
-                    @if($ticket->contact->phone)
-                    <div class="col-12 col-sm-6">
-                        <div class="d-flex justify-content-between">
-                            <span class="fw-medium text-muted">Telefone:</span>
-                            <span class="text-dark">{{ $ticket->contact->phone }}</span>
-                        </div>
+                    @endif
+                    @if($ticket->closed_at)
+                    <div class="flex items-center justify-between py-2 border-b border-gray-100">
+                        <span class="text-sm font-medium text-gray-600">Fechado em:</span>
+                        <span class="text-gray-900 font-medium">{{ $ticket->closed_at->format('d/m/Y H:i') }}</span>
                     </div>
                     @endif
                 </div>
             </div>
+        </div>
 
-            @if($ticket->resolution_notes)
-            <div class="mt-4">
-                <h6 class="fw-semibold text-dark mb-3">Notas de Resolução</h6>
-                <div class="p-3 bg-light rounded">
-                    <p class="text-dark mb-0">{{ $ticket->resolution_notes }}</p>
+        <!-- Cliente -->
+        <div class="mt-8 pt-6 border-t border-gray-200">
+            <h3 class="section-title mb-4">Informações do Cliente</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm font-medium text-gray-600">Empresa:</span>
+                        <span class="text-gray-900 font-medium">{{ $ticket->client->company_name }}</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm font-medium text-gray-600">CNPJ:</span>
+                        <span class="text-gray-900 font-medium">{{ $ticket->client->formatted_cnpj }}</span>
+                    </div>
                 </div>
-            </div>
-            @endif
-
-            <!-- Descrição -->
-            <div class="mt-4">
-                <h6 class="fw-semibold text-dark mb-3">Descrição</h6>
-                <div class="p-3 bg-light rounded">
-                    <p class="text-dark mb-0">{{ $ticket->description }}</p>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm font-medium text-gray-600">Contato:</span>
+                        <span class="text-gray-900 font-medium">{{ $ticket->contact->name }}</span>
+                    </div>
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm font-medium text-gray-600">Email:</span>
+                        <span class="text-gray-900 font-medium">{{ $ticket->contact->email }}</span>
+                    </div>
+                    @if($ticket->contact->phone)
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm font-medium text-gray-600">Telefone:</span>
+                        <span class="text-gray-900 font-medium">{{ $ticket->contact->phone }}</span>
+                    </div>
+                    @endif
                 </div>
             </div>
         </div>
-    </div>
+
+        @if($ticket->resolution_notes)
+        <div class="mt-6 pt-6 border-t border-gray-200">
+            <h3 class="section-title mb-4">Notas de Resolução</h3>
+            <div class="bg-blue-50 border border-blue-200 p-4 rounded-lg">
+                <p class="text-gray-900">{{ $ticket->resolution_notes }}</p>
+            </div>
+        </div>
+        @endif
+
+        <!-- Descrição -->
+        <div class="mt-6 pt-6 border-t border-gray-200">
+            <h3 class="section-title mb-4">Descrição do Problema</h3>
+            <div class="bg-gray-50 border border-gray-200 p-4 rounded-lg">
+                <p class="text-gray-900 whitespace-pre-wrap">{{ $ticket->description }}</p>
+            </div>
+        </div>
+    </x-card>
 
     <!-- Timeline de Mensagens -->
-    <div class="card border-0">
-        <div class="card-header">
-            <h5 class="mb-0 fw-semibold">Histórico de Mensagens</h5>
-        </div>
-        <div class="card-body">
-            @if($ticket->messages->count() > 0)
-                <div class="timeline">
-                    @foreach($ticket->messages as $message)
-                        <div class="timeline-item">
-                            <div class="timeline-marker">
-                                <div class="timeline-avatar 
-                                    @if($message->user) bg-primary
-                                    @else bg-secondary
-                                    @endif">
-                                    @if($message->user)
-                                        <span class="text-white">{{ substr($message->user->name, 0, 1) }}</span>
-                                    @else
-                                        <span class="text-white">{{ substr($message->contact->name, 0, 1) }}</span>
-                                    @endif
-                                </div>
-                            </div>
-                            <div class="timeline-content">
-                                <div class="d-flex justify-content-between align-items-start mb-2">
-                                    <div class="d-flex align-items-center gap-2">
-                                        <span class="fw-medium text-dark">
-                                            @if($message->user)
-                                                {{ $message->user->name }}
-                                                <small class="text-muted">({{ ucfirst($message->user->role) }})</small>
-                                            @else
-                                                {{ $message->contact->name }}
-                                                <small class="text-muted">(Cliente)</small>
-                                            @endif
-                                        </span>
-                                        <span class="badge 
-                                            @if($message->type === 'note') bg-info text-white
-                                            @elseif($message->type === 'status_change') bg-warning text-dark
-                                            @else bg-secondary text-white
-                                            @endif">
-                                            {{ ucfirst($message->type) }}
-                                        </span>
-                                        @if($message->is_internal)
-                                            <span class="badge bg-danger text-white">Interno</span>
-                                        @endif
-                                    </div>
-                                    <small class="text-muted">{{ $message->created_at->format('d/m/Y H:i') }}</small>
-                                </div>
-                                <div class="message-content">
-                                    <p class="text-dark mb-2">{{ $message->message }}</p>
-                                    @if($message->attachments->count() > 0)
-                                        <div class="attachments">
-                                            <small class="text-muted d-block mb-2">Anexos:</small>
-                                            <div class="d-flex flex-wrap gap-2">
-                                                @foreach($message->attachments as $attachment)
-                                                    <div class="btn-group" role="group">
-                                                        @php
-                                                            $canPreview = in_array($attachment->file_type, [
-                                                                'application/pdf',
-                                                                'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp',
-                                                                'text/plain', 'text/html', 'application/json', 'text/csv', 'text/xml'
-                                                            ]);
-                                                        @endphp
-                                                        
-                                                        @if($canPreview)
-                                                            <button type="button" class="btn btn-sm btn-outline-primary" 
-                                                                    onclick="previewAttachment({{ $attachment->id }}, '{{ $attachment->filename }}', '{{ $attachment->file_type }}')">
-                                                                <svg class="me-1" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                                                </svg>
-                                                                Preview
-                                                            </button>
-                                                        @endif
-                                                        
-                                                        <a href="{{ route('attachments.download', $attachment) }}" class="btn btn-sm btn-outline-secondary">
-                                                            <svg class="me-1" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
-                                                            </svg>
-                                                            Download
-                                                        </a>
-                                                    </div>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                    @endif
-                                    @if($message->metadata)
-                                        <div class="metadata mt-2">
-                                            @if(isset($message->metadata['status_change']))
-                                                <span class="badge bg-warning text-dark">
-                                                    Status alterado de "{{ $message->metadata['status_change']['from'] }}" para "{{ $message->metadata['status_change']['to'] }}"
-                                                </span>
-                                            @endif
-                                        </div>
-                                    @endif
-                                </div>
+    <x-card>
+        <h2 class="section-title mb-6">Histórico de Mensagens</h2>
+        @if($ticket->messages->count() > 0)
+            <div class="space-y-6">
+                @foreach($ticket->messages as $message)
+                    <div class="flex gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                        <!-- Avatar -->
+                        <div class="flex-shrink-0">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-medium
+                                @if($message->user) bg-blue-600
+                                @else bg-gray-600
+                                @endif">
+                                @if($message->user)
+                                    {{ substr($message->user->name, 0, 1) }}
+                                @else
+                                    {{ substr($message->contact->name, 0, 1) }}
+                                @endif
                             </div>
                         </div>
-                    @endforeach
-                </div>
-            @else
-                <div class="text-center py-5">
-                    <svg class="mx-auto mb-3 text-muted" width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-                    </svg>
-                    <h6 class="fw-medium text-dark">Nenhuma mensagem ainda</h6>
-                    <p class="text-muted mb-0">Seja o primeiro a comentar neste ticket.</p>
-                </div>
-            @endif
-        </div>
-    </div>
+                        
+                        <!-- Conteúdo da Mensagem -->
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center gap-2">
+                                    <span class="font-medium text-gray-900">
+                                        @if($message->user)
+                                            {{ $message->user->name }}
+                                            <span class="text-sm text-gray-500">({{ ucfirst($message->user->role) }})</span>
+                                        @else
+                                            {{ $message->contact->name }}
+                                            <span class="text-sm text-gray-500">(Cliente)</span>
+                                        @endif
+                                    </span>
+                                    <x-badge variant="
+                                        @if($message->type === 'note') info
+                                        @elseif($message->type === 'status_change') warning
+                                        @else secondary
+                                        @endif">
+                                        {{ ucfirst($message->type) }}
+                                    </x-badge>
+                                    @if($message->is_internal)
+                                        <x-badge variant="danger">Interno</x-badge>
+                                    @endif
+                                </div>
+                                <span class="text-sm text-gray-500">{{ $message->created_at->format('d/m/Y H:i') }}</span>
+                            </div>
+                            
+                            <div class="prose max-w-none">
+                                <p class="text-gray-900 whitespace-pre-wrap">{{ $message->message }}</p>
+                            </div>
+                            
+                            @if($message->attachments->count() > 0)
+                                <div class="mt-4">
+                                    <h4 class="text-sm font-medium text-gray-700 mb-2">Anexos:</h4>
+                                    <div class="flex flex-wrap gap-2">
+                                        @foreach($message->attachments as $attachment)
+                                            @php
+                                                $canPreview = in_array($attachment->file_type, [
+                                                    'application/pdf',
+                                                    'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp',
+                                                    'text/plain', 'text/html', 'application/json', 'text/csv', 'text/xml'
+                                                ]);
+                                            @endphp
+                                            
+                                            <div class="flex gap-1">
+                                                @if($canPreview)
+                                                    <x-button variant="outline" size="sm" type="button" 
+                                                            onclick="previewAttachment({{ $attachment->id }}, '{{ $attachment->filename }}', '{{ $attachment->file_type }}')">
+                                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                                        </svg>
+                                                        Preview
+                                                    </x-button>
+                                                @endif
+                                                
+                                                <x-button variant="outline" size="sm" tag="a" href="{{ route('attachments.download', $attachment) }}">
+                                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
+                                                    </svg>
+                                                    Download
+                                                </x-button>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+                            
+                            @if($message->metadata)
+                                <div class="mt-3">
+                                    @if(isset($message->metadata['status_change']))
+                                        <x-badge variant="warning">
+                                            Status alterado de "{{ $message->metadata['status_change']['from'] }}" para "{{ $message->metadata['status_change']['to'] }}"
+                                        </x-badge>
+                                    @endif
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @else
+            <div class="text-center py-12">
+                <svg class="mx-auto mb-4 text-gray-400" width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                </svg>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">Nenhuma mensagem ainda</h3>
+                <p class="text-gray-500">Seja o primeiro a comentar neste ticket.</p>
+            </div>
+        @endif
+    </x-card>
 
     <!-- Nova Mensagem -->
     @if($ticket->status !== 'fechado')
-    <div class="card border-0">
-        <div class="card-header">
-            <h5 class="mb-0 fw-semibold">Adicionar Mensagem</h5>
-        </div>
-        <div class="card-body">
-            <form action="{{ route('tickets.message', $ticket->ticket_number) }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                
-                <div class="mb-3">
-                    <label for="message" class="form-label fw-medium text-dark">Mensagem</label>
-                    <textarea id="message" name="message" rows="4" required
-                        class="form-control"
-                        placeholder="Digite sua mensagem..."></textarea>
+    <x-card>
+        <h2 class="section-title mb-6">Adicionar Mensagem</h2>
+        <form action="{{ route('tickets.message', $ticket->ticket_number) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+            @csrf
+            
+            <div>
+                <label for="message" class="block text-sm font-medium text-gray-700 mb-2">Mensagem</label>
+                <x-textarea id="message" name="message" rows="4" required placeholder="Digite sua mensagem..."></x-textarea>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="type" class="block text-sm font-medium text-gray-700 mb-2">Tipo</label>
+                    <x-select id="type" name="type">
+                        <option value="reply">Resposta</option>
+                        @if(auth()->user()->canManageTickets())
+                        <option value="note">Nota</option>
+                        <option value="status_change">Mudança de Status</option>
+                        @endif
+                    </x-select>
                 </div>
 
-                <div class="row g-3 mb-3">
-                    <div class="col-12 col-sm-6">
-                        <label for="type" class="form-label fw-medium text-dark">Tipo</label>
-                        <select id="type" name="type" class="form-select">
-                            <option value="reply">Resposta</option>
-                            @if(auth()->user()->canManageTickets())
-                            <option value="note">Nota</option>
-                            <option value="status_change">Mudança de Status</option>
-                            @endif
-                        </select>
+                @if(auth()->user()->canManageTickets())
+                <div class="flex items-center">
+                    <div class="flex items-center h-5">
+                        <input type="checkbox" id="is_internal" name="is_internal" value="1" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
                     </div>
-
-                    @if(auth()->user()->canManageTickets())
-                    <div class="col-12 col-sm-6">
-                        <div class="form-check mt-4">
-                            <input type="checkbox" id="is_internal" name="is_internal" value="1" class="form-check-input">
-                            <label for="is_internal" class="form-check-label text-dark">
-                                Mensagem interna (apenas para equipe)
-                            </label>
-                        </div>
+                    <div class="ml-3 text-sm">
+                        <label for="is_internal" class="font-medium text-gray-700">
+                            Mensagem interna (apenas para equipe)
+                        </label>
                     </div>
-                    @endif
                 </div>
+                @endif
+            </div>
 
-                <div class="mb-3">
-                    <label for="attachments" class="form-label fw-medium text-dark">Anexos</label>
-                    <input type="file" id="attachments" name="attachments[]" multiple class="form-control">
-                    <div class="form-text">Formatos aceitos: PDF, JPG, PNG, ZIP, LOG. Máximo 25MB por arquivo.</div>
-                </div>
+            <div>
+                <label for="attachments" class="block text-sm font-medium text-gray-700 mb-2">Anexos</label>
+                <input type="file" id="attachments" name="attachments[]" multiple 
+                       class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                <p class="mt-1 text-sm text-gray-500">Formatos aceitos: PDF, JPG, PNG, ZIP, LOG. Máximo 25MB por arquivo.</p>
+            </div>
 
-                <div class="d-flex justify-content-end">
-                    <button type="submit" class="btn btn-primary">
-                        <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-                        </svg>
-                        Enviar Mensagem
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
+            <div class="flex justify-end">
+                <x-button variant="primary" type="submit">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                    </svg>
+                    Enviar Mensagem
+                </x-button>
+            </div>
+        </form>
+    </x-card>
     @endif
 </div>
 
@@ -382,7 +371,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-0">
-                <div id="previewContent" class="d-flex justify-content-center align-items-center" style="min-height: 500px;">
+                <div id="previewContent" class="d-flex justify-content-center align-items-center preview-modal">
                     <div class="text-center">
                         <div class="spinner-border text-primary" role="status">
                             <span class="visually-hidden">Carregando...</span>
@@ -392,18 +381,18 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                    <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <x-button variant="outline" data-bs-dismiss="modal">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                     Fechar
-                </button>
-                <a id="downloadBtn" href="#" class="btn btn-primary">
-                    <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                </x-button>
+                <x-button variant="primary" tag="a" href="#" id="downloadBtn">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
                     </svg>
                     Download
-                </a>
+                </x-button>
             </div>
         </div>
     </div>
@@ -420,22 +409,22 @@
             <div class="modal-body">
                 <div class="mb-3">
                     <label for="new-status" class="form-label fw-medium text-dark">Novo Status</label>
-                    <select id="new-status" class="form-select">
+                    <x-select id="new-status">
                         <option value="aberto">Aberto</option>
                         <option value="em_andamento">Em Andamento</option>
                         <option value="resolvido">Resolvido</option>
                         <option value="fechado">Fechado</option>
-                    </select>
+                    </x-select>
                 </div>
 
                 <div class="mb-3">
                     <label for="status-notes" class="form-label fw-medium text-dark">Observações (opcional)</label>
-                    <textarea id="status-notes" rows="3" class="form-control" placeholder="Adicione observações sobre a mudança de status..."></textarea>
+                    <x-textarea id="status-notes" rows="3" placeholder="Adicione observações sobre a mudança de status..."></x-textarea>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" onclick="executeStatusChange()" class="btn btn-primary">Alterar Status</button>
+                <x-button variant="outline" data-bs-dismiss="modal">Cancelar</x-button>
+                <x-button variant="primary" type="button" onclick="executeStatusChange()">Alterar Status</x-button>
             </div>
         </div>
     </div>

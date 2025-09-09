@@ -3,34 +3,26 @@
 @section('title', 'Configurações de Email')
 
 @section('header')
-<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-md-between">
-    <div class="flex-grow-1">
-        <h2 class="fs-2 fw-bold text-dark mb-1">
-            Configurações de Email
-        </h2>
-        <p class="text-muted">
-            Configure o servidor SMTP e configurações de envio de emails
-        </p>
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+    <div class="mb-4 sm:mb-0">
+        <span class="text-sm text-gray-500">Administração</span>
+        <h1 class="page-title mt-1">Configurações de Email</h1>
+        <p class="text-gray-600 mt-2">Configure o servidor SMTP e configurações de envio de emails</p>
     </div>
-    <div class="mt-3 mt-md-0">
-        <a href="{{ route('admin.settings.index') }}" class="btn btn-outline-secondary d-inline-flex align-items-center">
-            <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-            </svg>
-            Voltar
-        </a>
-    </div>
+    <x-button variant="outline" tag="a" href="{{ route('admin.settings.index') }}">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        </svg>
+        Voltar
+    </x-button>
 </div>
 @endsection
 
 @section('content')
 <div class="row g-4">
     <div class="col-12 col-lg-8">
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white border-0">
-                <h5 class="mb-0 fw-semibold">Configurações SMTP</h5>
-            </div>
-            <div class="card-body">
+        <h2 class="section-title mb-4">Configurações SMTP</h2>
+        <x-card>
                 <form method="POST" action="{{ route('admin.settings.email.update') }}" class="d-flex flex-column gap-4">
                     @csrf
                     @method('PUT')

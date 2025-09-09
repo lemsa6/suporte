@@ -3,282 +3,256 @@
 @section('title', 'Novo Ticket')
 
 @section('header')
-<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-md-between">
-    <div class="flex-grow-1">
-        <h2 class="fs-2 fw-bold text-dark mb-1">
-            Novo Ticket
-        </h2>
-        <p class="text-muted">
-            Crie um novo ticket de suporte
-        </p>
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+    <div class="mb-4 sm:mb-0">
+        <span class="text-sm text-gray-500">Tickets</span>
+        <h1 class="page-title mt-1">Novo Ticket</h1>
+        <p class="text-gray-600 mt-2">Crie um novo ticket de suporte</p>
     </div>
-    <div class="mt-3 mt-md-0">
-        <a href="{{ route('tickets.index') }}" class="btn btn-outline-secondary d-inline-flex align-items-center">
-            <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-            </svg>
-            Voltar aos Tickets
-        </a>
-    </div>
+    <x-button 
+        variant="outline" 
+        tag="a"
+        href="{{ route('tickets.index') }}"
+    >
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        </svg>
+        Voltar aos Tickets
+    </x-button>
 </div>
 @endsection
 
 @section('content')
-<div class="d-flex flex-column gap-4">
-    <div class="row">
-        <div class="col-12 col-lg-8">
+<div class="space-y-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2">
             <!-- Formulário Principal -->
-            <div class="card border-0">
-                <div class="card-header bg-white border-0">
-                    <h5 class="mb-0 fw-semibold">Informações do Ticket</h5>
-                </div>
-                <div class="card-body">
-                    <form method="POST" action="{{ route('tickets.store') }}" class="d-flex flex-column gap-4">
-                        @csrf
+            <x-card title="Informações do Ticket">
+                <form method="POST" action="{{ route('tickets.store') }}" class="space-y-6">
+                    @csrf
 
-                        <div class="row g-3">
-                            <!-- Título -->
-                            <div class="col-12">
-                                <label for="title" class="form-label fw-medium text-dark">Título do Ticket <span class="text-danger">*</span></label>
-                                <input type="text" name="title" id="title" value="{{ old('title') }}" 
-                                    class="form-control @error('title') is-invalid @enderror" 
-                                    placeholder="Descreva brevemente o problema" required>
-                                @error('title')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <!-- Descrição -->
-                            <div class="col-12">
-                                <label for="description" class="form-label fw-medium text-dark">Descrição Detalhada <span class="text-danger">*</span></label>
-                                <textarea name="description" id="description" rows="6" 
-                                    class="form-control @error('description') is-invalid @enderror" 
-                                    placeholder="Descreva detalhadamente o problema, incluindo passos para reproduzir, se aplicável" required>{{ old('description') }}</textarea>
-                                @error('description')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                                <div class="form-text">
-                                    Seja o mais específico possível para ajudar nossa equipe a resolver o problema rapidamente.
-                                </div>
-                            </div>
-
-                            <!-- Categoria -->
-                            <div class="col-12 col-sm-6">
-                                <label for="category_id" class="form-label fw-medium text-dark">Categoria <span class="text-danger">*</span></label>
-                                <select name="category_id" id="category_id" class="form-select @error('category_id') is-invalid @enderror" required>
-                                    <option value="">Selecione uma categoria</option>
-                                    @foreach($categories as $category)
-                                        <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
-                                            {{ $category->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('category_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <!-- Prioridade -->
-                            <div class="col-12 col-sm-6">
-                                <label for="priority" class="form-label fw-medium text-dark">Prioridade <span class="text-danger">*</span></label>
-                                <select name="priority" id="priority" class="form-select @error('priority') is-invalid @enderror" required>
-                                    <option value="">Selecione a prioridade</option>
-                                    <option value="baixa" {{ old('priority') == 'baixa' ? 'selected' : '' }}>Baixa</option>
-                                    <option value="média" {{ old('priority') == 'média' ? 'selected' : '' }}>Média</option>
-                                    <option value="alta" {{ old('priority') == 'alta' ? 'selected' : '' }}>Alta</option>
-                                </select>
-                                @error('priority')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <!-- Cliente -->
-                            @if(auth()->user()->role === 'admin' || auth()->user()->role === 'tecnico')
-                            <div class="col-12 col-sm-6">
-                                <label for="client_id" class="form-label fw-medium text-dark">Cliente</label>
-                                <select name="client_id" id="client_id" class="form-select @error('client_id') is-invalid @enderror">
-                                    <option value="">Selecione um cliente</option>
-                                    @foreach($clients as $client)
-                                        <option value="{{ $client->id }}" {{ old('client_id') == $client->id ? 'selected' : '' }}>
-                                            {{ $client->name }}
-                                            @if($client->company_name) - {{ $client->company_name }} @endif
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('client_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            @endif
-
-                            <!-- Técnico Responsável -->
-                            @if(auth()->user()->role === 'admin' || auth()->user()->role === 'tecnico')
-                            <div class="col-12 col-sm-6">
-                                <label for="assigned_to" class="form-label fw-medium text-dark">Técnico Responsável</label>
-                                <select name="assigned_to" id="assigned_to" class="form-select @error('assigned_to') is-invalid @enderror">
-                                    <option value="">Não atribuído</option>
-                                    @foreach($technicians as $technician)
-                                        <option value="{{ $technician->id }}" {{ old('assigned_to') == $technician->id ? 'selected' : '' }}>
-                                            {{ $technician->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('assigned_to')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            @endif
-
-                            <!-- Anexos -->
-                            <div class="col-12">
-                                <label for="attachments" class="form-label fw-medium text-dark">Anexos</label>
-                                <input type="file" name="attachments[]" id="attachments" 
-                                    class="form-control @error('attachments') is-invalid @enderror" 
-                                    multiple accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.gif">
-                                @error('attachments')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                                <div class="form-text">
-                                    Formatos aceitos: PDF, DOC, DOCX, TXT, JPG, JPEG, PNG, GIF. Máximo 5 arquivos, 10MB cada.
-                                </div>
-                            </div>
-
-                            <!-- Tags -->
-                            <div class="col-12">
-                                <label for="tags" class="form-label fw-medium text-dark">Tags</label>
-                                <input type="text" name="tags" id="tags" value="{{ old('tags') }}" 
-                                    class="form-control @error('tags') is-invalid @enderror" 
-                                    placeholder="Digite as tags separadas por vírgula">
-                                @error('tags')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                                <div class="form-text">
-                                    Use tags para facilitar a busca e categorização do ticket.
-                                </div>
-                            </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Título -->
+                        <div class="md:col-span-2">
+                            <x-input 
+                                label="Título do Ticket"
+                                name="title"
+                                value="{{ old('title') }}"
+                                placeholder="Descreva brevemente o problema"
+                                required
+                                error="{{ $errors->first('title') }}"
+                            />
                         </div>
 
-                        <div class="d-flex justify-content-end gap-2">
-                            <a href="{{ route('tickets.index') }}" class="btn btn-outline-secondary">Cancelar</a>
-                            <button type="submit" class="btn btn-primary d-inline-flex align-items-center">
-                                <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                Criar Ticket
-                            </button>
+                        <!-- Descrição -->
+                        <div class="md:col-span-2">
+                            <x-textarea 
+                                label="Descrição Detalhada"
+                                name="description"
+                                rows="6"
+                                placeholder="Descreva detalhadamente o problema, incluindo passos para reproduzir, se aplicável"
+                                required
+                                error="{{ $errors->first('description') }}"
+                                help="Seja o mais específico possível para ajudar nossa equipe a resolver o problema rapidamente."
+                            >
+                                {{ old('description') }}
+                            </x-textarea>
                         </div>
-                    </form>
-                </div>
-            </div>
+
+                        <!-- Categoria -->
+                        <div>
+                            <x-select 
+                                label="Categoria"
+                                name="category_id"
+                                :options="collect($categories)->mapWithKeys(fn($cat) => [$cat->id => $cat->name])->prepend('Selecione uma categoria', '')"
+                                :selected="old('category_id')"
+                                required
+                                error="{{ $errors->first('category_id') }}"
+                            />
+                        </div>
+
+                        <!-- Prioridade -->
+                        <div>
+                            <x-select 
+                                label="Prioridade"
+                                name="priority"
+                                :options="[
+                                    '' => 'Selecione a prioridade',
+                                    'baixa' => 'Baixa',
+                                    'média' => 'Média',
+                                    'alta' => 'Alta'
+                                ]"
+                                :selected="old('priority')"
+                                required
+                                error="{{ $errors->first('priority') }}"
+                            />
+                        </div>
+
+                        <!-- Cliente -->
+                        @if(auth()->user()->role === 'admin' || auth()->user()->role === 'tecnico')
+                        <div>
+                            <x-select 
+                                label="Cliente"
+                                name="client_id"
+                                :options="collect($clients)->mapWithKeys(fn($client) => [$client->id => $client->name . ($client->company_name ? ' - ' . $client->company_name : '')])->prepend('Selecione um cliente', '')"
+                                :selected="old('client_id')"
+                                error="{{ $errors->first('client_id') }}"
+                            />
+                        </div>
+                        @endif
+
+                        <!-- Técnico Responsável -->
+                        @if(auth()->user()->role === 'admin' || auth()->user()->role === 'tecnico')
+                        <div>
+                            <x-select 
+                                label="Técnico Responsável"
+                                name="assigned_to"
+                                :options="collect($technicians)->mapWithKeys(fn($tech) => [$tech->id => $tech->name])->prepend('Não atribuído', '')"
+                                :selected="old('assigned_to')"
+                                error="{{ $errors->first('assigned_to') }}"
+                            />
+                        </div>
+                        @endif
+
+                        <!-- Anexos -->
+                        <div class="md:col-span-2">
+                            <x-input 
+                                label="Anexos"
+                                name="attachments[]"
+                                type="file"
+                                multiple
+                                accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.gif"
+                                error="{{ $errors->first('attachments') }}"
+                                help="Formatos aceitos: PDF, DOC, DOCX, TXT, JPG, JPEG, PNG, GIF. Máximo 5 arquivos, 10MB cada."
+                            />
+                        </div>
+
+                        <!-- Tags -->
+                        <div class="md:col-span-2">
+                            <x-input 
+                                label="Tags"
+                                name="tags"
+                                value="{{ old('tags') }}"
+                                placeholder="Digite as tags separadas por vírgula"
+                                error="{{ $errors->first('tags') }}"
+                                help="Use tags para facilitar a busca e categorização do ticket."
+                            />
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end gap-3">
+                        <x-button variant="outline" tag="a" href="{{ route('tickets.index') }}">
+                            Cancelar
+                        </x-button>
+                        <x-button type="submit" variant="primary">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            Criar Ticket
+                        </x-button>
+                    </div>
+                </form>
+            </x-card>
         </div>
 
-        <div class="col-12 col-lg-4">
+        <div class="lg:col-span-1">
             <!-- Sidebar com Informações -->
-            <div class="d-flex flex-column gap-4">
+            <div class="space-y-4">
                 <!-- Dicas para um Bom Ticket -->
-                <div class="card border-0">
-                    <div class="card-header bg-info bg-opacity-10 border-0">
-                        <h6 class="mb-0 fw-semibold text-info">
-                            <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <x-card>
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                        <h6 class="font-semibold text-blue-800 flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                             Dicas para um Bom Ticket
                         </h6>
                     </div>
-                    <div class="card-body">
-                        <ul class="list-unstyled mb-0">
-                            <li class="mb-2 d-flex align-items-start">
-                                <svg class="me-2 mt-1 text-success" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                <span class="small">Seja específico no título</span>
-                            </li>
-                            <li class="mb-2 d-flex align-items-start">
-                                <svg class="me-2 mt-1 text-success" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                <span class="small">Descreva o problema detalhadamente</span>
-                            </li>
-                            <li class="mb-2 d-flex align-items-start">
-                                <svg class="me-2 mt-1 text-success" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                <span class="small">Inclua passos para reproduzir</span>
-                            </li>
-                            <li class="mb-2 d-flex align-items-start">
-                                <svg class="me-2 mt-1 text-success" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                <span class="small">Anexe screenshots se relevante</span>
-                            </li>
-                            <li class="d-flex align-items-start">
-                                <svg class="me-2 mt-1 text-success" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                <span class="small">Escolha a categoria correta</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+                    <ul class="space-y-2">
+                        <li class="flex items-start">
+                            <svg class="w-4 h-4 mr-2 mt-1 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-sm">Seja específico no título</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-4 h-4 mr-2 mt-1 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-sm">Descreva o problema detalhadamente</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-4 h-4 mr-2 mt-1 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-sm">Inclua passos para reproduzir</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-4 h-4 mr-2 mt-1 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-sm">Anexe screenshots se relevante</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-4 h-4 mr-2 mt-1 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-sm">Escolha a categoria correta</span>
+                        </li>
+                    </ul>
+                </x-card>
 
                 <!-- Informações do Sistema -->
-                <div class="card border-0">
-                    <div class="card-header bg-light border-0">
-                        <h6 class="mb-0 fw-semibold">Informações do Sistema</h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex flex-column gap-2">
-                            <div class="d-flex justify-content-between">
-                                <span class="text-muted small">Ticket #</span>
-                                <span class="fw-medium small">{{ $nextTicketNumber }}</span>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <span class="text-muted small">Criado por</span>
-                                <span class="fw-medium small">{{ auth()->user()->name }}</span>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <span class="text-muted small">Data</span>
-                                <span class="fw-medium small">{{ now()->format('d/m/Y H:i') }}</span>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <span class="text-muted small">Status</span>
-                                <span class="badge bg-primary">Aberto</span>
-                            </div>
+                <x-card title="Informações do Sistema">
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-gray-500 text-sm">Ticket #</span>
+                            <span class="font-medium text-sm">{{ $nextTicketNumber }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500 text-sm">Criado por</span>
+                            <span class="font-medium text-sm">{{ auth()->user()->name }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500 text-sm">Data</span>
+                            <span class="font-medium text-sm">{{ now()->format('d/m/Y H:i') }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500 text-sm">Status</span>
+                            <x-badge variant="primary">Aberto</x-badge>
                         </div>
                     </div>
-                </div>
+                </x-card>
 
                 <!-- SLA Estimado -->
-                <div class="card border-0">
-                    <div class="card-header bg-warning bg-opacity-10 border-0">
-                        <h6 class="mb-0 fw-semibold text-warning">
-                            <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <x-card>
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                        <h6 class="font-semibold text-yellow-800 flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                             SLA Estimado
                         </h6>
                     </div>
-                    <div class="card-body">
-                        <div class="d-flex flex-column gap-2">
-                            <div class="d-flex justify-content-between">
-                                <span class="text-muted small">Baixa</span>
-                                <span class="fw-medium small">72h</span>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <span class="text-muted small">Média</span>
-                                <span class="fw-medium small">48h</span>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <span class="text-muted small">Alta</span>
-                                <span class="fw-medium small">24h</span>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <span class="text-muted small">Urgente</span>
-                                <span class="fw-medium small">4h</span>
-                            </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-gray-500 text-sm">Baixa</span>
+                            <span class="font-medium text-sm">72h</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500 text-sm">Média</span>
+                            <span class="font-medium text-sm">48h</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500 text-sm">Alta</span>
+                            <span class="font-medium text-sm">24h</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500 text-sm">Urgente</span>
+                            <span class="font-medium text-sm">4h</span>
                         </div>
                     </div>
-                </div>
+                </x-card>
             </div>
         </div>
     </div>
