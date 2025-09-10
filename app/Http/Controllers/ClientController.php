@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Client;
 use App\Models\ClientContact;
 use App\Models\Category;
+use App\Services\AuditService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -12,7 +13,12 @@ use Illuminate\Http\JsonResponse;
 
 class ClientController extends Controller
 {
-    // Middleware aplicado nas rotas
+    protected $auditService;
+
+    public function __construct(AuditService $auditService)
+    {
+        $this->auditService = $auditService;
+    }
 
     /**
      * Lista de clientes
@@ -28,27 +34,40 @@ class ClientController extends Controller
                 $q->whereIn('status', ['aberto', 'em_andamento']);
             }]);
         
-        // Filtro de busca
+        // Aplicar filtros
+        $this->applyFilters($query, $search, $status);
+        
+        $clients = $query->latest()->paginate(15);
+        $stats = $this->getClientStats();
+        
+        return view('clients.index', compact('clients', 'search', 'status', 'stats'));
+    }
+
+    /**
+     * Aplica filtros na consulta
+     */
+    private function applyFilters($query, ?string $search, string $status): void
+    {
         if ($search) {
             $query->search($search);
         }
         
-        // Filtro de status
         if ($status !== 'all') {
-            $query->where('is_active', $status === 'active');
+            $query->where('is_active', $status === 'ativo');
         }
-        
-        $clients = $query->latest()->paginate(15);
-        
-        // Estatísticas para o dashboard
-        $stats = [
+    }
+
+    /**
+     * Obtém estatísticas dos clientes
+     */
+    private function getClientStats(): array
+    {
+        return [
             'total' => Client::count(),
             'active' => Client::where('is_active', true)->count(),
-            'inactive' => Client::where('is_active', false)->count(),
-            'total_tickets' => \App\Models\Ticket::count(),
+            'companies' => Client::count(), // Todos os clientes são empresas neste sistema
+            'with_tickets' => Client::whereHas('tickets')->count(),
         ];
-        
-        return view('clients.index', compact('clients', 'search', 'status', 'stats'));
     }
 
     /**
@@ -81,9 +100,12 @@ class ClientController extends Controller
         
         $client = Client::create($validated);
         
+        // Registrar auditoria
+        $this->auditService->logCreated($client, auth()->user(), $request);
+        
         return redirect()
             ->route('clients.show', $client)
-            ->with('success', 'Empresa criada com sucesso!');
+            ->with('success', 'Cliente criado com sucesso!');
     }
 
     /**
@@ -152,28 +174,142 @@ class ClientController extends Controller
         // Limpar CNPJ antes de salvar (remover formatação)
         $validated['cnpj'] = preg_replace('/[^0-9]/', '', $validated['cnpj']);
         
+        $oldValues = $client->toArray();
         $client->update($validated);
+        
+        // Registrar auditoria
+        $this->auditService->logUpdated($client, $oldValues, $client->toArray(), auth()->user(), $request);
         
         return redirect()
             ->route('clients.show', $client)
-            ->with('success', 'Empresa atualizada com sucesso!');
+            ->with('success', 'Cliente atualizado com sucesso!');
+    }
+
+    /**
+     * Executa ações em lote nos clientes selecionados
+     */
+    public function bulkAction(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'action' => 'required|string|in:activate,deactivate,delete',
+            'client_ids' => 'required|array|min:1',
+            'client_ids.*' => 'integer|exists:clients,id',
+        ]);
+
+        $clientIds = $validated['client_ids'];
+        $action = $validated['action'];
+        $user = auth()->user();
+        
+        $results = [
+            'success' => [],
+            'errors' => [],
+            'total' => count($clientIds)
+        ];
+
+        foreach ($clientIds as $clientId) {
+            try {
+                $client = Client::find($clientId);
+                
+                if (!$client) {
+                    $results['errors'][] = "Cliente ID {$clientId} não encontrado";
+                    continue;
+                }
+
+                $this->executeBulkActionOnClient($client, $action, $user, $request);
+                $results['success'][] = $clientId;
+                
+            } catch (\Exception $e) {
+                $results['errors'][] = "Erro no cliente ID {$clientId}: " . $e->getMessage();
+            }
+        }
+
+        return response()->json([
+            'success' => count($results['success']) > 0,
+            'message' => $this->getBulkActionMessage($action, $results),
+            'results' => $results
+        ]);
+    }
+
+    /**
+     * Executa uma ação específica em um cliente
+     */
+    private function executeBulkActionOnClient(Client $client, string $action, $user, Request $request): void
+    {
+        $oldValues = $client->toArray();
+        
+        switch ($action) {
+            case 'activate':
+                $client->update(['is_active' => true]);
+                $this->auditService->logUpdated($client, $oldValues, $client->toArray(), $user, $request);
+                break;
+                
+            case 'deactivate':
+                $client->update(['is_active' => false]);
+                $this->auditService->logUpdated($client, $oldValues, $client->toArray(), $user, $request);
+                break;
+                
+            case 'delete':
+                // Verificar se há tickets ativos
+                if ($client->tickets()->whereIn('status', ['aberto', 'em_andamento'])->exists()) {
+                    throw new \Exception('Cliente possui tickets ativos e não pode ser excluído');
+                }
+                
+                $client->delete();
+                $this->auditService->logDeleted($client, $oldValues, $user, $request);
+                break;
+        }
+    }
+
+    /**
+     * Gera mensagem de resultado das ações em lote
+     */
+    private function getBulkActionMessage(string $action, array $results): string
+    {
+        $actionNames = [
+            'activate' => 'ativados',
+            'deactivate' => 'desativados',
+            'delete' => 'excluídos',
+        ];
+        
+        $actionName = $actionNames[$action] ?? 'processados';
+        $successCount = count($results['success']);
+        $errorCount = count($results['errors']);
+        
+        if ($successCount > 0 && $errorCount === 0) {
+            return "Todos os {$successCount} clientes foram {$actionName} com sucesso!";
+        } elseif ($successCount > 0 && $errorCount > 0) {
+            return "{$successCount} clientes foram {$actionName} com sucesso. {$errorCount} clientes apresentaram erro.";
+        } else {
+            return "Nenhum cliente pôde ser {$actionName}. Verifique as permissões e tente novamente.";
+        }
     }
 
     /**
      * Remove cliente
      */
-    public function destroy(Client $client): RedirectResponse
+    public function destroy(Client $client): JsonResponse
     {
         // Verifica se há tickets ativos
-        if ($client->tickets()->active()->exists()) {
-            return back()->with('error', 'Não é possível excluir empresa com tickets ativos!');
+        if ($client->tickets()->whereIn('status', ['aberto', 'em_andamento'])->exists()) {
+            if (request()->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'Não é possível excluir cliente com tickets ativos!'], 400);
+            }
+            return back()->with('error', 'Não é possível excluir cliente com tickets ativos!');
         }
         
+        $oldValues = $client->toArray();
         $client->delete();
+        
+        // Registrar auditoria
+        $this->auditService->logDeleted($client, $oldValues, auth()->user(), request());
+        
+        if (request()->expectsJson()) {
+            return response()->json(['success' => true, 'message' => 'Cliente removido com sucesso!']);
+        }
         
         return redirect()
             ->route('clients.index')
-            ->with('success', 'Empresa removida com sucesso!');
+            ->with('success', 'Cliente removido com sucesso!');
     }
 
     /**

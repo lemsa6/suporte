@@ -3,20 +3,18 @@
 @section('title', 'Novo Cliente')
 
 @section('header')
-<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-md-between">
-    <div class="flex-grow-1">
-        <div class="d-flex align-items-center mb-2">
-            <x-button variant="outline" size="sm" tag="a" href="{{ route('clients.index') }}" class="me-3">
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+    <div class="mb-4 sm:mb-0">
+        <div class="flex items-center mb-2">
+            <x-button variant="outline" size="sm" tag="a" href="{{ route('clients.index') }}" class="mr-3">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                 </svg>
                 Voltar
             </x-button>
-            <h2 class="fs-2 fw-bold text-dark mb-0">
-                Novo Cliente
-            </h2>
+            <h1 class="page-title mb-0">Novo Cliente</h1>
         </div>
-        <p class="text-muted">
+        <p class="text-cinza-claro">
             Cadastre uma nova empresa cliente
         </p>
     </div>
@@ -24,212 +22,222 @@
 @endsection
 
 @section('content')
-<div class="container-fluid">
-    <div class="d-flex flex-column gap-4">
-        <form action="{{ route('clients.store') }}" method="POST" class="d-flex flex-column gap-4">
-            @csrf
+<div class="space-y-6">
+    <form action="{{ route('clients.store') }}" method="POST" class="space-y-6">
+        @csrf
+        
+        <!-- Informações da Empresa -->
+        <h2 class="section-title mb-4">Informações da Empresa</h2>
+        <x-card>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Nome da Empresa -->
+                <div class="md:col-span-2">
+                    <x-input 
+                        label="Nome da Empresa"
+                        name="company_name"
+                        value="{{ old('company_name') }}"
+                        placeholder="Nome completo da empresa"
+                        required
+                        error="{{ $errors->first('company_name') }}"
+                    />
+                </div>
+
+                <!-- Nome Fantasia e CNPJ -->
+                <div>
+                    <x-input 
+                        label="Nome Fantasia"
+                        name="trade_name"
+                        value="{{ old('trade_name') }}"
+                        placeholder="Nome fantasia (se houver)"
+                        error="{{ $errors->first('trade_name') }}"
+                    />
+                </div>
+
+                <div>
+                    <x-input 
+                        label="CNPJ"
+                        name="cnpj"
+                        value="{{ old('cnpj') }}"
+                        placeholder="00.000.000/0000-00"
+                        maxlength="18"
+                        required
+                        error="{{ $errors->first('cnpj') }}"
+                    />
+                </div>
+
+                <!-- Email e Telefone -->
+                <div>
+                    <x-input 
+                        label="Email"
+                        name="email"
+                        type="email"
+                        value="{{ old('email') }}"
+                        placeholder="email@empresa.com"
+                        error="{{ $errors->first('email') }}"
+                    />
+                </div>
+
+                <div>
+                    <x-input 
+                        label="Telefone"
+                        name="phone"
+                        type="tel"
+                        value="{{ old('phone') }}"
+                        placeholder="(11) 99999-9999"
+                        error="{{ $errors->first('phone') }}"
+                    />
+                </div>
+
+                <!-- Endereço -->
+                <div class="md:col-span-2">
+                    <x-textarea 
+                        label="Endereço"
+                        name="address"
+                        rows="3"
+                        placeholder="Endereço completo da empresa"
+                        error="{{ $errors->first('address') }}"
+                    >
+                        {{ old('address') }}
+                    </x-textarea>
+                </div>
+
+                <!-- Observações -->
+                <div class="md:col-span-2">
+                    <x-textarea 
+                        label="Observações"
+                        name="notes"
+                        rows="3"
+                        placeholder="Informações adicionais sobre a empresa"
+                        error="{{ $errors->first('notes') }}"
+                    >
+                        {{ old('notes') }}
+                    </x-textarea>
+                </div>
+
+                <!-- Status -->
+                <div class="md:col-span-2">
+                    <div class="flex items-center">
+                        <div class="flex items-center h-5">
+                            <input type="checkbox" id="is_active" name="is_active" value="1" 
+                                   class="h-4 w-4 text-roxo focus:ring-roxo border-cinza-claro rounded"
+                                   {{ old('is_active', true) ? 'checked' : '' }}>
+                        </div>
+                        <div class="ml-3 text-sm">
+                            <label for="is_active" class="font-medium text-cinza">
+                                Cliente ativo
+                            </label>
+                        </div>
+                    </div>
+                    @error('is_active')
+                        <div class="form-error">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+        </x-card>
+
+        <!-- Contatos -->
+        <x-card>
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="section-title mb-0">Contatos</h2>
+                <x-button variant="outline" size="sm" type="button" onclick="addContact()">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    Adicionar Contato
+                </x-button>
+            </div>
             
-            <!-- Informações da Empresa -->
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0">
-                    <h5 class="mb-0 fw-semibold">Informações da Empresa</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row g-3">
-                        <!-- Nome da Empresa -->
-                        <div class="col-12">
-                            <label for="company_name" class="form-label fw-medium text-dark">Nome da Empresa *</label>
-                            <input type="text" name="company_name" id="company_name" required
-                                class="form-control @error('company_name') is-invalid @enderror"
-                                value="{{ old('company_name') }}"
-                                placeholder="Nome completo da empresa">
-                            @error('company_name')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+            <div id="contacts-container" class="space-y-4">
+                <!-- Contato Principal -->
+                <div class="contact-item border border-cinza-claro rounded-lg p-4 bg-cinza-claro-2">
+                    <div class="flex items-center justify-between mb-4">
+                        <h6 class="font-medium text-cinza">Contato Principal</h6>
+                        <x-badge variant="primary">Principal</x-badge>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <x-input 
+                                label="Nome"
+                                name="contacts[0][name]"
+                                value="{{ old('contacts.0.name') }}"
+                                placeholder="Nome completo do contato"
+                                required
+                            />
                         </div>
-
-                        <!-- Nome Fantasia e CNPJ -->
-                        <div class="col-12 col-md-6">
-                            <label for="trade_name" class="form-label fw-medium text-dark">Nome Fantasia</label>
-                            <input type="text" name="trade_name" id="trade_name"
-                                class="form-control @error('trade_name') is-invalid @enderror"
-                                value="{{ old('trade_name') }}"
-                                placeholder="Nome fantasia (se houver)">
-                            @error('trade_name')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                        
+                        <div>
+                            <x-input 
+                                label="Email"
+                                name="contacts[0][email]"
+                                type="email"
+                                value="{{ old('contacts.0.email') }}"
+                                placeholder="email@contato.com"
+                                required
+                            />
                         </div>
-
-                        <div class="col-12 col-md-6">
-                            <label for="cnpj" class="form-label fw-medium text-dark">CNPJ *</label>
-                            <input type="text" name="cnpj" id="cnpj" required maxlength="18"
-                                class="form-control @error('cnpj') is-invalid @enderror"
-                                value="{{ old('cnpj') }}"
-                                placeholder="00.000.000/0000-00">
-                            @error('cnpj')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                        
+                        <div>
+                            <x-input 
+                                label="Telefone"
+                                name="contacts[0][phone]"
+                                type="tel"
+                                value="{{ old('contacts.0.phone') }}"
+                                placeholder="(11) 99999-9999"
+                            />
                         </div>
-
-                        <!-- Email e Telefone -->
-                        <div class="col-12 col-md-6">
-                            <label for="email" class="form-label fw-medium text-dark">Email</label>
-                            <input type="email" name="email" id="email"
-                                class="form-control @error('email') is-invalid @enderror"
-                                value="{{ old('email') }}"
-                                placeholder="email@empresa.com">
-                            @error('email')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                        
+                        <div>
+                            <x-input 
+                                label="Cargo"
+                                name="contacts[0][position]"
+                                value="{{ old('contacts.0.position') }}"
+                                placeholder="Cargo/função"
+                            />
                         </div>
-
-                        <div class="col-12 col-md-6">
-                            <label for="phone" class="form-label fw-medium text-dark">Telefone</label>
-                            <input type="tel" name="phone" id="phone"
-                                class="form-control @error('phone') is-invalid @enderror"
-                                value="{{ old('phone') }}"
-                                placeholder="(11) 99999-9999">
-                            @error('phone')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                        
+                        <div>
+                            <x-input 
+                                label="Departamento"
+                                name="contacts[0][department]"
+                                value="{{ old('contacts.0.department') }}"
+                                placeholder="Departamento"
+                            />
                         </div>
-
-                        <!-- Endereço -->
-                        <div class="col-12">
-                            <label for="address" class="form-label fw-medium text-dark">Endereço</label>
-                            <textarea name="address" id="address" rows="3"
-                                class="form-control @error('address') is-invalid @enderror"
-                                placeholder="Endereço completo da empresa">{{ old('address') }}</textarea>
-                            @error('address')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- Observações -->
-                        <div class="col-12">
-                            <label for="notes" class="form-label fw-medium text-dark">Observações</label>
-                            <textarea name="notes" id="notes" rows="3"
-                                class="form-control @error('notes') is-invalid @enderror"
-                                placeholder="Informações adicionais sobre a empresa">{{ old('notes') }}</textarea>
-                            @error('notes')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- Status -->
-                        <div class="col-12">
-                            <div class="form-check">
-                                <input type="checkbox" id="is_active" name="is_active" value="1" 
-                                    class="form-check-input @error('is_active') is-invalid @enderror"
-                                    {{ old('is_active', true) ? 'checked' : '' }}>
-                                <label for="is_active" class="form-check-label fw-medium text-dark">
-                                    Cliente ativo
-                                </label>
+                        
+                        <div class="flex items-center">
+                            <div class="flex items-center h-5">
+                                <input type="checkbox" name="contacts[0][is_primary]" value="1" checked
+                                       class="h-4 w-4 text-roxo focus:ring-roxo border-cinza-claro rounded">
                             </div>
-                            @error('is_active')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            <div class="ml-3 text-sm">
+                                <label class="font-medium text-cinza">Contato principal</label>
+                            </div>
                         </div>
                     </div>
+                    
+                    <input type="hidden" name="contacts[0][is_primary]" value="1">
                 </div>
             </div>
+        </x-card>
 
-            <!-- Contatos -->
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <h5 class="mb-0 fw-semibold">Contatos</h5>
-                        <x-button variant="outline" size="sm" type="button" onclick="addContact()">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                            </svg>
-                            Adicionar Contato
-                        </x-button>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div id="contacts-container" class="d-flex flex-column gap-3">
-                        <!-- Contato Principal -->
-                        <div class="contact-item border rounded p-3 bg-light">
-                            <div class="d-flex align-items-center justify-content-between mb-3">
-                                <h6 class="mb-0 fw-medium text-dark">Contato Principal</h6>
-                                <span class="badge bg-primary">Principal</span>
-                            </div>
-                            
-                            <div class="row g-3">
-                                <div class="col-12 col-md-6">
-                                    <label class="form-label fw-medium text-dark">Nome *</label>
-                                    <input type="text" name="contacts[0][name]" required
-                                        class="form-control"
-                                        value="{{ old('contacts.0.name') }}"
-                                        placeholder="Nome completo do contato">
-                                </div>
-                                
-                                <div class="col-12 col-md-6">
-                                    <label class="form-label fw-medium text-dark">Email *</label>
-                                    <input type="email" name="contacts[0][email]" required
-                                        class="form-control"
-                                        value="{{ old('contacts.0.email') }}"
-                                        placeholder="email@contato.com">
-                                </div>
-                                
-                                <div class="col-12 col-md-6">
-                                    <label class="form-label fw-medium text-dark">Telefone</label>
-                                    <input type="tel" name="contacts[0][phone]"
-                                        class="form-control"
-                                        value="{{ old('contacts.0.phone') }}"
-                                        placeholder="(11) 99999-9999">
-                                </div>
-                                
-                                <div class="col-12 col-md-6">
-                                    <label class="form-label fw-medium text-dark">Cargo</label>
-                                    <input type="text" name="contacts[0][position]"
-                                        class="form-control"
-                                        value="{{ old('contacts.0.position') }}"
-                                        placeholder="Cargo/função">
-                                </div>
-                                
-                                <div class="col-12 col-md-6">
-                                    <label class="form-label fw-medium text-dark">Departamento</label>
-                                    <input type="text" name="contacts[0][department]"
-                                        class="form-control"
-                                        value="{{ old('contacts.0.department') }}"
-                                        placeholder="Departamento">
-                                </div>
-                                
-                                <div class="col-12 col-md-6">
-                                    <div class="form-check">
-                                        <input type="checkbox" name="contacts[0][is_primary]" value="1" checked
-                                            class="form-check-input">
-                                        <label class="form-check-label fw-medium text-dark">Contato principal</label>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <input type="hidden" name="contacts[0][is_primary]" value="1">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Botões de Ação -->
-            <div class="d-flex justify-content-end gap-2">
-                <x-button variant="outline" tag="a" href="{{ route('clients.index') }}">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                    Cancelar
-                </x-button>
-                
-                <x-button variant="primary" type="submit">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                    Criar Cliente
-                </x-button>
-            </div>
-        </form>
-    </div>
+        <!-- Botões de Ação -->
+        <div class="flex justify-end gap-3">
+            <x-button variant="outline" tag="a" href="{{ route('clients.index') }}">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+                Cancelar
+            </x-button>
+            
+            <x-button variant="primary" type="submit">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                Criar Cliente
+            </x-button>
+        </div>
+    </form>
 </div>
 
 @endsection
@@ -241,60 +249,61 @@
     function addContact() {
         const container = document.getElementById('contacts-container');
         const contactDiv = document.createElement('div');
-        contactDiv.className = 'contact-item border rounded p-3 bg-white';
+        contactDiv.className = 'contact-item border border-cinza-claro rounded-lg p-4 bg-white';
         contactDiv.innerHTML = `
-            <div class="d-flex align-items-center justify-content-between mb-3">
-                <h6 class="mb-0 fw-medium text-dark">Contato Adicional</h6>
-                <button type="button" onclick="removeContact(this)" 
-                    variant="outline" size="sm" class="btn-outline-danger">
-                    <svg class="me-1" width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flex items-center justify-between mb-4">
+                <h6 class="font-medium text-cinza">Contato Adicional</h6>
+                <x-button variant="outline" size="sm" type="button" onclick="removeContact(this)">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                     Remover
-                </button>
+                </x-button>
             </div>
             
-            <div class="row g-3">
-                <div class="col-12 col-md-6">
-                    <label class="form-label fw-medium text-dark">Nome *</label>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-cinza mb-2">Nome *</label>
                     <input type="text" name="contacts[${contactIndex}][name]" required
-                        class="form-control"
+                        class="w-full px-3 py-2 border border-cinza-claro rounded-md focus:outline-none focus:ring-2 focus:ring-roxo focus:border-transparent"
                         placeholder="Nome completo do contato">
                 </div>
                 
-                <div class="col-12 col-md-6">
-                    <label class="form-label fw-medium text-dark">Email *</label>
+                <div>
+                    <label class="block text-sm font-medium text-cinza mb-2">Email *</label>
                     <input type="email" name="contacts[${contactIndex}][email]" required
-                        class="form-control"
+                        class="w-full px-3 py-2 border border-cinza-claro rounded-md focus:outline-none focus:ring-2 focus:ring-roxo focus:border-transparent"
                         placeholder="email@contato.com">
                 </div>
                 
-                <div class="col-12 col-md-6">
-                    <label class="form-label fw-medium text-dark">Telefone</label>
+                <div>
+                    <label class="block text-sm font-medium text-cinza mb-2">Telefone</label>
                     <input type="tel" name="contacts[${contactIndex}][phone]"
-                        class="form-control"
+                        class="w-full px-3 py-2 border border-cinza-claro rounded-md focus:outline-none focus:ring-2 focus:ring-roxo focus:border-transparent"
                         placeholder="(11) 99999-9999">
                 </div>
                 
-                <div class="col-12 col-md-6">
-                    <label class="form-label fw-medium text-dark">Cargo</label>
+                <div>
+                    <label class="block text-sm font-medium text-cinza mb-2">Cargo</label>
                     <input type="text" name="contacts[${contactIndex}][position]"
-                        class="form-control"
+                        class="w-full px-3 py-2 border border-cinza-claro rounded-md focus:outline-none focus:ring-2 focus:ring-roxo focus:border-transparent"
                         placeholder="Cargo/função">
                 </div>
                 
-                <div class="col-12 col-md-6">
-                    <label class="form-label fw-medium text-dark">Departamento</label>
+                <div>
+                    <label class="block text-sm font-medium text-cinza mb-2">Departamento</label>
                     <input type="text" name="contacts[${contactIndex}][department]"
-                        class="form-control"
+                        class="w-full px-3 py-2 border border-cinza-claro rounded-md focus:outline-none focus:ring-2 focus:ring-roxo focus:border-transparent"
                         placeholder="Departamento">
                 </div>
                 
-                <div class="col-12 col-md-6">
-                    <div class="form-check">
+                <div class="flex items-center">
+                    <div class="flex items-center h-5">
                         <input type="checkbox" name="contacts[${contactIndex}][is_primary]" value="1"
-                            class="form-check-input">
-                        <label class="form-check-label fw-medium text-dark">Contato principal</label>
+                            class="h-4 w-4 text-roxo focus:ring-roxo border-cinza-claro rounded">
+                    </div>
+                    <div class="ml-3 text-sm">
+                        <label class="font-medium text-cinza">Contato principal</label>
                     </div>
                 </div>
             </div>

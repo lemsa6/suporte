@@ -6,24 +6,24 @@
 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
     <div class="mb-4 sm:mb-0">
         <div class="flex items-center gap-3 mb-2">
-            <a href="{{ route('clients.index') }}" class="text-gray-500 hover:text-gray-700">
+            <a href="{{ route('clients.index') }}" class="text-cinza-claro hover:text-cinza">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                 </svg>
             </a>
-            <span class="text-sm text-gray-500">Clientes</span>
+            <span class="text-sm text-cinza-claro">Clientes</span>
         </div>
         <h1 class="page-title mt-1">{{ $client->company_name }}</h1>
         @if($client->trade_name)
-            <p class="text-gray-600 mt-2">Nome Fantasia: {{ $client->trade_name }}</p>
+            <p class="text-cinza mt-2">Nome Fantasia: {{ $client->trade_name }}</p>
         @endif
         <div class="flex items-center gap-4 mt-3">
             <x-badge variant="{{ $client->is_active ? 'success' : 'danger' }}">
                 {{ $client->is_active ? 'Ativo' : 'Inativo' }}
             </x-badge>
-            <span class="text-sm text-gray-500">{{ $client->formatted_cnpj }}</span>
-            <span class="text-sm text-gray-500">{{ $client->contacts->count() }} contato(s)</span>
-            <span class="text-sm text-gray-500">{{ $client->tickets->count() }} ticket(s)</span>
+            <span class="text-sm text-cinza-claro">{{ $client->formatted_cnpj }}</span>
+            <span class="text-sm text-cinza-claro">{{ $client->contacts->count() }} contato(s)</span>
+            <span class="text-sm text-cinza-claro">{{ $client->tickets->count() }} ticket(s)</span>
         </div>
     </div>
     <div class="flex gap-3">
@@ -52,7 +52,7 @@
             :value="$stats['total_tickets']"
             color="primary"
         >
-            <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-5 h-5 text-roxo" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
             </svg>
         </x-stat-card>
@@ -93,25 +93,25 @@
     <x-card>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div class="space-y-4">
-                <div class="flex items-center justify-between py-2 border-b border-gray-100">
-                    <span class="text-sm font-medium text-gray-600">Nome da Empresa:</span>
-                    <span class="font-medium">{{ $client->company_name }}</span>
+                <div class="flex items-center justify-between py-2 border-b border-cinza-claro-2">
+                    <span class="text-sm font-medium text-cinza">Nome da Empresa:</span>
+                    <span class="font-medium text-cinza">{{ $client->company_name }}</span>
                 </div>
                 
                 @if($client->trade_name)
-                <div class="flex items-center justify-between py-2 border-b border-gray-100">
-                    <span class="text-sm font-medium text-gray-600">Nome Fantasia:</span>
-                    <span class="font-medium">{{ $client->trade_name }}</span>
+                <div class="flex items-center justify-between py-2 border-b border-cinza-claro-2">
+                    <span class="text-sm font-medium text-cinza">Nome Fantasia:</span>
+                    <span class="font-medium text-cinza">{{ $client->trade_name }}</span>
                 </div>
                 @endif
                 
-                <div class="flex items-center justify-between py-2 border-b border-gray-100">
-                    <span class="text-sm font-medium text-gray-600">CNPJ:</span>
-                    <span class="font-mono text-sm">{{ $client->formatted_cnpj }}</span>
+                <div class="flex items-center justify-between py-2 border-b border-cinza-claro-2">
+                    <span class="text-sm font-medium text-cinza">CNPJ:</span>
+                    <span class="font-mono text-sm text-cinza">{{ $client->formatted_cnpj }}</span>
                 </div>
                 
-                <div class="flex items-center justify-between py-2 border-b border-gray-100">
-                    <span class="text-sm font-medium text-gray-600">Status:</span>
+                <div class="flex items-center justify-between py-2 border-b border-cinza-claro-2">
+                    <span class="text-sm font-medium text-cinza">Status:</span>
                     <x-badge variant="{{ $client->is_active ? 'success' : 'danger' }}">
                         {{ $client->is_active ? 'Ativo' : 'Inativo' }}
                     </x-badge>
@@ -120,41 +120,41 @@
             
             <div class="space-y-4">
                 @if($client->email)
-                <div class="flex items-center justify-between py-2 border-b border-gray-100">
-                    <span class="text-sm font-medium text-gray-600">Email:</span>
-                    <a href="mailto:{{ $client->email }}" class="text-primary-600 hover:text-primary-700 text-sm">
+                <div class="flex items-center justify-between py-2 border-b border-cinza-claro-2">
+                    <span class="text-sm font-medium text-cinza">Email:</span>
+                    <a href="mailto:{{ $client->email }}" class="text-roxo hover:text-roxo-det text-sm">
                         {{ $client->email }}
                     </a>
                 </div>
                 @endif
                 
                 @if($client->phone)
-                <div class="flex items-center justify-between py-2 border-b border-gray-100">
-                    <span class="text-sm font-medium text-gray-600">Telefone:</span>
-                    <a href="tel:{{ $client->phone }}" class="text-primary-600 hover:text-primary-700 text-sm">
+                <div class="flex items-center justify-between py-2 border-b border-cinza-claro-2">
+                    <span class="text-sm font-medium text-cinza">Telefone:</span>
+                    <a href="tel:{{ $client->phone }}" class="text-roxo hover:text-roxo-det text-sm">
                         {{ $client->phone }}
                     </a>
                 </div>
                 @endif
                 
                 @if($client->address)
-                <div class="flex items-center justify-between py-2 border-b border-gray-100">
-                    <span class="text-sm font-medium text-gray-600">Endereço:</span>
-                    <span class="text-sm text-right max-w-xs">{{ $client->address }}</span>
+                <div class="flex items-center justify-between py-2 border-b border-cinza-claro-2">
+                    <span class="text-sm font-medium text-cinza">Endereço:</span>
+                    <span class="text-sm text-right max-w-xs text-cinza">{{ $client->address }}</span>
                 </div>
                 @endif
                 
-                <div class="flex items-center justify-between py-2 border-b border-gray-100">
-                    <span class="text-sm font-medium text-gray-600">Data de Cadastro:</span>
-                    <span class="text-sm">{{ $client->created_at->format('d/m/Y H:i') }}</span>
+                <div class="flex items-center justify-between py-2 border-b border-cinza-claro-2">
+                    <span class="text-sm font-medium text-cinza">Data de Cadastro:</span>
+                    <span class="text-sm text-cinza">{{ $client->created_at->format('d/m/Y H:i') }}</span>
                 </div>
             </div>
         </div>
         
         @if($client->notes)
-        <div class="mt-6 pt-6 border-t border-gray-200">
-            <h3 class="text-sm font-medium text-gray-600 mb-3">Observações</h3>
-            <div class="bg-gray-50 border border-gray-200 p-4 rounded-lg">
+        <div class="mt-6 pt-6 border-t border-cinza-claro">
+            <h3 class="text-sm font-medium text-cinza mb-3">Observações</h3>
+            <div class="bg-cinza-claro-2 border border-cinza-claro p-4 rounded-lg">
                 <p class="text-sm whitespace-pre-wrap">{{ $client->notes }}</p>
             </div>
         </div>
@@ -178,14 +178,14 @@
         @if($client->contacts->count() > 0)
             <div class="space-y-4">
                 @foreach($client->contacts as $contact)
-                    <div class="flex items-center p-4 bg-gray-50 rounded-lg border border-gray-200">
-                        <div class="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center mr-4">
-                            <span class="text-sm font-medium text-primary-600">{{ substr($contact->name, 0, 1) }}</span>
+                    <div class="flex items-center p-4 bg-cinza-claro-2 rounded-lg border border-cinza-claro">
+                        <div class="w-10 h-10 bg-roxo bg-opacity-10 rounded-full flex items-center justify-center mr-4">
+                            <span class="text-sm font-medium text-roxo">{{ substr($contact->name, 0, 1) }}</span>
                         </div>
                         
                         <div class="flex-1">
                             <div class="flex items-center gap-2 mb-1">
-                                <h4 class="font-medium text-gray-900">{{ $contact->name }}</h4>
+                                <h4 class="font-medium text-cinza">{{ $contact->name }}</h4>
                                 @if($contact->is_primary)
                                     <x-badge variant="primary" size="sm">Principal</x-badge>
                                 @endif
@@ -195,7 +195,7 @@
                                     </x-badge>
                                 @endif
                             </div>
-                            <div class="flex items-center gap-4 text-sm text-gray-500">
+                            <div class="flex items-center gap-4 text-sm text-cinza-claro">
                                 <span>{{ $contact->email }}</span>
                                 @if($contact->phone)
                                     <span>•</span>
@@ -229,11 +229,11 @@
             </div>
         @else
             <div class="text-center py-12">
-                <svg width="64" height="64" fill="none" stroke="currentColor" class="text-gray-300 mb-4 mx-auto" viewBox="0 0 24 24">
+                <svg width="64" height="64" fill="none" stroke="currentColor" class="text-cinza-claro mb-4 mx-auto" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                 </svg>
-                <h6 class="text-gray-500 mb-2">Nenhum contato cadastrado</h6>
-                <p class="text-gray-400 text-sm mb-4">Comece adicionando o primeiro contato para esta empresa.</p>
+                <h6 class="text-cinza-claro mb-2">Nenhum contato cadastrado</h6>
+                <p class="text-cinza-claro-2 text-sm mb-4">Comece adicionando o primeiro contato para esta empresa.</p>
             </div>
         @endif
     </x-card>
@@ -250,16 +250,16 @@
         @if($client->tickets->count() > 0)
             <div class="space-y-4">
                 @foreach($client->tickets->take(5) as $ticket)
-                    <div class="flex items-center p-4 bg-gray-50 rounded-lg border border-gray-200">
-                        <div class="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center mr-4">
-                            <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="flex items-center p-4 bg-cinza-claro-2 rounded-lg border border-cinza-claro">
+                        <div class="w-10 h-10 bg-roxo bg-opacity-10 rounded-full flex items-center justify-center mr-4">
+                            <svg class="w-5 h-5 text-roxo" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                             </svg>
                         </div>
                         
                         <div class="flex-1">
                             <div class="flex items-center gap-2 mb-1">
-                                <a href="{{ route('tickets.show', $ticket->ticket_number) }}" class="font-medium text-primary-600 hover:text-primary-700">
+                                <a href="{{ route('tickets.show', $ticket->ticket_number) }}" class="font-medium text-roxo hover:text-roxo-det">
                                     #{{ $ticket->ticket_number }} - {{ $ticket->title }}
                                 </a>
                                 <x-badge variant="{{ $ticket->status === 'aberto' ? 'warning' : ($ticket->status === 'em_andamento' ? 'info' : ($ticket->status === 'resolvido' ? 'success' : 'secondary')) }}">
@@ -269,7 +269,7 @@
                                     <x-badge variant="danger">Urgente</x-badge>
                                 @endif
                             </div>
-                            <div class="flex items-center gap-4 text-sm text-gray-500">
+                            <div class="flex items-center gap-4 text-sm text-cinza-claro">
                                 <span>{{ $ticket->category->name }}</span>
                                 <span>•</span>
                                 <span>{{ ucfirst($ticket->priority) }}</span>
@@ -300,11 +300,11 @@
             @endif
         @else
             <div class="text-center py-12">
-                <svg width="64" height="64" fill="none" stroke="currentColor" class="text-gray-300 mb-4 mx-auto" viewBox="0 0 24 24">
+                <svg width="64" height="64" fill="none" stroke="currentColor" class="text-cinza-claro mb-4 mx-auto" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                 </svg>
-                <h6 class="text-gray-500 mb-2">Nenhum ticket encontrado</h6>
-                <p class="text-gray-400 text-sm mb-4">Esta empresa ainda não possui tickets de suporte.</p>
+                <h6 class="text-cinza-claro mb-2">Nenhum ticket encontrado</h6>
+                <p class="text-cinza-claro-2 text-sm mb-4">Esta empresa ainda não possui tickets de suporte.</p>
                 <x-button variant="primary" tag="a" href="{{ route('tickets.create', ['client_id' => $client->id]) }}">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
@@ -322,7 +322,11 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="contact-modal-title">Adicionar Contato</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="absolute top-4 right-4 text-cinza-claro hover:text-cinza" onclick="closeModal()" aria-label="Close">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
             </div>
             <div class="modal-body">
                 <form id="contact-form">
@@ -366,7 +370,7 @@
                         
                         <div class="flex items-center">
                             <input type="checkbox" id="contact-is-primary" name="is_primary" value="1" class="form-check-input">
-                            <label for="contact-is-primary" class="ml-2 text-sm text-gray-700">Contato principal</label>
+                            <label for="contact-is-primary" class="ml-2 text-sm text-cinza">Contato principal</label>
                         </div>
                         
                         <x-select 
@@ -378,14 +382,14 @@
                                 'cliente_gestor' => 'Gestor da Empresa'
                             ]"
                         />
-                        <div class="text-sm text-gray-500">
+                        <div class="text-sm text-cinza-claro">
                             <strong>Gestor:</strong> Pode criar usuários e ver todos os tickets da empresa<br>
                             <strong>Funcionário:</strong> Apenas seus próprios tickets
                         </div>
                     </div>
                 </form>
 
-                <div id="reset-password-section" class="mt-6 pt-6 border-t border-gray-200 hidden">
+                <div id="reset-password-section" class="mt-6 pt-6 border-t border-cinza-claro hidden">
                     <h6 class="font-medium mb-4">Redefinir Senha</h6>
                     
                     <div class="space-y-4">
@@ -412,7 +416,7 @@
                     </svg>
                     Redefinir Senha
                 </x-button>
-                <x-button variant="outline" type="button" data-bs-dismiss="modal">Cancelar</x-button>
+                <x-button variant="outline" type="button" onclick="closeModal()">Cancelar</x-button>
                 <x-button variant="primary" type="button" onclick="saveContact()">Salvar</x-button>
             </div>
         </div>

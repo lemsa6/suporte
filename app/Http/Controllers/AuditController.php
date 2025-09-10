@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AuditLog;
 use App\Models\Ticket;
+use App\Models\User;
 use App\Services\AuditService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -48,6 +49,9 @@ class AuditController extends Controller
             'status_changed' => 'Status alterado',
             'priority_changed' => 'Prioridade alterada',
             'viewed' => 'Visualizado',
+            'login_success' => 'Login realizado',
+            'login_failed' => 'Tentativa de login falhada',
+            'logout' => 'Logout realizado',
         ];
 
         $auditableTypes = [
@@ -57,7 +61,31 @@ class AuditController extends Controller
             'App\Models\Client' => 'Cliente',
         ];
 
-        return view('admin.audit.index', compact('logs', 'eventTypes', 'auditableTypes', 'filters'));
+        // Buscar usuários para o filtro
+        $users = User::select('id', 'name')->orderBy('name')->get();
+
+        return view('admin.audit.index', compact('logs', 'eventTypes', 'auditableTypes', 'users', 'filters'));
+    }
+
+    /**
+     * Retorna a classe CSS para o tipo de evento de auditoria
+     */
+    public static function getEventColorClass(string $eventType): string
+    {
+        $colorMap = [
+            'created' => 'verde-claro',
+            'updated' => 'amarelo-claro',
+            'deleted' => 'vermelho-claro',
+            'replied' => 'roxo-pastel',
+            'closed' => 'roxo-escuro',
+            'reopened' => 'vermelho-escuro',
+            'assigned' => 'azul-claro',
+            'status_changed' => 'cinza-claro-2',
+            'priority_changed' => 'verde-pastel',
+            'viewed' => 'lilás',
+        ];
+
+        return $colorMap[$eventType] ?? 'cinza-claro';
     }
 
     /**

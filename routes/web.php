@@ -32,6 +32,12 @@ Route::get('/', function () {
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login']);
+    
+    // Rotas de recuperação de senha
+    Route::get('/password/reset', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+    Route::post('/password/email', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+    Route::get('/password/reset/{token}', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
+    Route::post('/password/reset', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'reset'])->name('password.update');
 });
 
 // Rotas autenticadas
@@ -64,6 +70,9 @@ Route::middleware('auth')->group(function () {
         Route::put('/tickets/{ticketNumber}', [TicketController::class, 'update'])->name('tickets.update');
         Route::delete('/tickets/{ticketNumber}', [TicketController::class, 'destroy'])->name('tickets.destroy');
         Route::post('/tickets/{ticketNumber}/message', [TicketController::class, 'addMessage'])->name('tickets.message');
+        
+        // Ações em lote
+        Route::post('/tickets/bulk-action', [TicketController::class, 'bulkAction'])->name('tickets.bulk-action');
     });
     
     // Rotas de anexos
@@ -75,6 +84,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:admin,tecnico')->group(function () {
         Route::resource('clients', ClientController::class);
         Route::post('/clients/{client}/toggle-status', [ClientController::class, 'toggleStatus'])->name('clients.toggle-status');
+        Route::post('/clients/bulk-action', [ClientController::class, 'bulkAction'])->name('clients.bulk-action');
         
         // Rotas para gerenciar contatos dos clientes
         Route::post('/clients/{client}/contacts', [ClientController::class, 'storeContact'])->name('clients.contacts.store');

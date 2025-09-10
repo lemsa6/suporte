@@ -139,4 +139,86 @@ class SystemHelper
     {
         return self::getLimit('ticket_number_prefix') ?? 'TKT';
     }
+    
+    /**
+     * Retorna a classe CSS para o tipo de evento de auditoria
+     */
+    public static function getAuditEventColorClass(string $eventType): string
+    {
+        $colorMap = [
+            'created' => 'verde-claro',
+            'updated' => 'amarelo-claro',
+            'deleted' => 'vermelho-claro',
+            'replied' => 'roxo-pastel',
+            'closed' => 'roxo-escuro',
+            'reopened' => 'vermelho-escuro',
+            'assigned' => 'azul-claro',
+            'status_changed' => 'cinza-claro-2',
+            'priority_changed' => 'verde-pastel',
+            'viewed' => 'lilás',
+            'login_success' => 'verde-claro',
+            'login_failed' => 'vermelho-claro',
+            'logout' => 'cinza-claro-2',
+        ];
+
+        return $colorMap[$eventType] ?? 'cinza-claro';
+    }
+
+    /**
+     * Retorna a classe CSS para o status do ticket
+     */
+    public static function getTicketStatusColorClass(string $status): string
+    {
+        $colorMap = [
+            'aberto' => 'amarelo-claro',      // Amarelo claro - Aberto
+            'em_andamento' => 'azul-claro',   // Azul claro - Em Andamento
+            'resolvido' => 'verde-claro',     // Verde claro - Resolvido
+            'fechado' => 'cinza-claro-2',     // Cinza claro - Fechado
+        ];
+
+        return $colorMap[$status] ?? 'cinza-claro';
+    }
+
+    /**
+     * Retorna a classe CSS para a prioridade do ticket
+     */
+    public static function getTicketPriorityColorClass(string $priority): string
+    {
+        $colorMap = [
+            'baixa' => 'verde-claro',         // Verde claro - Baixa
+            'média' => 'amarelo-claro',       // Amarelo claro - Média
+            'alta' => 'vermelho-claro',       // Vermelho claro - Alta
+        ];
+
+        return $colorMap[$priority] ?? 'cinza-claro';
+    }
+
+    /**
+     * Retorna o texto formatado para o status do ticket
+     */
+    public static function getTicketStatusText(string $status): string
+    {
+        $statusMap = [
+            'aberto' => 'Aberto',
+            'em_andamento' => 'Em Andamento',
+            'resolvido' => 'Resolvido',
+            'fechado' => 'Fechado',
+        ];
+
+        return $statusMap[$status] ?? ucfirst($status);
+    }
+
+    /**
+     * Retorna o texto formatado para a prioridade do ticket
+     */
+    public static function getTicketPriorityText(string $priority): string
+    {
+        $priorityMap = [
+            'baixa' => 'Baixa',
+            'média' => 'Média',
+            'alta' => 'Alta',
+        ];
+
+        return $priorityMap[$priority] ?? ucfirst($priority);
+    }
 }

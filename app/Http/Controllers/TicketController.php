@@ -585,6 +585,194 @@ class TicketController extends Controller
     }
 
     /**
+     * Executa ações em lote nos tickets selecionados
+     */
+    public function bulkAction(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'action' => 'required|string|in:delete,change_status,change_priority,assign,mark_urgent,unmark_urgent',
+            'ticket_ids' => 'required|array|min:1',
+            'ticket_ids.*' => 'string',
+            'status' => 'required_if:action,change_status|in:aberto,em_andamento,resolvido,fechado',
+            'priority' => 'required_if:action,change_priority|in:baixa,média,alta',
+            'assigned_to' => 'required_if:action,assign|exists:users,id',
+        ]);
+
+        $ticketNumbers = $validated['ticket_ids'];
+        $action = $validated['action'];
+        $user = auth()->user();
+        
+        $results = [
+            'success' => [],
+            'errors' => [],
+            'total' => count($ticketNumbers)
+        ];
+
+        foreach ($ticketNumbers as $ticketNumber) {
+            try {
+                $ticket = Ticket::findByNumber($ticketNumber);
+                
+                if (!$ticket) {
+                    $results['errors'][] = "Ticket {$ticketNumber} não encontrado";
+                    continue;
+                }
+
+                // Verificar permissões
+                if ($user->isCliente() && $ticket->client_id !== $user->client_id) {
+                    $results['errors'][] = "Sem permissão para modificar ticket {$ticketNumber}";
+                    continue;
+                }
+
+                $this->executeBulkActionOnTicket($ticket, $action, $validated, $user, $request);
+                $results['success'][] = $ticketNumber;
+                
+            } catch (\Exception $e) {
+                $results['errors'][] = "Erro no ticket {$ticketNumber}: " . $e->getMessage();
+            }
+        }
+
+        return response()->json([
+            'success' => count($results['success']) > 0,
+            'message' => $this->getBulkActionMessage($action, $results),
+            'results' => $results
+        ]);
+    }
+
+    /**
+     * Executa uma ação específica em um ticket
+     */
+    private function executeBulkActionOnTicket(Ticket $ticket, string $action, array $validated, $user, Request $request): void
+    {
+        $oldValues = $ticket->toArray();
+        
+        switch ($action) {
+            case 'delete':
+                $ticket->delete();
+                $this->auditService->logDeleted($ticket, $oldValues, $user, $request);
+                break;
+                
+            case 'change_status':
+                $oldStatus = $ticket->status;
+                $newStatus = $validated['status'];
+                
+                $updateData = ['status' => $newStatus];
+                
+                if ($newStatus === 'resolvido' && $oldStatus !== 'resolvido') {
+                    $updateData['resolved_at'] = now();
+                } elseif ($newStatus === 'fechado' && $oldStatus !== 'fechado') {
+                    $updateData['closed_at'] = now();
+                }
+                
+                $ticket->update($updateData);
+                
+                // Criar mensagem de mudança de status
+                TicketMessage::create([
+                    'ticket_id' => $ticket->id,
+                    'user_id' => $user->id,
+                    'type' => 'status_change',
+                    'message' => "Status alterado de '{$oldStatus}' para '{$newStatus}' (ação em lote)",
+                    'is_internal' => true,
+                ]);
+                
+                $this->auditService->logStatusChange($ticket, $oldStatus, $newStatus, $user, $request);
+                $this->notificationService->notifyStatusChange($ticket, $oldStatus, $newStatus, $user);
+                break;
+                
+            case 'change_priority':
+                $oldPriority = $ticket->priority;
+                $newPriority = $validated['priority'];
+                
+                $ticket->update(['priority' => $newPriority]);
+                
+                // Criar mensagem de mudança de prioridade
+                TicketMessage::create([
+                    'ticket_id' => $ticket->id,
+                    'user_id' => $user->id,
+                    'type' => 'priority_change',
+                    'message' => "Prioridade alterada de '{$oldPriority}' para '{$newPriority}' (ação em lote)",
+                    'is_internal' => true,
+                ]);
+                
+                $this->auditService->logPriorityChange($ticket, $oldPriority, $newPriority, $user, $request);
+                $this->notificationService->notifyPriorityChange($ticket, $oldPriority, $newPriority, $user);
+                break;
+                
+            case 'assign':
+                $assignedUserId = $validated['assigned_to'];
+                $assignedUser = User::find($assignedUserId);
+                $oldAssignedTo = $ticket->assigned_to;
+                
+                $ticket->update(['assigned_to' => $assignedUserId]);
+                
+                // Criar mensagem de atribuição
+                TicketMessage::create([
+                    'ticket_id' => $ticket->id,
+                    'user_id' => $user->id,
+                    'type' => 'assignment',
+                    'message' => "Ticket atribuído a {$assignedUser->name} (ação em lote)",
+                    'is_internal' => true,
+                ]);
+                
+                $this->auditService->logTicketAssigned($ticket, $assignedUser, $user, $request);
+                $this->notificationService->notifyTicketAssigned($ticket, $assignedUser);
+                break;
+                
+            case 'mark_urgent':
+                $ticket->update(['is_urgent' => true]);
+                
+                // Criar mensagem de urgência
+                TicketMessage::create([
+                    'ticket_id' => $ticket->id,
+                    'user_id' => $user->id,
+                    'type' => 'priority_change',
+                    'message' => 'Ticket marcado como urgente (ação em lote)',
+                    'is_internal' => true,
+                ]);
+                break;
+                
+            case 'unmark_urgent':
+                $ticket->update(['is_urgent' => false]);
+                
+                // Criar mensagem de urgência
+                TicketMessage::create([
+                    'ticket_id' => $ticket->id,
+                    'user_id' => $user->id,
+                    'type' => 'priority_change',
+                    'message' => 'Ticket desmarcado como urgente (ação em lote)',
+                    'is_internal' => true,
+                ]);
+                break;
+        }
+    }
+
+    /**
+     * Gera mensagem de resultado das ações em lote
+     */
+    private function getBulkActionMessage(string $action, array $results): string
+    {
+        $actionNames = [
+            'delete' => 'excluídos',
+            'change_status' => 'status alterado',
+            'change_priority' => 'prioridade alterada',
+            'assign' => 'atribuídos',
+            'mark_urgent' => 'marcados como urgentes',
+            'unmark_urgent' => 'desmarcados como urgentes',
+        ];
+        
+        $actionName = $actionNames[$action] ?? 'processados';
+        $successCount = count($results['success']);
+        $errorCount = count($results['errors']);
+        
+        if ($successCount > 0 && $errorCount === 0) {
+            return "Todos os {$successCount} tickets foram {$actionName} com sucesso!";
+        } elseif ($successCount > 0 && $errorCount > 0) {
+            return "{$successCount} tickets foram {$actionName} com sucesso. {$errorCount} tickets apresentaram erro.";
+        } else {
+            return "Nenhum ticket pôde ser {$actionName}. Verifique as permissões e tente novamente.";
+        }
+    }
+
+    /**
      * Aplica filtros na query
      */
     private function applyFilters($query, Request $request): void

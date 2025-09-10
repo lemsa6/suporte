@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Ticket;
+use App\Services\AuditService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -10,30 +12,49 @@ use Illuminate\Http\JsonResponse;
 
 class CategoryController extends Controller
 {
-    // Middleware aplicado nas rotas
+    protected $auditService;
+
+    public function __construct(AuditService $auditService)
+    {
+        $this->auditService = $auditService;
+    }
 
     /**
      * Lista de categorias
      */
     public function index(): View
     {
-        $categories = Category::withCount('tickets')
+        $categories = $this->getCategoriesWithStats();
+        $stats = $this->getCategoryStats();
+        
+        return view('categories.index', compact('categories', 'stats'));
+    }
+
+    /**
+     * Obtém categorias com estatísticas
+     */
+    private function getCategoriesWithStats()
+    {
+        return Category::withCount('tickets')
             ->withCount(['tickets as active_tickets_count' => function ($q) {
                 $q->whereIn('status', ['aberto', 'em_andamento']);
             }])
             ->orderBy('name')
-            ->paginate(15); // Alterado de get() para paginate(15)
-        
-        // Estatísticas para o dashboard
-        $stats = [
+            ->paginate(15);
+    }
+
+    /**
+     * Obtém estatísticas das categorias
+     */
+    private function getCategoryStats(): array
+    {
+        return [
             'total' => Category::count(),
             'active' => Category::where('is_active', true)->count(),
             'inactive' => Category::where('is_active', false)->count(),
-            'total_tickets' => \App\Models\Ticket::count(),
-            'open_tickets' => \App\Models\Ticket::where('status', 'aberto')->count(),
+            'total_tickets' => Ticket::count(),
+            'open_tickets' => Ticket::where('status', 'aberto')->count(),
         ];
-        
-        return view('categories.index', compact('categories', 'stats'));
     }
 
     /**

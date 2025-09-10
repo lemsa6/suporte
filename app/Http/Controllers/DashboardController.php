@@ -62,26 +62,7 @@ class DashboardController extends Controller
      */
     private function getGeneralStats(User $user): array
     {
-        $query = Ticket::query();
-        
-        // Filtra por perfil do usuário
-        if ($user->isClienteGestor()) {
-            // Gestor vê todos os tickets da empresa
-            $query->whereHas('client', function ($q) use ($user) {
-                $q->whereHas('contacts', function ($q2) use ($user) {
-                    $q2->where('email', $user->email);
-                });
-            });
-        } elseif ($user->isClienteFuncionario()) {
-            // Funcionário vê apenas seus próprios tickets
-            $query->whereHas('contact', function ($q) use ($user) {
-                $q->where('email', $user->email);
-            });
-        } elseif ($user->isTecnico()) {
-            // Técnico vê tickets atribuídos a ele
-            $query->where('assigned_to', $user->id);
-        }
-        // Admin vê todos os tickets
+        $query = $this->getUserTicketQuery($user);
         
         $totalTickets = $query->count();
         $openTickets = (clone $query)->open()->count();
@@ -99,6 +80,30 @@ class DashboardController extends Controller
             'urgent' => $urgentTickets,
             'active' => $openTickets + $inProgressTickets,
         ];
+    }
+
+    /**
+     * Obtém query baseada no perfil do usuário
+     */
+    private function getUserTicketQuery(User $user)
+    {
+        $query = Ticket::query();
+        
+        if ($user->isClienteGestor()) {
+            $query->whereHas('client', function ($q) use ($user) {
+                $q->whereHas('contacts', function ($q2) use ($user) {
+                    $q2->where('email', $user->email);
+                });
+            });
+        } elseif ($user->isClienteFuncionario()) {
+            $query->whereHas('contact', function ($q) use ($user) {
+                $q->where('email', $user->email);
+            });
+        } elseif ($user->isTecnico()) {
+            $query->where('assigned_to', $user->id);
+        }
+        
+        return $query;
     }
 
     /**

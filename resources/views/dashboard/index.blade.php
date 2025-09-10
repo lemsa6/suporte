@@ -6,7 +6,7 @@
 <div class="mb-8">
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div class="mb-4 sm:mb-0">
-            <span class="text-sm text-gray-500">Dashboard</span>
+            <span class="text-sm text-cinza-claro">Dashboard</span>
             <h1 class="page-title mt-1">Bem-vindo, {{ auth()->user()->name }}!</h1>
         </div>
         <x-button 
@@ -75,53 +75,26 @@
                                     </td>
                                     <td>
                                         <div>
-                                            <div class="font-medium text-gray-900">{{ Str::limit($ticket->title ?? $ticket->subject, 50) }}</div>
-                                            <div class="text-gray-500 text-sm">{{ Str::limit($ticket->description ?? '', 60) }}</div>
+                                            <div class="font-medium text-cinza">{{ Str::limit($ticket->title ?? $ticket->subject, 50) }}</div>
+                                            <div class="text-cinza-claro text-sm">{{ Str::limit($ticket->description ?? '', 60) }}</div>
                                         </div>
                                     </td>
                                     <td>
                                         <div class="flex items-center">
                                             <div class="table-avatar">
-                                                <span class="table-avatar-text">{{ substr($ticket->client->name ?? 'N/A', 0, 1) }}</span>
+                                                <span class="table-avatar-text">{{ substr($ticket->client->trade_name ?? $ticket->client->company_name ?? 'N/A', 0, 1) }}</span>
                                             </div>
-                                            <span class="font-medium">{{ $ticket->client->name ?? 'N/A' }}</span>
+                                            <span class="font-medium">{{ $ticket->client->trade_name ?? $ticket->client->company_name ?? 'N/A' }}</span>
                                         </div>
                                     </td>
                                     <td>
-                                        @switch($ticket->status)
-                                            @case('aberto')
-                                                <x-badge variant="warning">Aberto</x-badge>
-                                                @break
-                                            @case('em_andamento')
-                                                <x-badge variant="info">Em Andamento</x-badge>
-                                                @break
-                                            @case('resolvido')
-                                                <x-badge variant="success">Resolvido</x-badge>
-                                                @break
-                                            @case('fechado')
-                                                <x-badge variant="default">Fechado</x-badge>
-                                                @break
-                                            @default
-                                                <x-badge variant="default">{{ ucfirst($ticket->status) }}</x-badge>
-                                        @endswitch
+                                        <x-ticket-status-badge :status="$ticket->status" />
                                     </td>
                                     <td>
-                                        @switch($ticket->priority)
-                                            @case('baixa')
-                                                <x-badge variant="success">Baixa</x-badge>
-                                                @break
-                                            @case('média')
-                                                <x-badge variant="warning">Média</x-badge>
-                                                @break
-                                            @case('alta')
-                                                <x-badge variant="danger">Alta</x-badge>
-                                                @break
-                                            @default
-                                                <x-badge variant="default">{{ ucfirst($ticket->priority) }}</x-badge>
-                                        @endswitch
+                                        <x-ticket-priority-badge :priority="$ticket->priority" />
                                     </td>
                                     <td>
-                                        <span class="text-gray-500">{{ $ticket->created_at->diffForHumans() }}</span>
+                                        <span class="text-cinza-claro">{{ $ticket->created_at->diffForHumans() }}</span>
                                     </td>
                                 </tr>
                             @endforeach
@@ -141,26 +114,30 @@
         <!-- Métricas (2/6) -->
         <div class="lg:col-span-1">
             <h2 class="section-title mb-4">Métricas do Sistema</h2>
-            <div class="grid grid-cols-2 gap-2">
-                <div class="dashboard-metric">
-                    <div class="text-2xl font-bold text-primary-600 mb-1">{{ $stats['total'] ?? 0 }}</div>
-                    <div class="text-xs text-gray-600">Total</div>
-                </div>
+            <div class="grid grid-cols-2 gap-4">
+                <x-stat-card 
+                    title="Total"
+                    :value="$stats['total'] ?? 0"
+                    color="primary"
+                />
                 
-                <div class="dashboard-metric">
-                    <div class="text-2xl font-bold text-warning-600 mb-1">{{ $stats['open'] ?? 0 }}</div>
-                    <div class="text-xs text-gray-600">Abertos</div>
-                </div>
+                <x-stat-card 
+                    title="Abertos"
+                    :value="$stats['open'] ?? 0"
+                    color="warning"
+                />
                 
-                <div class="dashboard-metric">
-                    <div class="text-2xl font-bold text-danger-600 mb-1">{{ $stats['urgent'] ?? 0 }}</div>
-                    <div class="text-xs text-gray-600">Urgentes</div>
-                </div>
+                <x-stat-card 
+                    title="Urgentes"
+                    :value="$stats['urgent'] ?? 0"
+                    color="danger"
+                />
                 
-                <div class="dashboard-metric">
-                    <div class="text-2xl font-bold text-success-600 mb-1">{{ $stats['resolved'] ?? 0 }}</div>
-                    <div class="text-xs text-gray-600">Resolvidos</div>
-                </div>
+                <x-stat-card 
+                    title="Resolvidos"
+                    :value="$stats['resolved'] ?? 0"
+                    color="success"
+                />
             </div>
         </div>
     </div>
@@ -228,15 +205,15 @@
             <x-card>
                 <div class="space-y-4">
                     <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-600">Tempo de Resposta</span>
+                        <span class="text-sm text-cinza">Tempo de Resposta</span>
                         <x-badge variant="info">2.4h</x-badge>
                     </div>
                     <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-600">Taxa de Resolução</span>
+                        <span class="text-sm text-cinza">Taxa de Resolução</span>
                         <x-badge variant="success">94%</x-badge>
                     </div>
                     <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-600">Satisfação</span>
+                        <span class="text-sm text-cinza">Satisfação</span>
                         <x-badge variant="primary">4.8/5</x-badge>
                     </div>
                 </div>

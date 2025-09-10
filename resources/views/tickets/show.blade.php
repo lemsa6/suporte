@@ -13,9 +13,9 @@
                 Voltar
             </x-button>
             <div>
-                <span class="text-sm text-gray-500">Ticket</span>
+                <span class="text-sm text-cinza-claro">Ticket</span>
                 <h1 class="page-title mt-1">#{{ $ticket->ticket_number }}</h1>
-                <p class="text-gray-600 mt-2">{{ $ticket->title }}</p>
+                <p class="text-cinza mt-2">{{ $ticket->title }}</p>
             </div>
         </div>
     </div>
@@ -62,8 +62,8 @@
             <div class="space-y-4">
                 <h3 class="section-title mb-4">Informações Principais</h3>
                 <div class="space-y-3">
-                    <div class="flex items-center justify-between py-2 border-b border-gray-100">
-                        <span class="text-sm font-medium text-gray-600">Status:</span>
+                    <div class="flex items-center justify-between py-2 border-b border-cinza-claro-2">
+                        <span class="text-sm font-medium text-cinza">Status:</span>
                         <x-badge variant="
                             @if($ticket->status === 'aberto') warning
                             @elseif($ticket->status === 'em_andamento') info
@@ -73,8 +73,8 @@
                             {{ ucfirst($ticket->status) }}
                         </x-badge>
                     </div>
-                    <div class="flex items-center justify-between py-2 border-b border-gray-100">
-                        <span class="text-sm font-medium text-gray-600">Prioridade:</span>
+                    <div class="flex items-center justify-between py-2 border-b border-cinza-claro-2">
+                        <span class="text-sm font-medium text-cinza">Prioridade:</span>
                         <x-badge variant="
                             @if($ticket->priority === 'alta') danger
                             @elseif($ticket->priority === 'média') warning
@@ -83,12 +83,12 @@
                             {{ ucfirst($ticket->priority) }}
                         </x-badge>
                     </div>
-                    <div class="flex items-center justify-between py-2 border-b border-gray-100">
-                        <span class="text-sm font-medium text-gray-600">Categoria:</span>
-                        <span class="text-gray-900 font-medium">{{ $ticket->category->name }}</span>
+                    <div class="flex items-center justify-between py-2 border-b border-cinza-claro-2">
+                        <span class="text-sm font-medium text-cinza">Categoria:</span>
+                        <span class="text-cinza font-medium">{{ $ticket->category->name }}</span>
                     </div>
-                    <div class="flex items-center justify-between py-2 border-b border-gray-100">
-                        <span class="text-sm font-medium text-gray-600">Urgente:</span>
+                    <div class="flex items-center justify-between py-2 border-b border-cinza-claro-2">
+                        <span class="text-sm font-medium text-cinza">Urgente:</span>
                         <x-badge variant="{{ $ticket->is_urgent ? 'danger' : 'secondary' }}">
                             {{ $ticket->is_urgent ? 'Sim' : 'Não' }}
                         </x-badge>
@@ -100,34 +100,34 @@
             <div class="space-y-4">
                 <h3 class="section-title mb-4">Detalhes do Ticket</h3>
                 <div class="space-y-3">
-                    <div class="flex items-center justify-between py-2 border-b border-gray-100">
-                        <span class="text-sm font-medium text-gray-600">Responsável:</span>
-                        <span class="text-gray-900 font-medium">
+                    <div class="flex items-center justify-between py-2 border-b border-cinza-claro-2">
+                        <span class="text-sm font-medium text-cinza">Responsável:</span>
+                        <span class="text-cinza font-medium">
                             @if($ticket->assignedTo)
                                 {{ $ticket->assignedTo->name }}
                             @else
-                                <span class="text-gray-400">Não atribuído</span>
+                                <span class="text-cinza-claro-2">Não atribuído</span>
                             @endif
                         </span>
                     </div>
-                    <div class="flex items-center justify-between py-2 border-b border-gray-100">
-                        <span class="text-sm font-medium text-gray-600">Aberto em:</span>
-                        <span class="text-gray-900 font-medium">{{ $ticket->opened_at->format('d/m/Y H:i') }}</span>
+                    <div class="flex items-center justify-between py-2 border-b border-cinza-claro-2">
+                        <span class="text-sm font-medium text-cinza">Aberto em:</span>
+                        <span class="text-cinza font-medium">{{ $ticket->opened_at->format('d/m/Y H:i') }}</span>
                     </div>
-                    <div class="flex items-center justify-between py-2 border-b border-gray-100">
-                        <span class="text-sm font-medium text-gray-600">Tempo aberto:</span>
-                        <span class="text-gray-900 font-medium">{{ $ticket->days_open }} dias</span>
+                    <div class="flex items-center justify-between py-2 border-b border-cinza-claro-2">
+                        <span class="text-sm font-medium text-cinza">Tempo aberto:</span>
+                        <span class="text-cinza font-medium">{{ $ticket->days_open }} dias</span>
                     </div>
                     @if($ticket->resolved_at)
-                    <div class="flex items-center justify-between py-2 border-b border-gray-100">
-                        <span class="text-sm font-medium text-gray-600">Resolvido em:</span>
-                        <span class="text-gray-900 font-medium">{{ $ticket->resolved_at->format('d/m/Y H:i') }}</span>
+                    <div class="flex items-center justify-between py-2 border-b border-cinza-claro-2">
+                        <span class="text-sm font-medium text-cinza">Resolvido em:</span>
+                        <span class="text-cinza font-medium">{{ $ticket->resolved_at->format('d/m/Y H:i') }}</span>
                     </div>
                     @endif
                     @if($ticket->closed_at)
-                    <div class="flex items-center justify-between py-2 border-b border-gray-100">
-                        <span class="text-sm font-medium text-gray-600">Fechado em:</span>
-                        <span class="text-gray-900 font-medium">{{ $ticket->closed_at->format('d/m/Y H:i') }}</span>
+                    <div class="flex items-center justify-between py-2 border-b border-cinza-claro-2">
+                        <span class="text-sm font-medium text-cinza">Fechado em:</span>
+                        <span class="text-cinza font-medium">{{ $ticket->closed_at->format('d/m/Y H:i') }}</span>
                     </div>
                     @endif
                 </div>
@@ -135,32 +135,32 @@
         </div>
 
         <!-- Cliente -->
-        <div class="mt-8 pt-6 border-t border-gray-200">
+        <div class="mt-8 pt-6 border-t border-cinza-claro">
             <h3 class="section-title mb-4">Informações do Cliente</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="bg-gray-50 p-4 rounded-lg">
+                <div class="bg-cinza-claro-2 p-4 rounded-lg">
                     <div class="flex justify-between items-center mb-2">
-                        <span class="text-sm font-medium text-gray-600">Empresa:</span>
-                        <span class="text-gray-900 font-medium">{{ $ticket->client->company_name }}</span>
+                        <span class="text-sm font-medium text-cinza">Empresa:</span>
+                        <span class="text-cinza font-medium">{{ $ticket->client->company_name }}</span>
                     </div>
                     <div class="flex justify-between items-center">
-                        <span class="text-sm font-medium text-gray-600">CNPJ:</span>
-                        <span class="text-gray-900 font-medium">{{ $ticket->client->formatted_cnpj }}</span>
+                        <span class="text-sm font-medium text-cinza">CNPJ:</span>
+                        <span class="text-cinza font-medium">{{ $ticket->client->formatted_cnpj }}</span>
                     </div>
                 </div>
-                <div class="bg-gray-50 p-4 rounded-lg">
+                <div class="bg-cinza-claro-2 p-4 rounded-lg">
                     <div class="flex justify-between items-center mb-2">
-                        <span class="text-sm font-medium text-gray-600">Contato:</span>
-                        <span class="text-gray-900 font-medium">{{ $ticket->contact->name }}</span>
+                        <span class="text-sm font-medium text-cinza">Contato:</span>
+                        <span class="text-cinza font-medium">{{ $ticket->contact->name }}</span>
                     </div>
                     <div class="flex justify-between items-center mb-2">
-                        <span class="text-sm font-medium text-gray-600">Email:</span>
-                        <span class="text-gray-900 font-medium">{{ $ticket->contact->email }}</span>
+                        <span class="text-sm font-medium text-cinza">Email:</span>
+                        <span class="text-cinza font-medium">{{ $ticket->contact->email }}</span>
                     </div>
                     @if($ticket->contact->phone)
                     <div class="flex justify-between items-center">
-                        <span class="text-sm font-medium text-gray-600">Telefone:</span>
-                        <span class="text-gray-900 font-medium">{{ $ticket->contact->phone }}</span>
+                        <span class="text-sm font-medium text-cinza">Telefone:</span>
+                        <span class="text-cinza font-medium">{{ $ticket->contact->phone }}</span>
                     </div>
                     @endif
                 </div>
@@ -168,19 +168,19 @@
         </div>
 
         @if($ticket->resolution_notes)
-        <div class="mt-6 pt-6 border-t border-gray-200">
+        <div class="mt-6 pt-6 border-t border-cinza-claro">
             <h3 class="section-title mb-4">Notas de Resolução</h3>
             <div class="alert-info p-4 rounded-lg">
-                <p class="text-gray-900">{{ $ticket->resolution_notes }}</p>
+                <p class="text-cinza">{{ $ticket->resolution_notes }}</p>
             </div>
         </div>
         @endif
 
         <!-- Descrição -->
-        <div class="mt-6 pt-6 border-t border-gray-200">
+        <div class="mt-6 pt-6 border-t border-cinza-claro">
             <h3 class="section-title mb-4">Descrição do Problema</h3>
-            <div class="bg-gray-50 border border-gray-200 p-4 rounded-lg">
-                <p class="text-gray-900 whitespace-pre-wrap">{{ $ticket->description }}</p>
+            <div class="bg-cinza-claro-2 border border-cinza-claro p-4 rounded-lg">
+                <p class="text-cinza whitespace-pre-wrap">{{ $ticket->description }}</p>
             </div>
         </div>
     </x-card>
@@ -191,12 +191,12 @@
         @if($ticket->messages->count() > 0)
             <div class="space-y-6">
                 @foreach($ticket->messages as $message)
-                    <div class="flex gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <div class="flex gap-4 p-4 bg-cinza-claro-2 rounded-lg border border-cinza-claro">
                         <!-- Avatar -->
                         <div class="flex-shrink-0">
                             <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-medium
                                 @if($message->user) bg-roxo
-                                @else bg-gray-600
+                                @else bg-cinza-claro-2
                                 @endif">
                                 @if($message->user)
                                     {{ substr($message->user->name, 0, 1) }}
@@ -210,13 +210,13 @@
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center justify-between mb-2">
                                 <div class="flex items-center gap-2">
-                                    <span class="font-medium text-gray-900">
+                                    <span class="font-medium text-cinza">
                                         @if($message->user)
                                             {{ $message->user->name }}
-                                            <span class="text-sm text-gray-500">({{ ucfirst($message->user->role) }})</span>
+                                            <span class="text-sm text-cinza-claro">({{ ucfirst($message->user->role) }})</span>
                                         @else
                                             {{ $message->contact->name }}
-                                            <span class="text-sm text-gray-500">(Cliente)</span>
+                                            <span class="text-sm text-cinza-claro">(Cliente)</span>
                                         @endif
                                     </span>
                                     <x-badge variant="
@@ -230,16 +230,16 @@
                                         <x-badge variant="danger">Interno</x-badge>
                                     @endif
                                 </div>
-                                <span class="text-sm text-gray-500">{{ $message->created_at->format('d/m/Y H:i') }}</span>
+                                <span class="text-sm text-cinza-claro">{{ $message->created_at->format('d/m/Y H:i') }}</span>
                             </div>
                             
                             <div class="prose max-w-none">
-                                <p class="text-gray-900 whitespace-pre-wrap">{{ $message->message }}</p>
+                                <p class="text-cinza whitespace-pre-wrap">{{ $message->message }}</p>
                             </div>
                             
                             @if($message->attachments->count() > 0)
                                 <div class="mt-4">
-                                    <h4 class="text-sm font-medium text-gray-700 mb-2">Anexos:</h4>
+                                    <h4 class="text-sm font-medium text-cinza mb-2">Anexos:</h4>
                                     <div class="flex flex-wrap gap-2">
                                         @foreach($message->attachments as $attachment)
                                             @php
@@ -289,11 +289,11 @@
             </div>
         @else
             <div class="text-center py-12">
-                <svg class="mx-auto mb-4 text-gray-400" width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="mx-auto mb-4 text-cinza-claro" width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
                 </svg>
-                <h3 class="text-lg font-medium text-gray-900 mb-2">Nenhuma mensagem ainda</h3>
-                <p class="text-gray-500">Seja o primeiro a comentar neste ticket.</p>
+                <h3 class="text-lg font-medium text-cinza mb-2">Nenhuma mensagem ainda</h3>
+                <p class="text-cinza-claro">Seja o primeiro a comentar neste ticket.</p>
             </div>
         @endif
     </x-card>
@@ -306,13 +306,13 @@
             @csrf
             
             <div>
-                <label for="message" class="block text-sm font-medium text-gray-700 mb-2">Mensagem</label>
+                <label for="message" class="block text-sm font-medium text-cinza mb-2">Mensagem</label>
                 <x-textarea id="message" name="message" rows="4" required placeholder="Digite sua mensagem..."></x-textarea>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label for="type" class="block text-sm font-medium text-gray-700 mb-2">Tipo</label>
+                    <label for="type" class="block text-sm font-medium text-cinza mb-2">Tipo</label>
                     <x-select id="type" name="type">
                         <option value="reply">Resposta</option>
                         @if(auth()->user()->canManageTickets())
@@ -325,10 +325,10 @@
                 @if(auth()->user()->canManageTickets())
                 <div class="flex items-center">
                     <div class="flex items-center h-5">
-                        <input type="checkbox" id="is_internal" name="is_internal" value="1" class="h-4 w-4 text-roxo focus:ring-roxo border-gray-300 rounded">
+                        <input type="checkbox" id="is_internal" name="is_internal" value="1" class="h-4 w-4 text-roxo focus:ring-roxo border-cinza-claro rounded">
                     </div>
                     <div class="ml-3 text-sm">
-                        <label for="is_internal" class="font-medium text-gray-700">
+                        <label for="is_internal" class="font-medium text-cinza">
                             Mensagem interna (apenas para equipe)
                         </label>
                     </div>
@@ -337,10 +337,10 @@
             </div>
 
             <div>
-                <label for="attachments" class="block text-sm font-medium text-gray-700 mb-2">Anexos</label>
+                <label for="attachments" class="block text-sm font-medium text-cinza mb-2">Anexos</label>
                 <input type="file" id="attachments" name="attachments[]" multiple 
-                       class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-roxo file:bg-opacity-10 file:text-roxo hover:file:bg-roxo hover:file:bg-opacity-20">
-                <p class="mt-1 text-sm text-gray-500">Formatos aceitos: PDF, JPG, PNG, ZIP, LOG. Máximo 25MB por arquivo.</p>
+                       class="block w-full text-sm text-cinza-claro file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-roxo file:bg-opacity-10 file:text-roxo hover:file:bg-roxo hover:file:bg-opacity-20">
+                <p class="mt-1 text-sm text-cinza-claro">Formatos aceitos: PDF, JPG, PNG, ZIP, LOG. Máximo 25MB por arquivo.</p>
             </div>
 
             <div class="flex justify-end">
@@ -368,20 +368,24 @@
                     </svg>
                     Preview do Arquivo
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="text-cinza-claro hover:text-cinza" onclick="closePreviewModal()" aria-label="Close">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
             </div>
             <div class="modal-body p-0">
-                <div id="previewContent" class="d-flex justify-content-center align-items-center preview-modal">
+                <div id="previewContent" class="flex justify-center items-center preview-modal">
                     <div class="text-center">
                         <div class="spinner-border text-primary" role="status">
                             <span class="visually-hidden">Carregando...</span>
                         </div>
-                        <p class="mt-2 text-muted">Carregando preview...</p>
+                        <p class="mt-2 text-cinza-claro">Carregando preview...</p>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <x-button variant="outline" data-bs-dismiss="modal">
+                <x-button variant="outline" onclick="closeStatusModal()">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
@@ -404,11 +408,15 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title fw-semibold">Alterar Status</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <button type="button" class="absolute top-4 right-4 text-cinza-claro hover:text-cinza" onclick="closeStatusModal()">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label for="new-status" class="form-label fw-medium text-dark">Novo Status</label>
+                    <label for="new-status" class="block text-sm font-medium text-cinza mb-2">Novo Status</label>
                     <x-select id="new-status">
                         <option value="aberto">Aberto</option>
                         <option value="em_andamento">Em Andamento</option>
@@ -418,12 +426,12 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="status-notes" class="form-label fw-medium text-dark">Observações (opcional)</label>
+                    <label for="status-notes" class="block text-sm font-medium text-cinza mb-2">Observações (opcional)</label>
                     <x-textarea id="status-notes" rows="3" placeholder="Adicione observações sobre a mudança de status..."></x-textarea>
                 </div>
             </div>
             <div class="modal-footer">
-                <x-button variant="outline" data-bs-dismiss="modal">Cancelar</x-button>
+                <x-button variant="outline" onclick="closeStatusModal()">Cancelar</x-button>
                 <x-button variant="primary" type="button" onclick="executeStatusChange()">Alterar Status</x-button>
             </div>
         </div>
@@ -495,7 +503,7 @@
                 <div class="spinner-border text-primary" role="status">
                     <span class="visually-hidden">Carregando...</span>
                 </div>
-                <p class="mt-2 text-muted">Carregando preview...</p>
+                <p class="mt-2 text-cinza-claro">Carregando preview...</p>
             </div>
         `;
         
@@ -514,7 +522,7 @@
             };
             img.onerror = function() {
                 previewContent.innerHTML = `
-                    <div class="text-center text-muted">
+                    <div class="text-center text-cinza-claro">
                         <svg class="mb-3" width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
                         </svg>
@@ -535,7 +543,7 @@
             };
             iframe.onerror = function() {
                 previewContent.innerHTML = `
-                    <div class="text-center text-muted">
+                    <div class="text-center text-cinza-claro">
                         <svg class="mb-3" width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
                         </svg>
@@ -558,7 +566,7 @@
                 })
                 .catch(error => {
                     previewContent.innerHTML = `
-                        <div class="text-center text-muted">
+                        <div class="text-center text-cinza-claro">
                             <svg class="mb-3" width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
                             </svg>
@@ -569,7 +577,7 @@
         } else {
             // Para outros tipos
             previewContent.innerHTML = `
-                <div class="text-center text-muted">
+                        <div class="text-center text-cinza-claro">
                     <svg class="mb-3" width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                     </svg>

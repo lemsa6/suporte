@@ -5,9 +5,9 @@
 @section('header')
 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
     <div class="mb-4 sm:mb-0">
-        <span class="text-sm text-gray-500">Categorias</span>
+        <span class="text-sm text-cinza-claro">Categorias</span>
         <h1 class="page-title mt-1">Gerenciar Categorias</h1>
-        <p class="text-gray-600 mt-2">Gerencie as categorias de tickets do sistema</p>
+        <p class="text-cinza mt-2">Gerencie as categorias de tickets do sistema</p>
     </div>
     <x-button 
         variant="primary" 
@@ -31,7 +31,7 @@
             :value="$categories->count()"
             color="primary"
         >
-            <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-5 h-5 text-roxo" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
             </svg>
         </x-stat-card>
@@ -41,7 +41,7 @@
             :value="$categories->where('is_active', true)->count()"
             color="success"
         >
-            <svg class="w-5 h-5 text-success-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-5 h-5 text-verde" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
         </x-stat-card>
@@ -51,7 +51,7 @@
             :value="$categories->where('tickets_count', '>', 0)->count()"
             color="info"
         >
-            <svg class="w-5 h-5 text-info-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-5 h-5 text-roxo-det" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
             </svg>
         </x-stat-card>
@@ -61,22 +61,23 @@
             :value="$categories->where('is_active', false)->count()"
             color="warning"
         >
-            <svg class="w-5 h-5 text-warning-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-5 h-5 text-amarelo" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833.192 2.5 1.732 2.5z"></path>
             </svg>
         </x-stat-card>
     </div>
 
     <!-- Lista de Categorias -->
-    <x-card title="Lista de Categorias">
-        <x-slot name="actions">
+    <h2 class="section-title mb-4">Lista de Categorias</h2>
+    <x-card>
+        <div class="card-header-actions">
             <x-button id="apply-bulk-action" variant="outline" size="sm" class="bulk-action-btn hidden">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                 </svg>
                 Aplicar Ação
             </x-button>
-        </x-slot>
+        </div>
         @if($categories->count() > 0)
             <x-table striped hover>
                 <thead>
@@ -84,7 +85,7 @@
                         <th class="w-24">
                             <div class="flex items-center gap-2">
                                 <input type="checkbox" class="form-check-input" id="select-all">
-                                <span class="text-xs font-medium text-gray-700 whitespace-nowrap">ID</span>
+                                <span class="text-xs font-medium text-cinza whitespace-nowrap">ID</span>
                             </div>
                         </th>
                         <th>Nome</th>
@@ -98,7 +99,7 @@
                 </thead>
                 <tbody>
                     @foreach($categories as $category)
-                        <tr class="cursor-pointer hover:bg-gray-50" onclick="window.location.href='{{ route('categories.edit', $category) }}'">
+                        <tr class="cursor-pointer hover:bg-cinza-claro-2" onclick="window.location.href='{{ route('categories.edit', $category) }}'">
                             <td onclick="event.stopPropagation();" class="w-24">
                                 <div class="flex items-center gap-2">
                                     <input type="checkbox" class="form-check-input category-checkbox" value="{{ $category->id }}">
@@ -116,12 +117,12 @@
                                 </div>
                             </td>
                             <td>
-                                <span class="text-gray-500">{{ Str::limit($category->description, 50) }}</span>
+                                <span class="text-cinza-claro">{{ Str::limit($category->description, 50) }}</span>
                             </td>
                             <td>
                                 <div class="flex items-center">
                                     <div class="w-4 h-4 rounded-full mr-2 category-color-badge" style="--category-color: {{ $category->color }};"></div>
-                                    <span class="text-gray-500 text-sm">{{ $category->color }}</span>
+                                    <span class="text-cinza-claro text-sm">{{ $category->color }}</span>
                                 </div>
                             </td>
                             <td>
@@ -135,16 +136,16 @@
                                 <x-badge variant="primary">{{ $category->tickets_count ?? 0 }}</x-badge>
                             </td>
                             <td>
-                                <span class="text-gray-500">{{ $category->created_at->diffForHumans() }}</span>
+                                <span class="text-cinza-claro">{{ $category->created_at->diffForHumans() }}</span>
                             </td>
                             <td onclick="event.stopPropagation();">
-                                <div class="d-flex gap-1">
+                                <div class="flex gap-1">
                                     <x-button variant="outline" size="sm" tag="a" href="{{ route('categories.edit', $category) }}" title="Editar">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                         </svg>
                                     </x-button>
-                                    <x-button variant="outline" size="sm" type="button" onclick="deleteCategory('{{ $category->id }}')" title="Excluir" class="text-danger">
+                                    <x-button variant="outline" size="sm" type="button" onclick="deleteCategory('{{ $category->id }}')" title="Excluir" class="text-vermelho">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                         </svg>
@@ -157,11 +158,11 @@
             </x-table>
         @else
             <div class="text-center py-12">
-                <svg width="64" height="64" fill="none" stroke="currentColor" class="text-gray-300 mb-4 mx-auto" viewBox="0 0 24 24">
+                <svg width="64" height="64" fill="none" stroke="currentColor" class="text-cinza-claro-2 mb-4 mx-auto" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
                 </svg>
-                <h6 class="text-gray-500 mb-2">Nenhuma categoria encontrada</h6>
-                <p class="text-gray-400 text-sm mb-4">Crie sua primeira categoria para começar</p>
+                <h6 class="text-cinza-claro mb-2">Nenhuma categoria encontrada</h6>
+                <p class="text-cinza-claro-2 text-sm mb-4">Crie sua primeira categoria para começar</p>
                 <x-button variant="primary" tag="a" href="{{ route('categories.create') }}">
                     Criar Categoria
                 </x-button>
@@ -171,25 +172,25 @@
 </div>
 
 <!-- Modal de Ação em Lote -->
-<div class="modal fade" id="bulk-action-modal" tabindex="-1" aria-labelledby="bulk-action-modal-label" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="bulk-action-modal-label">Ação em Lote</h5>
-                <x-button variant="outline" size="sm" type="button" data-bs-dismiss="modal" aria-label="Close">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<div class="hidden" id="bulk-action-modal">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bulk-action-modal-content">
+            <div class="bulk-action-modal-header">
+                <h3 class="text-lg font-medium text-cinza">Ação em Lote</h3>
+                <button type="button" onclick="closeBulkActionModal()" class="text-cinza-claro hover:text-cinza">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
-                </x-button>
+                </button>
             </div>
-            <div class="modal-body">
-                <p>Tem certeza que deseja executar esta ação nas categorias selecionadas?</p>
-                <div id="bulk-action-details" class="alert alert-info">
+            <div class="bulk-action-modal-body">
+                <p class="text-cinza mb-4">Tem certeza que deseja executar esta ação nas categorias selecionadas?</p>
+                <div id="bulk-action-details" class="bg-roxo-claro border border-roxo text-roxo-escuro px-4 py-3 rounded-md">
                     <!-- Detalhes da ação serão inseridos aqui -->
                 </div>
             </div>
-            <div class="modal-footer">
-                <x-button variant="secondary" type="button" data-bs-dismiss="modal">Cancelar</x-button>
+            <div class="bulk-action-modal-footer">
+                <x-button variant="secondary" type="button" onclick="closeBulkActionModal()">Cancelar</x-button>
                 <x-button variant="primary" type="button" onclick="executeBulkAction()">Confirmar</x-button>
             </div>
         </div>

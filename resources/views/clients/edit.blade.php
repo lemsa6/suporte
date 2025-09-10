@@ -3,305 +3,334 @@
 @section('title', 'Editar Cliente - ' . $client->company_name)
 
 @section('header')
-<div class="d-flex align-items-center justify-content-between">
-    <div class="d-flex align-items-center">
-        <x-button variant="outline" size="sm" tag="a" href="{{ route('clients.show', $client) }}" class="me-3">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-            </svg>
-        </x-button>
-        <div>
-            <h1 class="page-title mb-0">Editar Cliente</h1>
-            <p class="text-muted mb-0">{{ $client->company_name }}</p>
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+    <div class="mb-4 sm:mb-0">
+        <div class="flex items-center">
+            <x-button variant="outline" size="sm" tag="a" href="{{ route('clients.show', $client) }}" class="mr-3">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+                Voltar
+            </x-button>
+            <div>
+                <h1 class="page-title mb-0">Editar Cliente</h1>
+                <p class="text-cinza-claro mb-0">{{ $client->company_name }}</p>
+            </div>
         </div>
     </div>
 </div>
 @endsection
 
 @section('content')
-<div class="row justify-content-center">
-    <div class="col-12 col-lg-10">
-        <form action="{{ route('clients.update', $client) }}" method="POST">
-            @csrf
-            @method('PUT')
-            
-            <!-- Informações da Empresa -->
-            <h2 class="section-title mb-4">Informações da Empresa</h2>
-            <x-card>
-                <div class="row g-3">
-                        <!-- Nome da Empresa -->
-                        <div class="col-12">
-                            <label for="company_name" class="form-label">Nome da Empresa *</label>
-                            <input type="text" name="company_name" id="company_name" required
-                                class="form-control @error('company_name') is-invalid @enderror"
-                                value="{{ old('company_name', $client->company_name) }}"
-                                placeholder="Nome completo da empresa">
-                            @error('company_name')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- Nome Fantasia -->
-                        <div class="col-12 col-md-6">
-                            <label for="trade_name" class="form-label">Nome Fantasia</label>
-                            <input type="text" name="trade_name" id="trade_name"
-                                class="form-control @error('trade_name') is-invalid @enderror"
-                                value="{{ old('trade_name', $client->trade_name) }}"
-                                placeholder="Nome fantasia (se houver)">
-                            @error('trade_name')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- CNPJ -->
-                        <div class="col-12 col-md-6">
-                            <label for="cnpj" class="form-label">CNPJ *</label>
-                            <input type="text" name="cnpj" id="cnpj" required maxlength="18"
-                                class="form-control font-monospace @error('cnpj') is-invalid @enderror"
-                                value="{{ old('cnpj', $client->cnpj) }}"
-                                placeholder="00.000.000/0000-00">
-                            @error('cnpj')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- Email -->
-                        <div class="col-12 col-md-6">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" name="email" id="email"
-                                class="form-control @error('email') is-invalid @enderror"
-                                value="{{ old('email', $client->email) }}"
-                                placeholder="email@empresa.com">
-                            @error('email')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- Telefone -->
-                        <div class="col-12 col-md-6">
-                            <label for="phone" class="form-label">Telefone</label>
-                            <input type="tel" name="phone" id="phone"
-                                class="form-control @error('phone') is-invalid @enderror"
-                                value="{{ old('phone', $client->phone) }}"
-                                placeholder="(11) 99999-9999">
-                            @error('phone')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- Endereço -->
-                        <div class="col-12">
-                            <label for="address" class="form-label">Endereço</label>
-                            <textarea name="address" id="address" rows="3"
-                                class="form-control @error('address') is-invalid @enderror"
-                                placeholder="Endereço completo da empresa">{{ old('address', $client->address) }}</textarea>
-                            @error('address')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- Observações -->
-                        <div class="col-12">
-                            <label for="notes" class="form-label">Observações</label>
-                            <textarea name="notes" id="notes" rows="3"
-                                class="form-control @error('notes') is-invalid @enderror"
-                                placeholder="Informações adicionais sobre a empresa">{{ old('notes', $client->notes) }}</textarea>
-                            @error('notes')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- Status -->
-                        <div class="col-12">
-                            <div class="form-check">
-                                <input type="checkbox" id="is_active" name="is_active" value="1" 
-                                    class="form-check-input @error('is_active') is-invalid @enderror"
-                                    {{ old('is_active', $client->is_active) ? 'checked' : '' }}>
-                                <label for="is_active" class="form-check-label">
-                                    Cliente ativo
-                                </label>
-                            </div>
-                            @error('is_active')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+<div class="space-y-6">
+    <form action="{{ route('clients.update', $client) }}" method="POST" class="space-y-6">
+        @csrf
+        @method('PUT')
+        
+        <!-- Informações da Empresa -->
+        <h2 class="section-title mb-4">Informações da Empresa</h2>
+        <x-card>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Nome da Empresa -->
+                <div class="md:col-span-2">
+                    <x-input 
+                        label="Nome da Empresa"
+                        name="company_name"
+                        value="{{ old('company_name', $client->company_name) }}"
+                        placeholder="Nome completo da empresa"
+                        required
+                        error="{{ $errors->first('company_name') }}"
+                    />
                 </div>
-            </x-card>
 
-            <!-- Contatos Existentes -->
-            <h2 class="section-title mb-4">Contatos Existentes</h2>
-            <x-card>
-                <div class="d-flex align-items-center justify-content-between mb-4">
-                    <x-button variant="primary" size="sm" type="button" onclick="showAddContactModal()">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                        </svg>
-                        Adicionar Contato
-                    </x-button>
+                <!-- Nome Fantasia -->
+                <div>
+                    <x-input 
+                        label="Nome Fantasia"
+                        name="trade_name"
+                        value="{{ old('trade_name', $client->trade_name) }}"
+                        placeholder="Nome fantasia (se houver)"
+                        error="{{ $errors->first('trade_name') }}"
+                    />
                 </div>
-                <div class="card-body">
-                    @if($client->contacts->count() > 0)
-                        <div id="contacts-container">
-                            @foreach($client->contacts as $index => $contact)
-                                <div class="contact-item border rounded p-3 mb-3 {{ $contact->is_primary ? 'bg-light' : 'bg-white' }}">
-                                    <div class="d-flex align-items-center justify-content-between mb-3">
-                                        <h6 class="mb-0 fw-medium">
-                                            @if($contact->is_primary)
-                                                Contato Principal
-                                            @else
-                                                Contato {{ $index + 1 }}
-                                            @endif
-                                        </h6>
-                                        <div class="d-flex align-items-center gap-2">
-                                            @if($contact->is_primary)
-                                                <span class="badge bg-primary">Principal</span>
-                                            @endif
-                                            @if(!$contact->is_primary)
-                                                <button type="button" onclick="removeContact({{ $contact->id }})" 
-                                                    class="btn btn-outline-danger btn-sm">
-                                                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                                    </svg>
-                                                    Remover
-                                                </button>
-                                            @endif
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="row g-3">
-                                        <div class="col-12 col-md-6">
-                                            <label class="form-label">Nome *</label>
-                                            <input type="text" name="contacts[{{ $index }}][name]" required
-                                                class="form-control"
-                                                value="{{ $contact->name }}"
-                                                placeholder="Nome completo do contato">
-                                        </div>
-                                        
-                                        <div class="col-12 col-md-6">
-                                            <label class="form-label">Email *</label>
-                                            <input type="email" name="contacts[{{ $index }}][email]" required
-                                                class="form-control"
-                                                value="{{ $contact->email }}"
-                                                placeholder="email@contato.com">
-                                        </div>
-                                        
-                                        <div class="col-12 col-md-6">
-                                            <label class="form-label">Telefone</label>
-                                            <input type="tel" name="contacts[{{ $index }}][phone]"
-                                                class="form-control"
-                                                value="{{ $contact->phone }}"
-                                                placeholder="(11) 99999-9999">
-                                        </div>
-                                        
-                                        <div class="col-12 col-md-6">
-                                            <label class="form-label">Cargo</label>
-                                            <input type="text" name="contacts[{{ $index }}][position]"
-                                                class="form-control"
-                                                value="{{ $contact->position }}"
-                                                placeholder="Cargo/função">
-                                        </div>
-                                        
-                                        <div class="col-12 col-md-6">
-                                            <label class="form-label">Departamento</label>
-                                            <input type="text" name="contacts[{{ $index }}][department]"
-                                                class="form-control"
-                                                value="{{ $contact->department }}"
-                                                placeholder="Departamento">
-                                        </div>
-                                        
-                                        <div class="col-12 col-md-6">
-                                            <div class="form-check mt-4">
-                                                <input type="checkbox" name="contacts[{{ $index }}][is_primary]" value="1" 
-                                                    class="form-check-input"
-                                                    {{ $contact->is_primary ? 'checked' : '' }}
-                                                    onchange="updatePrimaryContact(this, {{ $index }})">
-                                                <label class="form-check-label">Contato principal</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <input type="hidden" name="contacts[{{ $index }}][id]" value="{{ $contact->id }}">
-                                </div>
-                            @endforeach
-                        </div>
-                    @else
-                        <div class="empty-state">
-                            <svg width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                            </svg>
-                            <h5 class="mt-3 mb-1">Nenhum contato cadastrado</h5>
-                            <p class="text-muted mb-0">Adicione pelo menos um contato para esta empresa.</p>
-                        </div>
-                    @endif
-            </x-card>
 
-            <!-- Botões de Ação -->
-            <div class="d-flex justify-content-end gap-2">
-                <x-button variant="outline" tag="a" href="{{ route('clients.show', $client) }}">
+                <!-- CNPJ -->
+                <div>
+                    <x-input 
+                        label="CNPJ"
+                        name="cnpj"
+                        value="{{ old('cnpj', $client->cnpj) }}"
+                        placeholder="00.000.000/0000-00"
+                        maxlength="18"
+                        required
+                        error="{{ $errors->first('cnpj') }}"
+                    />
+                </div>
+
+                <!-- Email -->
+                <div>
+                    <x-input 
+                        label="Email"
+                        name="email"
+                        type="email"
+                        value="{{ old('email', $client->email) }}"
+                        placeholder="email@empresa.com"
+                        error="{{ $errors->first('email') }}"
+                    />
+                </div>
+
+                <!-- Telefone -->
+                <div>
+                    <x-input 
+                        label="Telefone"
+                        name="phone"
+                        type="tel"
+                        value="{{ old('phone', $client->phone) }}"
+                        placeholder="(11) 99999-9999"
+                        error="{{ $errors->first('phone') }}"
+                    />
+                </div>
+
+                <!-- Endereço -->
+                <div class="md:col-span-2">
+                    <x-textarea 
+                        label="Endereço"
+                        name="address"
+                        rows="3"
+                        placeholder="Endereço completo da empresa"
+                        error="{{ $errors->first('address') }}"
+                    >
+                        {{ old('address', $client->address) }}
+                    </x-textarea>
+                </div>
+
+                <!-- Observações -->
+                <div class="md:col-span-2">
+                    <x-textarea 
+                        label="Observações"
+                        name="notes"
+                        rows="3"
+                        placeholder="Informações adicionais sobre a empresa"
+                        error="{{ $errors->first('notes') }}"
+                    >
+                        {{ old('notes', $client->notes) }}
+                    </x-textarea>
+                </div>
+
+                <!-- Status -->
+                <div class="md:col-span-2">
+                    <div class="flex items-center">
+                        <div class="flex items-center h-5">
+                            <input type="checkbox" id="is_active" name="is_active" value="1" 
+                                   class="h-4 w-4 text-roxo focus:ring-roxo border-cinza-claro rounded"
+                                   {{ old('is_active', $client->is_active) ? 'checked' : '' }}>
+                        </div>
+                        <div class="ml-3 text-sm">
+                            <label for="is_active" class="font-medium text-cinza">
+                                Cliente ativo
+                            </label>
+                        </div>
+                    </div>
+                    @error('is_active')
+                        <div class="form-error">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+        </x-card>
+
+        <!-- Contatos Existentes -->
+        <x-card>
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="section-title mb-0">Contatos Existentes</h2>
+                <x-button variant="primary" size="sm" type="button" onclick="showAddContactModal()">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                     </svg>
-                    Cancelar
-                </x-button>
-                
-                <x-button variant="primary" type="submit">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                    Atualizar Cliente
+                    Adicionar Contato
                 </x-button>
             </div>
-        </form>
-    </div>
+            
+            @if($client->contacts->count() > 0)
+                <div id="contacts-container" class="space-y-4">
+                    @foreach($client->contacts as $index => $contact)
+                        <div class="contact-item border border-cinza-claro rounded-lg p-4 {{ $contact->is_primary ? 'bg-cinza-claro-2' : 'bg-white' }}">
+                            <div class="flex items-center justify-between mb-4">
+                                <h6 class="font-medium text-cinza">
+                                    @if($contact->is_primary)
+                                        Contato Principal
+                                    @else
+                                        Contato {{ $index + 1 }}
+                                    @endif
+                                </h6>
+                                <div class="flex items-center gap-2">
+                                    @if($contact->is_primary)
+                                        <x-badge variant="primary">Principal</x-badge>
+                                    @endif
+                                    @if(!$contact->is_primary)
+                                        <x-button variant="outline" size="sm" type="button" onclick="removeContact({{ $contact->id }})">
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                            </svg>
+                                            Remover
+                                        </x-button>
+                                    @endif
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <x-input 
+                                        label="Nome"
+                                        name="contacts[{{ $index }}][name]"
+                                        value="{{ $contact->name }}"
+                                        placeholder="Nome completo do contato"
+                                        required
+                                    />
+                                </div>
+                                
+                                <div>
+                                    <x-input 
+                                        label="Email"
+                                        name="contacts[{{ $index }}][email]"
+                                        type="email"
+                                        value="{{ $contact->email }}"
+                                        placeholder="email@contato.com"
+                                        required
+                                    />
+                                </div>
+                                
+                                <div>
+                                    <x-input 
+                                        label="Telefone"
+                                        name="contacts[{{ $index }}][phone]"
+                                        type="tel"
+                                        value="{{ $contact->phone }}"
+                                        placeholder="(11) 99999-9999"
+                                    />
+                                </div>
+                                
+                                <div>
+                                    <x-input 
+                                        label="Cargo"
+                                        name="contacts[{{ $index }}][position]"
+                                        value="{{ $contact->position }}"
+                                        placeholder="Cargo/função"
+                                    />
+                                </div>
+                                
+                                <div>
+                                    <x-input 
+                                        label="Departamento"
+                                        name="contacts[{{ $index }}][department]"
+                                        value="{{ $contact->department }}"
+                                        placeholder="Departamento"
+                                    />
+                                </div>
+                                
+                                <div class="flex items-center">
+                                    <div class="flex items-center h-5">
+                                        <input type="checkbox" name="contacts[{{ $index }}][is_primary]" value="1" 
+                                               class="h-4 w-4 text-roxo focus:ring-roxo border-cinza-claro rounded"
+                                               {{ $contact->is_primary ? 'checked' : '' }}
+                                               onchange="updatePrimaryContact(this, {{ $index }})">
+                                    </div>
+                                    <div class="ml-3 text-sm">
+                                        <label class="font-medium text-cinza">Contato principal</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <input type="hidden" name="contacts[{{ $index }}][id]" value="{{ $contact->id }}">
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <div class="text-center py-12">
+                    <svg class="mx-auto mb-4 text-cinza-claro" width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                    <h5 class="text-lg font-medium text-cinza mb-2">Nenhum contato cadastrado</h5>
+                    <p class="text-cinza-claro mb-0">Adicione pelo menos um contato para esta empresa.</p>
+                </div>
+            @endif
+        </x-card>
+
+        <!-- Botões de Ação -->
+        <div class="flex justify-end gap-3">
+            <x-button variant="outline" tag="a" href="{{ route('clients.show', $client) }}">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+                Cancelar
+            </x-button>
+            
+            <x-button variant="primary" type="submit">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                Atualizar Cliente
+            </x-button>
+        </div>
+    </form>
 </div>
 
 <!-- Modal para adicionar novo contato -->
-<div class="modal fade" id="add-contact-modal" tabindex="-1" aria-labelledby="add-contact-modal-title" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="add-contact-modal-title">Adicionar Novo Contato</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<div id="add-contact-modal" class="fixed inset-0 bg-cinza-escuro bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+        <div class="flex items-center justify-between mb-4">
+            <h5 class="text-lg font-semibold text-cinza">Adicionar Novo Contato</h5>
+            <button type="button" onclick="closeAddContactModal()" class="text-cinza-claro hover:text-cinza">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        
+        <form id="new-contact-form" class="space-y-4">
+            <div>
+                <label for="new-contact-name" class="block text-sm font-medium text-cinza mb-2">Nome *</label>
+                <input type="text" id="new-contact-name" name="name" required 
+                       class="w-full px-3 py-2 border border-cinza-claro rounded-md focus:outline-none focus:ring-2 focus:ring-roxo focus:border-transparent">
             </div>
-            <div class="modal-body">
-                <form id="new-contact-form">
-                    <div class="mb-3">
-                        <label for="new-contact-name" class="form-label">Nome *</label>
-                        <input type="text" id="new-contact-name" name="name" required class="form-control">
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="new-contact-email" class="form-label">Email *</label>
-                        <input type="email" id="new-contact-email" name="email" required class="form-control">
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="new-contact-phone" class="form-label">Telefone</label>
-                        <input type="tel" id="new-contact-phone" name="phone" class="form-control">
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="new-contact-position" class="form-label">Cargo</label>
-                        <input type="text" id="new-contact-position" name="position" class="form-control">
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="new-contact-department" class="form-label">Departamento</label>
-                        <input type="text" id="new-contact-department" name="department" class="form-control">
-                    </div>
-                    
-                    <div class="mb-3">
-                        <div class="form-check">
-                            <input type="checkbox" id="new-contact-is-primary" name="is_primary" value="1" class="form-check-input">
-                            <label for="new-contact-is-primary" class="form-check-label">Contato principal</label>
-                        </div>
-                    </div>
-                </form>
+            
+            <div>
+                <label for="new-contact-email" class="block text-sm font-medium text-cinza mb-2">Email *</label>
+                <input type="email" id="new-contact-email" name="email" required 
+                       class="w-full px-3 py-2 border border-cinza-claro rounded-md focus:outline-none focus:ring-2 focus:ring-roxo focus:border-transparent">
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" onclick="addNewContact()" class="btn btn-primary">Adicionar</button>
+            
+            <div>
+                <label for="new-contact-phone" class="block text-sm font-medium text-cinza mb-2">Telefone</label>
+                <input type="tel" id="new-contact-phone" name="phone" 
+                       class="w-full px-3 py-2 border border-cinza-claro rounded-md focus:outline-none focus:ring-2 focus:ring-roxo focus:border-transparent">
             </div>
+            
+            <div>
+                <label for="new-contact-position" class="block text-sm font-medium text-cinza mb-2">Cargo</label>
+                <input type="text" id="new-contact-position" name="position" 
+                       class="w-full px-3 py-2 border border-cinza-claro rounded-md focus:outline-none focus:ring-2 focus:ring-roxo focus:border-transparent">
+            </div>
+            
+            <div>
+                <label for="new-contact-department" class="block text-sm font-medium text-cinza mb-2">Departamento</label>
+                <input type="text" id="new-contact-department" name="department" 
+                       class="w-full px-3 py-2 border border-cinza-claro rounded-md focus:outline-none focus:ring-2 focus:ring-roxo focus:border-transparent">
+            </div>
+            
+            <div class="flex items-center">
+                <div class="flex items-center h-5">
+                    <input type="checkbox" id="new-contact-is-primary" name="is_primary" value="1" 
+                           class="h-4 w-4 text-roxo focus:ring-roxo border-cinza-claro rounded">
+                </div>
+                <div class="ml-3 text-sm">
+                    <label for="new-contact-is-primary" class="font-medium text-cinza">Contato principal</label>
+                </div>
+            </div>
+        </form>
+        
+        <div class="flex justify-end gap-3 mt-6">
+            <x-button variant="outline" type="button" onclick="closeAddContactModal()">Cancelar</x-button>
+            <x-button variant="primary" type="button" onclick="addNewContact()">Adicionar</x-button>
         </div>
     </div>
 </div>
@@ -313,8 +342,13 @@
     let contactIndex = {{ $client->contacts->count() }};
 
     function showAddContactModal() {
-        const modal = new bootstrap.Modal(document.getElementById('add-contact-modal'));
-        modal.show();
+        document.getElementById('add-contact-modal').classList.remove('hidden');
+        document.getElementById('add-contact-modal').classList.add('flex');
+    }
+
+    function closeAddContactModal() {
+        document.getElementById('add-contact-modal').classList.add('hidden');
+        document.getElementById('add-contact-modal').classList.remove('flex');
     }
 
     function addNewContact() {
@@ -323,67 +357,68 @@
         
         // Criar novo contato dinamicamente
         const contactDiv = document.createElement('div');
-        contactDiv.className = 'contact-item border rounded p-3 mb-3 bg-white';
+        contactDiv.className = 'contact-item border border-cinza-claro rounded-lg p-4 bg-white';
         contactDiv.innerHTML = `
-            <div class="d-flex align-items-center justify-content-between mb-3">
-                <h6 class="mb-0 fw-medium">Novo Contato</h6>
-                <button type="button" onclick="removeContact(this)" 
-                    class="btn btn-outline-danger btn-sm">
-                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flex items-center justify-between mb-4">
+                <h6 class="font-medium text-cinza">Novo Contato</h6>
+                <x-button variant="outline" size="sm" type="button" onclick="removeContact(this)">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                     Remover
-                </button>
+                </x-button>
             </div>
             
-            <div class="row g-3">
-                <div class="col-12 col-md-6">
-                    <label class="form-label">Nome *</label>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-cinza mb-2">Nome *</label>
                     <input type="text" name="contacts[${contactIndex}][name]" required
-                        class="form-control"
+                        class="w-full px-3 py-2 border border-cinza-claro rounded-md focus:outline-none focus:ring-2 focus:ring-roxo focus:border-transparent"
                         value="${formData.get('name')}"
                         placeholder="Nome completo do contato">
                 </div>
                 
-                <div class="col-12 col-md-6">
-                    <label class="form-label">Email *</label>
+                <div>
+                    <label class="block text-sm font-medium text-cinza mb-2">Email *</label>
                     <input type="email" name="contacts[${contactIndex}][email]" required
-                        class="form-control"
+                        class="w-full px-3 py-2 border border-cinza-claro rounded-md focus:outline-none focus:ring-2 focus:ring-roxo focus:border-transparent"
                         value="${formData.get('email')}"
                         placeholder="email@contato.com">
                 </div>
                 
-                <div class="col-12 col-md-6">
-                    <label class="form-label">Telefone</label>
+                <div>
+                    <label class="block text-sm font-medium text-cinza mb-2">Telefone</label>
                     <input type="tel" name="contacts[${contactIndex}][phone]"
-                        class="form-control"
+                        class="w-full px-3 py-2 border border-cinza-claro rounded-md focus:outline-none focus:ring-2 focus:ring-roxo focus:border-transparent"
                         value="${formData.get('phone')}"
                         placeholder="(11) 99999-9999">
                 </div>
                 
-                <div class="col-12 col-md-6">
-                    <label class="form-label">Cargo</label>
+                <div>
+                    <label class="block text-sm font-medium text-cinza mb-2">Cargo</label>
                     <input type="text" name="contacts[${contactIndex}][position]"
-                        class="form-control"
+                        class="w-full px-3 py-2 border border-cinza-claro rounded-md focus:outline-none focus:ring-2 focus:ring-roxo focus:border-transparent"
                         value="${formData.get('position')}"
                         placeholder="Cargo/função">
                 </div>
                 
-                <div class="col-12 col-md-6">
-                    <label class="form-label">Departamento</label>
+                <div>
+                    <label class="block text-sm font-medium text-cinza mb-2">Departamento</label>
                     <input type="text" name="contacts[${contactIndex}][department]"
-                        class="form-control"
+                        class="w-full px-3 py-2 border border-cinza-claro rounded-md focus:outline-none focus:ring-2 focus:ring-roxo focus:border-transparent"
                         value="${formData.get('department')}"
                         placeholder="Departamento">
                 </div>
                 
-                <div class="col-12 col-md-6">
-                    <div class="form-check mt-4">
+                <div class="flex items-center">
+                    <div class="flex items-center h-5">
                         <input type="checkbox" name="contacts[${contactIndex}][is_primary]" value="1"
-                            class="form-check-input"
+                            class="h-4 w-4 text-roxo focus:ring-roxo border-cinza-claro rounded"
                             ${formData.get('is_primary') ? 'checked' : ''}
                             onchange="updatePrimaryContact(this, ${contactIndex})">
-                        <label class="form-check-label">Contato principal</label>
+                    </div>
+                    <div class="ml-3 text-sm">
+                        <label class="font-medium text-cinza">Contato principal</label>
                     </div>
                 </div>
             </div>
@@ -395,9 +430,10 @@
             container.appendChild(contactDiv);
         } else {
             // Se não existir container, criar um
-            const contactsSection = document.querySelector('.card-body');
+            const contactsSection = document.querySelector('.p-6');
             const newContainer = document.createElement('div');
             newContainer.id = 'contacts-container';
+            newContainer.className = 'space-y-4';
             newContainer.appendChild(contactDiv);
             contactsSection.appendChild(newContainer);
         }
@@ -405,8 +441,7 @@
         contactIndex++;
         
         // Fechar modal
-        const modal = bootstrap.Modal.getInstance(document.getElementById('add-contact-modal'));
-        modal.hide();
+        closeAddContactModal();
         
         // Limpar formulário
         form.reset();

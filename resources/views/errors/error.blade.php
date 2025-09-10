@@ -3,168 +3,102 @@
 @section('title', 'Erro')
 
 @section('content')
-<div class="container-fluid d-flex align-items-center justify-content-center min-vh-100">
-    <div class="row w-100">
-        <div class="col-12 text-center">
-            <!-- Código de Erro -->
-            <div class="error-code mb-4">
-                <h1 class="display-1 fw-bold text-primary">{{ $exception->getStatusCode() ?? 'Erro' }}</h1>
-            </div>
-            
-            <!-- Ícone -->
-            <div class="error-icon mb-4">
-                <svg width="120" height="120" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="text-muted">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                </svg>
-            </div>
-            
-            <!-- Título -->
-            <h2 class="h3 fw-bold text-dark mb-3">
-                @switch($exception->getStatusCode())
-                    @case(400)
-                        Solicitação Inválida
-                        @break
-                    @case(401)
-                        Não Autorizado
-                        @break
-                    @case(402)
-                        Pagamento Necessário
-                        @break
-                    @case(404)
-                        Página Não Encontrada
-                        @break
-                    @case(405)
-                        Método Não Permitido
-                        @break
-                    @case(408)
-                        Tempo Esgotado
-                        @break
-                    @case(422)
-                        Dados Inválidos
-                        @break
-                    @case(429)
-                        Muitas Solicitações
-                        @break
-                    @case(500)
-                        Erro Interno do Servidor
-                        @break
-                    @case(502)
-                        Gateway Inválido
-                        @break
-                    @case(503)
-                        Serviço Indisponível
-                        @break
-                    @case(504)
-                        Gateway Timeout
-                        @break
-                    @default
-                        Ocorreu um Erro
-                @endswitch
+<div class="min-h-screen bg-gradient-to-br from-cinza-claro-2 to-cinza-claro flex items-center justify-center px-4">
+    <div class="max-w-2xl w-full text-center">
+        <!-- Código de Erro -->
+        <div class="mb-8">
+            <h1 class="text-6xl font-bold text-roxo mb-4">{{ $exception->getStatusCode() ?? 'Erro' }}</h1>
+        </div>
+        
+        <!-- Ícone -->
+        <div class="mb-8">
+            <svg width="120" height="120" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="text-cinza-claro mx-auto">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+            </svg>
+        </div>
+        
+        <!-- Título -->
+        <div class="mb-6">
+            <h2 class="text-2xl font-semibold text-cinza mb-4">
+                @if($exception->getStatusCode() == 404)
+                    Página não encontrada
+                @elseif($exception->getStatusCode() == 403)
+                    Acesso negado
+                @elseif($exception->getStatusCode() == 500)
+                    Erro interno do servidor
+                @elseif($exception->getStatusCode() == 503)
+                    Serviço indisponível
+                @else
+                    Ocorreu um erro
+                @endif
             </h2>
             
-            <!-- Descrição -->
-            <p class="text-muted mb-4 fs-5">
-                @switch($exception->getStatusCode())
-                    @case(400)
-                        A solicitação contém dados inválidos ou malformados.
-                        @break
-                    @case(401)
-                        Você precisa fazer login para acessar este recurso.
-                        @break
-                    @case(402)
-                        É necessário realizar um pagamento para acessar este recurso.
-                        @break
-                    @case(404)
-                        A página que você está procurando não foi encontrada.
-                        @break
-                    @case(405)
-                        O método de requisição não é permitido para este recurso.
-                        @break
-                    @case(408)
-                        A solicitação demorou muito para ser processada.
-                        @break
-                    @case(422)
-                        Os dados enviados não são válidos.
-                        @break
-                    @case(429)
-                        Muitas solicitações foram feitas. Tente novamente mais tarde.
-                        @break
-                    @case(500)
-                        Ocorreu um erro interno no servidor.
-                        @break
-                    @case(502)
-                        O servidor recebeu uma resposta inválida de outro servidor.
-                        @break
-                    @case(503)
-                        O serviço está temporariamente indisponível.
-                        @break
-                    @case(504)
-                        O servidor não conseguiu responder a tempo.
-                        @break
-                    @default
-                        Ocorreu um erro inesperado. Nossa equipe foi notificada.
-                @endswitch
+            <p class="text-cinza-claro text-lg mb-4">
+                @if($exception->getStatusCode() == 404)
+                    A página que você está procurando não existe ou foi movida.
+                @elseif($exception->getStatusCode() == 403)
+                    Você não tem permissão para acessar esta página.
+                @elseif($exception->getStatusCode() == 500)
+                    Ocorreu um erro interno no servidor. Nossa equipe foi notificada.
+                @elseif($exception->getStatusCode() == 503)
+                    O serviço está temporariamente indisponível. Tente novamente em alguns minutos.
+                @else
+                    Algo deu errado. Por favor, tente novamente.
+                @endif
             </p>
+        </div>
+
+        <!-- Detalhes do Erro (apenas em desenvolvimento) -->
+        @if(config('app.debug') && $exception)
+            <div class="mb-8">
+                <details class="text-left bg-cinza-claro-2 rounded-lg p-4">
+                    <summary class="cursor-pointer text-cinza font-medium mb-2">Detalhes do Erro (Desenvolvimento)</summary>
+                    <div class="text-sm text-cinza-claro">
+                        <p><strong>Mensagem:</strong> {{ $exception->getMessage() }}</p>
+                        <p><strong>Arquivo:</strong> {{ $exception->getFile() }}</p>
+                        <p><strong>Linha:</strong> {{ $exception->getLine() }}</p>
+                        @if($exception->getTrace())
+                            <p><strong>Stack Trace:</strong></p>
+                            <pre class="text-xs overflow-x-auto">{{ $exception->getTraceAsString() }}</pre>
+                        @endif
+                    </div>
+                </details>
+            </div>
+        @endif
+
+        <!-- Botões de Ação -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <x-button variant="primary" size="lg" onclick="history.back()">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                Voltar
+            </x-button>
             
-            <!-- Ações -->
-            <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
-                <a href="{{ route('dashboard') }}" class="btn btn-primary btn-lg px-4">
-                    <svg class="me-2" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                    </svg>
-                    Ir para Dashboard
-                </a>
-                
-                <button onclick="history.back()" class="btn btn-outline-secondary btn-lg px-4">
-                    <svg class="me-2" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                    </svg>
-                    Voltar
-                </button>
-                
-                <button onclick="location.reload()" class="btn btn-outline-primary btn-lg px-4">
-                    <svg class="me-2" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <x-button variant="outline" size="lg" tag="a" href="{{ route('dashboard') }}">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z"></path>
+                </svg>
+                Ir para Dashboard
+            </x-button>
+            
+            @if($exception->getStatusCode() == 500 || $exception->getStatusCode() == 503)
+                <x-button variant="outline" size="lg" onclick="location.reload()">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                     </svg>
                     Tentar Novamente
-                </button>
-            </div>
-            
-            <!-- Informações de Suporte -->
-            <div class="mt-5 pt-4 border-top">
-                <p class="text-muted small mb-0">
-                    <strong>Código do Erro:</strong> {{ $exception->getStatusCode() }} | 
-                    <strong>Horário:</strong> {{ now()->format('d/m/Y H:i:s') }}
-                </p>
-            </div>
+                </x-button>
+            @endif
+        </div>
+
+        <!-- Informações Adicionais -->
+        <div class="mt-12 pt-8 border-t border-cinza-claro-2">
+            <p class="text-cinza-claro text-sm mb-0">
+                Se o problema persistir, entre em contato com o suporte técnico.
+            </p>
         </div>
     </div>
 </div>
-
-<style>
-.min-vh-100 {
-    min-height: 100vh;
-}
-
-.error-code h1 {
-    font-size: 8rem;
-    line-height: 1;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-}
-
-.error-icon svg {
-    opacity: 0.8;
-}
-
-@media (max-width: 768px) {
-    .error-code h1 {
-        font-size: 6rem;
-    }
-    
-    .error-icon svg {
-        width: 80px;
-        height: 80px;
-    }
-}
-</style>
 @endsection

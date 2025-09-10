@@ -19,6 +19,18 @@
   --cinza: #5a5a5a;              /* Texto principal (cinza) */
   --cinza-claro: #a0a0a0;        /* Texto secundário (cinza-claro) */
   
+  /* Cores para auditoria - reutilizáveis */
+  --verde-claro: #d1e0c7;        /* Verde claro - Criado */
+  --amarelo-claro: #fff8bb;      /* Amarelo claro - Atualizado */
+  --vermelho-claro: #f8d3d3;     /* Vermelho claro - Excluído */
+  --roxo-pastel: #c9a9e3;        /* Roxo pastel - Respondido */
+  --roxo-escuro: #3c006c;        /* Roxo escuro - Fechado */
+  --vermelho-escuro: #770000;    /* Vermelho escuro - Reaberto */
+  --azul-claro: #b0caff;         /* Azul claro - Atribuído */
+  --cinza-claro-2: #cecece;      /* Cinza claro 2 - Status alterado */
+  --verde-pastel: #b2d9a8;       /* Verde pastel - Prioridade alterada */
+  --lilás: #d3c7e0;              /* Lilás - Visualizado */
+  
   /* Cores padrão do sistema - fallback automático */
   --cor-padrao: var(--roxo);           /* Cor padrão para elementos sem classe específica */
   --cor-padrao-hover: var(--roxo-claro); /* Hover padrão */
@@ -201,11 +213,6 @@
     /* Removido: border: 1px solid var(--cor-borda-padrao); */
   }
   
-  /* Badges sem classe específica usam cor padrão */
-  .badge:not([class*="bg-"]):not([class*="text-"]) {
-    background-color: var(--cor-padrao);
-    color: var(--branco);
-  }
   
   /* Alertas sem classe específica usam cor padrão */
   .alert:not([class*="bg-"]):not([class*="text-"]) {
@@ -832,6 +839,7 @@
          .badge-info {
            @apply bg-roxo-det bg-opacity-10 text-roxo-det;
          }
+         
        }
 
 /* ========================================
@@ -1151,6 +1159,39 @@
 /* Table auto layout */
 .ticket-table-auto { table-layout: auto; }
 
+/* Classes para ações em lote */
+.bulk-action-btn {
+    @apply transition-opacity duration-200;
+}
+
+.bulk-action-btn.hidden {
+    @apply opacity-0 pointer-events-none;
+}
+
+#bulk-action-modal {
+    @apply fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center;
+}
+
+#bulk-action-modal.hidden {
+    display: none;
+}
+
+.bulk-action-modal-content {
+    @apply bg-branco rounded-lg shadow-xl max-w-md w-full mx-4;
+}
+
+.bulk-action-modal-header {
+    @apply px-6 py-4 border-b border-cinza-claro-2;
+}
+
+.bulk-action-modal-body {
+    @apply px-6 py-4;
+}
+
+.bulk-action-modal-footer {
+    @apply px-6 py-4 border-t border-cinza-claro-2 flex justify-end gap-3;
+}
+
 /* Category Color Picker Styles */
 .color-option {
     @apply transition-all duration-200 ease-in-out;
@@ -1408,5 +1449,51 @@
 .btn-info {
   background-color: var(--roxo-det); /* Alerta confirmação (roxo-det) */
   color: var(--branco); /* Texto hover (branco) */
+}
+
+/* Componentes específicos da página de clientes */
+.client-table-action-icon {
+    width: 1rem;
+    height: 1rem;
+}
+
+.client-table-cell {
+    @apply px-4 py-3 text-left;
+}
+
+.client-table-cell-flex {
+    @apply px-4 py-3 text-left flex-1;
+}
+
+.client-table-header-id {
+    @apply font-medium text-cinza;
+}
+
+.client-table-row {
+    @apply hover:bg-cinza-claro-2 transition-colors cursor-pointer;
+}
+
+.client-table-id-text {
+    @apply font-mono text-sm text-cinza-claro;
+}
+
+.client-table-client-avatar {
+    @apply w-8 h-8 rounded-full bg-roxo text-branco flex items-center justify-center text-sm font-medium mr-3;
+}
+
+.client-table-client-initial {
+    @apply text-xs font-bold;
+}
+
+.client-table-title-text {
+    @apply font-medium text-cinza text-sm;
+}
+
+.client-table-description-text {
+    @apply text-cinza-claro text-xs;
+}
+
+.client-table-date-text {
+    @apply text-cinza-claro text-sm;
 }
 

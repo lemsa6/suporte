@@ -5,13 +5,20 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Client;
 use App\Models\ClientContact;
+use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
-    // Middleware aplicado nas rotas
+    protected UserService $userService;
+
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
 
     /**
      * Display a listing of the resource.
@@ -35,33 +42,20 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'confirmed', Password::defaults()],
-            'role' => ['required', 'in:admin,tecnico,cliente'],
-            'company_name' => ['required_if:role,cliente', 'string', 'max:255'],
-            'cnpj' => ['required_if:role,cliente', 'string', 'size:14', 'unique:clients,cnpj'],
-        ], [
-            'company_name.required_if' => 'O nome da empresa é obrigatório para clientes.',
-            'cnpj.required_if' => 'O CNPJ é obrigatório para clientes.',
-            'cnpj.unique' => 'Este CNPJ já está cadastrado no sistema.',
-        ]);
+        $validatedData = $this->validateUserData($request, isUpdate: false);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => $request->role,
-        ]);
+        try {
+            $user = $this->userService->createUser($validatedData);
 
-        // Se for cliente, criar empresa e contato
-        if ($request->role === 'cliente') {
-            $this->createClientAndContact($user, $request->all());
+            return redirect()
+                ->route('users.index')
+                ->with('success', 'Usuário criado com sucesso!');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Erro ao criar usuário: ' . $e->getMessage());
         }
-
-        return redirect()->route('users.index')
-            ->with('success', 'Usuário criado com sucesso!');
     }
 
     /**
@@ -86,25 +80,20 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
-            'role' => ['required', 'in:admin,tecnico,cliente'],
-            'password' => ['nullable', 'confirmed', Password::defaults()],
-        ]);
+        $validatedData = $this->validateUserData($request, $user, isUpdate: true);
 
-        $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'role' => $request->role,
-        ]);
+        try {
+            $this->userService->updateUser($user, $validatedData);
 
-        if ($request->filled('password')) {
-            $user->update(['password' => Hash::make($request->password)]);
+            return redirect()
+                ->route('users.index')
+                ->with('success', 'Usuário atualizado com sucesso!');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Erro ao atualizar usuário: ' . $e->getMessage());
         }
-
-        return redirect()->route('users.index')
-            ->with('success', 'Usuário atualizado com sucesso!');
     }
 
     /**
@@ -112,16 +101,23 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        // Não permitir deletar o próprio usuário
-        if ($user->id === auth()->id()) {
-            return redirect()->route('users.index')
+        if ($this->isCurrentUser($user)) {
+            return redirect()
+                ->route('users.index')
                 ->with('error', 'Você não pode deletar sua própria conta!');
         }
 
-        $user->delete();
+        try {
+            $this->userService->deleteUser($user);
 
-        return redirect()->route('users.index')
-            ->with('success', 'Usuário removido com sucesso!');
+            return redirect()
+                ->route('users.index')
+                ->with('success', 'Usuário removido com sucesso!');
+        } catch (\Exception $e) {
+            return redirect()
+                ->route('users.index')
+                ->with('error', 'Erro ao remover usuário: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -129,33 +125,71 @@ class UserController extends Controller
      */
     public function toggleStatus(User $user)
     {
-        $user->update(['is_active' => !$user->is_active]);
+        try {
+            $this->userService->toggleUserStatus($user);
 
-        $status = $user->is_active ? 'ativado' : 'desativado';
-        return redirect()->route('users.index')
-            ->with('success', "Usuário {$status} com sucesso!");
+            $status = $user->is_active ? 'ativado' : 'desativado';
+            return redirect()
+                ->route('users.index')
+                ->with('success', "Usuário {$status} com sucesso!");
+        } catch (\Exception $e) {
+            return redirect()
+                ->route('users.index')
+                ->with('error', 'Erro ao alterar status: ' . $e->getMessage());
+        }
     }
 
     /**
-     * Cria empresa e contato para usuário cliente
+     * Validate user data based on operation type
      */
-    protected function createClientAndContact(User $user, array $data)
+    protected function validateUserData(Request $request, ?User $user = null, bool $isUpdate = false): array
     {
-        // Criar empresa
-        $client = Client::create([
-            'cnpj' => $data['cnpj'],
-            'company_name' => $data['company_name'],
-            'trade_name' => $data['company_name'],
-            'is_active' => true,
-        ]);
+        $rules = [
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255'],
+            'role' => ['required', 'in:admin,tecnico,cliente'],
+        ];
 
-        // Criar contato principal
-        ClientContact::create([
-            'client_id' => $client->id,
-            'name' => $user->name,
-            'email' => $user->email,
-            'is_primary' => true,
-            'is_active' => true,
-        ]);
+        // Email uniqueness rule
+        if ($isUpdate) {
+            $rules['email'][] = 'unique:users,email,' . $user->id;
+        } else {
+            $rules['email'][] = 'unique:users';
+        }
+
+        // Password rules
+        if ($isUpdate) {
+            $rules['password'] = ['nullable', 'confirmed', Password::defaults()];
+        } else {
+            $rules['password'] = ['required', 'confirmed', Password::defaults()];
+        }
+
+        // Client-specific rules
+        if ($request->role === 'cliente') {
+            $rules['company_name'] = ['required', 'string', 'max:255'];
+            $rules['cnpj'] = ['required', 'string', 'size:14'];
+            
+            if ($isUpdate) {
+                $rules['cnpj'][] = 'unique:clients,cnpj,' . ($user->client?->id ?? 'NULL');
+            } else {
+                $rules['cnpj'][] = 'unique:clients,cnpj';
+            }
+        }
+
+        $messages = [
+            'company_name.required' => 'O nome da empresa é obrigatório para clientes.',
+            'cnpj.required' => 'O CNPJ é obrigatório para clientes.',
+            'cnpj.unique' => 'Este CNPJ já está cadastrado no sistema.',
+        ];
+
+        return $request->validate($rules, $messages);
+    }
+
+    /**
+     * Check if the user is the current authenticated user
+     */
+    protected function isCurrentUser(User $user): bool
+    {
+        return $user->id === auth()->id();
     }
 }

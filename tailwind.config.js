@@ -6,6 +6,18 @@ module.exports = {
     "./resources/**/*.vue",
     "./app/**/*.php",
   ],
+  safelist: [
+    // Cores de auditoria - usando regex para capturar todas as variações
+    {
+      pattern: /bg-(verde-claro|amarelo-claro|vermelho-claro|roxo-pastel|roxo-escuro|vermelho-escuro|azul-claro|cinza-claro-2|verde-pastel|lilás)/,
+    },
+    // Cores de tickets - classes reais geradas pelo SystemHelper
+    {
+      pattern: /bg-(amarelo-claro|azul-claro|verde-claro|cinza-claro-2|vermelho-claro)/,
+    },
+    // Classes específicas para badges de status e prioridade
+    'bg-amarelo-claro', 'bg-azul-claro', 'bg-verde-claro', 'bg-cinza-claro-2', 'bg-vermelho-claro',
+  ],
   theme: {
     extend: {
       colors: {
@@ -39,7 +51,19 @@ module.exports = {
         sidebar: {
           DEFAULT: '#3d235a',
           hover: '#4d2f6f',
-        }
+        },
+        
+        // Cores para auditoria - reutilizáveis
+        'verde-claro': '#d1e0c7',        /* Verde claro - Criado */
+        'amarelo-claro': '#fff8bb',      /* Amarelo claro - Atualizado */
+        'vermelho-claro': '#f8d3d3',     /* Vermelho claro - Excluído */
+        'roxo-pastel': '#c9a9e3',        /* Roxo pastel - Respondido */
+        'roxo-escuro': '#3c006c',        /* Roxo escuro - Fechado */
+        'vermelho-escuro': '#770000',    /* Vermelho escuro - Reaberto */
+        'azul-claro': '#b0caff',         /* Azul claro - Atribuído */
+        'cinza-claro-2': '#cecece',      /* Cinza claro 2 - Status alterado */
+        'verde-pastel': '#b2d9a8',       /* Verde pastel - Prioridade alterada */
+        'lilás': '#d3c7e0'               /* Lilás - Visualizado */
       },
              fontFamily: {
                'sans': ['Lato', 'sans-serif'],

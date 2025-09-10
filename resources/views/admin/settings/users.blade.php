@@ -5,9 +5,9 @@
 @section('header')
 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
     <div class="mb-4 sm:mb-0">
-        <span class="text-sm text-gray-500">Administração</span>
+        <span class="text-sm text-cinza-claro">Administração</span>
         <h1 class="page-title mt-1">Gerenciar Usuários</h1>
-        <p class="text-gray-600 mt-2">Gerencie usuários, permissões e configurações de acesso ao sistema</p>
+        <p class="text-cinza mt-2">Gerencie usuários, permissões e configurações de acesso ao sistema</p>
     </div>
     <x-button 
         variant="primary" 
@@ -108,8 +108,8 @@
                                         <span class="text-sm font-medium">{{ substr($user->name, 0, 1) }}</span>
                                     </div>
                                     <div>
-                                        <div class="font-medium text-gray-900">{{ $user->name }}</div>
-                                        <div class="text-sm text-gray-500">{{ $user->email }}</div>
+                                        <div class="font-medium text-cinza">{{ $user->name }}</div>
+                                        <div class="text-sm text-cinza-claro">{{ $user->email }}</div>
                                     </div>
                                 </div>
                             </td>
@@ -119,7 +119,7 @@
                                 </x-badge>
                             </td>
                             <td>
-                                <div class="text-sm text-gray-500">
+                                <div class="text-sm text-cinza-claro">
                                     @if($user->phone)
                                         <div>{{ $user->phone }}</div>
                                     @endif
@@ -132,7 +132,7 @@
                                 </x-badge>
                             </td>
                             <td>
-                                <div class="text-sm text-gray-500">
+                                <div class="text-sm text-cinza-claro">
                                     {{ $user->last_login_at ? $user->last_login_at->format('d/m/Y H:i') : 'Nunca' }}
                                 </div>
                             </td>

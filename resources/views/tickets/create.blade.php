@@ -5,9 +5,9 @@
 @section('header')
 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
     <div class="mb-4 sm:mb-0">
-        <span class="text-sm text-gray-500">Tickets</span>
+        <span class="text-sm text-cinza-claro">Tickets</span>
         <h1 class="page-title mt-1">Novo Ticket</h1>
-        <p class="text-gray-600 mt-2">Crie um novo ticket de suporte</p>
+        <p class="text-cinza mt-2">Crie um novo ticket de suporte</p>
     </div>
     <x-button 
         variant="outline" 
@@ -27,7 +27,8 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div class="lg:col-span-2">
             <!-- Formulário Principal -->
-            <x-card title="Informações do Ticket">
+            <h2 class="section-title mb-4">Informações do Ticket</h2>
+            <x-card>
                 <form method="POST" action="{{ route('tickets.store') }}" class="space-y-6">
                     @csrf
 
@@ -203,22 +204,23 @@
                 </x-card>
 
                 <!-- Informações do Sistema -->
-                <x-card title="Informações do Sistema">
+                <h3 class="text-lg font-semibold text-cinza mb-4">Informações do Sistema</h3>
+                <x-card>
                     <div class="space-y-2">
                         <div class="flex justify-between">
-                            <span class="text-gray-500 text-sm">Ticket #</span>
+                            <span class="text-cinza-claro text-sm">Ticket #</span>
                             <span class="font-medium text-sm">{{ $nextTicketNumber }}</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-gray-500 text-sm">Criado por</span>
+                            <span class="text-cinza-claro text-sm">Criado por</span>
                             <span class="font-medium text-sm">{{ auth()->user()->name }}</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-gray-500 text-sm">Data</span>
+                            <span class="text-cinza-claro text-sm">Data</span>
                             <span class="font-medium text-sm">{{ now()->format('d/m/Y H:i') }}</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-gray-500 text-sm">Status</span>
+                            <span class="text-cinza-claro text-sm">Status</span>
                             <x-badge variant="primary">Aberto</x-badge>
                         </div>
                     </div>
@@ -236,19 +238,19 @@
                     </div>
                     <div class="space-y-2">
                         <div class="flex justify-between">
-                            <span class="text-gray-500 text-sm">Baixa</span>
+                            <span class="text-cinza-claro text-sm">Baixa</span>
                             <span class="font-medium text-sm">72h</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-gray-500 text-sm">Média</span>
+                            <span class="text-cinza-claro text-sm">Média</span>
                             <span class="font-medium text-sm">48h</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-gray-500 text-sm">Alta</span>
+                            <span class="text-cinza-claro text-sm">Alta</span>
                             <span class="font-medium text-sm">24h</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-gray-500 text-sm">Urgente</span>
+                            <span class="text-cinza-claro text-sm">Urgente</span>
                             <span class="font-medium text-sm">4h</span>
                         </div>
                     </div>

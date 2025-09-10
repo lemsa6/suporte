@@ -13,7 +13,7 @@
     <!-- CSS do Tailwind via Vite -->
     @vite(['resources/css/tailwind.css', 'resources/js/app.js'])
 </head>
-<body class="bg-gray-50 antialiased">
+<body class="bg-cinza-claro-2 antialiased">
     <div class="flex h-screen">
         <!-- Sidebar -->
         <div class="sidebar" id="sidebar">

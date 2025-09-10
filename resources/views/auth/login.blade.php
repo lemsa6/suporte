@@ -26,11 +26,6 @@
                 <p class="text-cinza">Sistema de Gerenciamento de Tickets</p>
             </div>
 
-            <!-- Título do formulário -->
-            <div class="text-center mb-6">
-                <h2 class="section-title text-xl mb-2">Bem-vindo de volta!</h2>
-                <p class="text-cinza-claro">Faça login na sua conta</p>
-            </div>
 
             <!-- Mensagens de erro -->
             @if ($errors->any())

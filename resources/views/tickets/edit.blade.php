@@ -3,9 +3,9 @@
 @section('title', 'Editar Ticket #' . $ticket->ticket_number)
 
 @section('header')
-<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-md-between">
-    <div class="flex-grow-1">
-        <div class="d-flex align-items-center">
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+    <div class="mb-4 sm:mb-0">
+        <div class="flex items-center">
             <x-button variant="outline" tag="a" href="{{ route('tickets.show', $ticket->ticket_number) }}" class="me-3">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
@@ -16,7 +16,7 @@
                 <h1 class="page-title mb-1">
                     Editar Ticket #{{ $ticket->ticket_number }}
                 </h1>
-                <p class="text-muted mb-0">
+                <p class="text-cinza-claro mb-0">
                     {{ $ticket->title }}
                 </p>
             </div>
@@ -32,12 +32,12 @@
         @method('PUT')
         
         <!-- Informações Básicas -->
+        <h2 class="section-title mb-4">Informações do Ticket</h2>
         <x-card>
-            <h2 class="section-title mb-6">Informações do Ticket</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Título -->
                 <div class="md:col-span-2">
-                    <label for="title" class="block text-sm font-medium text-gray-700 mb-2">Título do Ticket *</label>
+                    <label for="title" class="block text-sm font-medium text-cinza mb-2">Título do Ticket *</label>
                     <x-input id="title" name="title" required 
                              value="{{ old('title', $ticket->title) }}"
                              placeholder="Descreva brevemente o problema" />
@@ -48,7 +48,7 @@
 
                 <!-- Cliente -->
                 <div>
-                    <label for="client_id" class="block text-sm font-medium text-gray-700 mb-2">Cliente *</label>
+                    <label for="client_id" class="block text-sm font-medium text-cinza mb-2">Cliente *</label>
                     <x-select id="client_id" name="client_id" required>
                         <option value="">Selecione o cliente</option>
                         @foreach($clients as $client)
@@ -64,7 +64,7 @@
 
                 <!-- Contato -->
                 <div>
-                    <label for="contact_id" class="block text-sm font-medium text-gray-700 mb-2">Contato *</label>
+                    <label for="contact_id" class="block text-sm font-medium text-cinza mb-2">Contato *</label>
                     <x-select id="contact_id" name="contact_id" required>
                         <option value="">Selecione o contato</option>
                         @foreach($ticket->client->contacts as $contact)
@@ -81,7 +81,7 @@
 
                 <!-- Categoria -->
                 <div>
-                    <label for="category_id" class="block text-sm font-medium text-gray-700 mb-2">Categoria *</label>
+                    <label for="category_id" class="block text-sm font-medium text-cinza mb-2">Categoria *</label>
                     <x-select id="category_id" name="category_id" required>
                         <option value="">Selecione a categoria</option>
                         @foreach($categories as $category)
@@ -97,7 +97,7 @@
 
                 <!-- Prioridade -->
                 <div>
-                    <label for="priority" class="block text-sm font-medium text-gray-700 mb-2">Prioridade *</label>
+                    <label for="priority" class="block text-sm font-medium text-cinza mb-2">Prioridade *</label>
                     <x-select id="priority" name="priority" required>
                         <option value="">Selecione a prioridade</option>
                         <option value="baixa" {{ old('priority', $ticket->priority) == 'baixa' ? 'selected' : '' }}>Baixa</option>
@@ -111,7 +111,7 @@
 
                 <!-- Status -->
                 <div>
-                    <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Status *</label>
+                    <label for="status" class="block text-sm font-medium text-cinza mb-2">Status *</label>
                     <x-select id="status" name="status" required>
                         <option value="aberto" {{ old('status', $ticket->status) == 'aberto' ? 'selected' : '' }}>Aberto</option>
                         <option value="em_andamento" {{ old('status', $ticket->status) == 'em_andamento' ? 'selected' : '' }}>Em Andamento</option>
@@ -128,11 +128,11 @@
                     <div class="flex items-center">
                         <div class="flex items-center h-5">
                             <input type="checkbox" id="is_urgent" name="is_urgent" value="1" 
-                                   class="h-4 w-4 text-roxo focus:ring-roxo border-gray-300 rounded"
+                                   class="h-4 w-4 text-roxo focus:ring-roxo border-cinza-claro rounded"
                                    {{ old('is_urgent', $ticket->is_urgent) ? 'checked' : '' }}>
                         </div>
                         <div class="ml-3 text-sm">
-                            <label for="is_urgent" class="font-medium text-gray-700">
+                            <label for="is_urgent" class="font-medium text-cinza">
                                 Marcar como urgente
                             </label>
                         </div>
@@ -145,10 +145,10 @@
         </x-card>
 
         <!-- Descrição -->
+        <h2 class="section-title mb-4">Descrição do Problema</h2>
         <x-card>
-            <h2 class="section-title mb-6">Descrição do Problema</h2>
             <div>
-                <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Descrição Detalhada *</label>
+                <label for="description" class="block text-sm font-medium text-cinza mb-2">Descrição Detalhada *</label>
                 <x-textarea id="description" name="description" rows="6" required
                            placeholder="Descreva detalhadamente o problema, incluindo passos para reproduzir, mensagens de erro, etc.">{{ old('description', $ticket->description) }}</x-textarea>
                 @error('description')
@@ -159,10 +159,10 @@
 
         <!-- Atribuição -->
         @if(auth()->user()->can('assign-tickets'))
+        <h2 class="section-title mb-4">Atribuição</h2>
         <x-card>
-            <h2 class="section-title mb-6">Atribuição</h2>
             <div>
-                <label for="assigned_to" class="block text-sm font-medium text-gray-700 mb-2">Atribuir para</label>
+                <label for="assigned_to" class="block text-sm font-medium text-cinza mb-2">Atribuir para</label>
                 <x-select id="assigned_to" name="assigned_to">
                     <option value="">Não atribuir (deixar em fila)</option>
                     @foreach($technicians as $technician)
@@ -180,10 +180,10 @@
 
         <!-- Notas de Resolução -->
         @if($ticket->status === 'resolvido' || $ticket->status === 'fechado')
+        <h2 class="section-title mb-4">Notas de Resolução</h2>
         <x-card>
-            <h2 class="section-title mb-6">Notas de Resolução</h2>
             <div>
-                <label for="resolution_notes" class="block text-sm font-medium text-gray-700 mb-2">Como foi resolvido</label>
+                <label for="resolution_notes" class="block text-sm font-medium text-cinza mb-2">Como foi resolvido</label>
                 <x-textarea id="resolution_notes" name="resolution_notes" rows="4"
                            placeholder="Descreva como o problema foi resolvido...">{{ old('resolution_notes', $ticket->resolution_notes) }}</x-textarea>
                 @error('resolution_notes')

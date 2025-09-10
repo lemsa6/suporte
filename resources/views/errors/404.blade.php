@@ -1,106 +1,75 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
-@section('title', 'Página Não Encontrada')
+    <title>Página não encontrada - {{ config('app.name', 'Laravel') }}</title>
 
-@section('content')
-<div class="container-fluid d-flex align-items-center justify-content-center min-vh-100">
-    <div class="row w-100">
-        <div class="col-12 text-center">
-            <!-- Código de Erro -->
-            <div class="error-code mb-4">
-                <h1 class="display-1 fw-bold text-primary">404</h1>
-            </div>
-            
-            <!-- Ícone -->
-            <div class="error-icon mb-4">
-                <svg width="120" height="120" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="text-muted">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.29-1.009-5.824-2.709M15 6.291A7.962 7.962 0 0112 4c-2.34 0-4.29 1.009-5.824 2.709M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2z"></path>
+    <!-- Fonts - Lato Local -->
+    <link rel="stylesheet" href="{{ asset('fonts/lato/lato.css') }}">
+
+    <!-- CSS do Tailwind via Vite -->
+    @vite(['resources/css/tailwind.css', 'resources/js/app.js'])
+</head>
+<body class="font-sans antialiased">
+    <div class="min-h-screen bg-gradient-to-br from-cinza-claro-2 to-cinza-claro flex items-center justify-center px-4">
+        <div class="max-w-2xl w-full text-center">
+            <!-- Ícone de Erro -->
+            <div class="mb-8">
+                <svg width="120" height="120" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="text-cinza-claro mx-auto">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                 </svg>
             </div>
-            
-            <!-- Título -->
-            <h2 class="h3 fw-bold text-dark mb-3">Página Não Encontrada</h2>
-            
-            <!-- Descrição -->
-            <p class="text-muted mb-4 fs-5">
-                A página que você está procurando não existe ou foi movida.
-            </p>
-            
-            <!-- Informações Adicionais -->
-            <div class="alert alert-info border-0 bg-light mb-4 mx-auto error-alert">
-                <div class="d-flex align-items-center">
-                    <svg class="me-3" width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+
+            <!-- Título e Descrição -->
+            <div class="mb-8">
+                <h1 class="text-6xl font-bold text-cinza mb-4">404</h1>
+                <h2 class="text-2xl font-semibold text-cinza mb-4">Página não encontrada</h2>
+                <p class="text-cinza-claro text-lg mb-4">
+                    A página que você está procurando não existe ou foi movida.
+                </p>
+                <div class="flex items-center justify-center text-cinza-claro">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
                     </svg>
-                    <div class="text-start">
-                        <strong>Possíveis causas:</strong>
-                        <ul class="mb-0 mt-2 small">
-                            <li>URL digitada incorretamente</li>
-                            <li>Página foi movida ou removida</li>
-                            <li>Link desatualizado</li>
-                        </ul>
-                    </div>
+                    <span>Verifique o endereço e tente novamente</span>
                 </div>
             </div>
-            
-            <!-- Ações -->
-            <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
-                <a href="{{ route('dashboard') }}" class="btn btn-primary btn-lg px-4">
-                    <svg class="me-2" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+
+            <!-- Botões de Ação -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <x-button variant="primary" size="lg" tag="a" href="{{ route('dashboard') }}">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z"></path>
                     </svg>
                     Ir para Dashboard
-                </a>
+                </x-button>
                 
-                <button onclick="history.back()" class="btn btn-outline-secondary btn-lg px-4">
-                    <svg class="me-2" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <x-button variant="outline" size="lg" onclick="history.back()">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                     </svg>
                     Voltar
-                </button>
+                </x-button>
                 
-                <a href="{{ route('tickets.index') }}" class="btn btn-outline-primary btn-lg px-4">
-                    <svg class="me-2" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <x-button variant="outline" size="lg" tag="a" href="{{ route('tickets.index') }}">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                     </svg>
                     Ver Tickets
-                </a>
+                </x-button>
             </div>
-            
-            <!-- Informações de Suporte -->
-            <div class="mt-5 pt-4 border-top">
-                <p class="text-muted small mb-0">
+
+            <!-- Informações Adicionais -->
+            <div class="mt-12 pt-8 border-t border-cinza-claro-2">
+                <p class="text-cinza-claro text-sm mb-0">
                     Se você acredita que isso é um erro, entre em contato com o suporte técnico.
                 </p>
             </div>
         </div>
     </div>
-</div>
-
-<style>
-.min-vh-100 {
-    min-height: 100vh;
-}
-
-.error-code h1 {
-    font-size: 8rem;
-    line-height: 1;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-}
-
-.error-icon svg {
-    opacity: 0.6;
-}
-
-@media (max-width: 768px) {
-    .error-code h1 {
-        font-size: 6rem;
-    }
-    
-    .error-icon svg {
-        width: 80px;
-        height: 80px;
-    }
-}
-</style>
-@endsection
+</body>
+</html>

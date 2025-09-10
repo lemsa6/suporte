@@ -44,7 +44,7 @@ class AuditService
         return AuditLog::create([
             'event_type' => $eventType,
             'auditable_type' => get_class($auditable),
-            'auditable_id' => $auditable->id,
+            'auditable_id' => $auditable->id ?? null,
             'user_id' => $user?->id,
             'user_type' => $user?->role,
             'ip_address' => $ipAddress,

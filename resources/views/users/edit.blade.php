@@ -5,9 +5,9 @@
 @section('header')
 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
     <div class="mb-4 sm:mb-0">
-        <span class="text-sm text-gray-500">Usuários</span>
+        <span class="text-sm text-cinza-claro">Usuários</span>
         <h1 class="page-title mt-1">Editar Usuário</h1>
-        <p class="text-gray-600 mt-2">Atualize as informações do usuário</p>
+        <p class="text-cinza mt-2">Atualize as informações do usuário</p>
     </div>
     <x-button variant="outline" tag="a" href="{{ route('settings.users') }}">
         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -84,40 +84,40 @@
             <div class="space-y-4">
                 <div class="flex items-center">
                     <input type="checkbox" name="notify_ticket_created" id="notify_ticket_created" value="1"
-                        class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                        class="h-4 w-4 text-roxo focus:ring-roxo border-cinza-claro rounded"
                         {{ old('notify_ticket_created', $user->notify_ticket_created) ? 'checked' : '' }}>
-                    <label for="notify_ticket_created" class="ml-2 block text-sm text-gray-900">
+                    <label for="notify_ticket_created" class="ml-2 block text-sm text-cinza">
                         Notificar sobre novos tickets
                     </label>
                 </div>
                 <div class="flex items-center">
                     <input type="checkbox" name="notify_ticket_replied" id="notify_ticket_replied" value="1"
-                        class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                        class="h-4 w-4 text-roxo focus:ring-roxo border-cinza-claro rounded"
                         {{ old('notify_ticket_replied', $user->notify_ticket_replied) ? 'checked' : '' }}>
-                    <label for="notify_ticket_replied" class="ml-2 block text-sm text-gray-900">
+                    <label for="notify_ticket_replied" class="ml-2 block text-sm text-cinza">
                         Notificar sobre respostas em tickets
                     </label>
                 </div>
                 <div class="flex items-center">
                     <input type="checkbox" name="notify_ticket_status_changed" id="notify_ticket_status_changed" value="1"
-                        class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                        class="h-4 w-4 text-roxo focus:ring-roxo border-cinza-claro rounded"
                         {{ old('notify_ticket_status_changed', $user->notify_ticket_status_changed) ? 'checked' : '' }}>
-                    <label for="notify_ticket_status_changed" class="ml-2 block text-sm text-gray-900">
+                    <label for="notify_ticket_status_changed" class="ml-2 block text-sm text-cinza">
                         Notificar sobre mudanças de status
                     </label>
                 <div class="flex items-center">
                     <input type="checkbox" name="notify_ticket_priority_changed" id="notify_ticket_priority_changed" value="1"
-                        class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                        class="h-4 w-4 text-roxo focus:ring-roxo border-cinza-claro rounded"
                         {{ old('notify_ticket_priority_changed', $user->notify_ticket_priority_changed) ? 'checked' : '' }}>
-                    <label for="notify_ticket_priority_changed" class="ml-2 block text-sm text-gray-900">
+                    <label for="notify_ticket_priority_changed" class="ml-2 block text-sm text-cinza">
                         Notificar sobre mudanças de prioridade
                     </label>
                 </div>
                 <div class="flex items-center">
                     <input type="checkbox" name="notify_ticket_urgent" id="notify_ticket_urgent" value="1"
-                        class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                        class="h-4 w-4 text-roxo focus:ring-roxo border-cinza-claro rounded"
                         {{ old('notify_ticket_urgent', $user->notify_ticket_urgent) ? 'checked' : '' }}>
-                    <label for="notify_ticket_urgent" class="ml-2 block text-sm text-gray-900">
+                    <label for="notify_ticket_urgent" class="ml-2 block text-sm text-cinza">
                         Notificar sobre tickets urgentes
                     </label>
                 </div>

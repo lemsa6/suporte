@@ -5,9 +5,9 @@
 @section('header')
 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
     <div class="mb-4 sm:mb-0">
-        <span class="text-sm text-gray-500">Administração</span>
+        <span class="text-sm text-cinza-claro">Administração</span>
         <h1 class="page-title mt-1">Configurações do Sistema</h1>
-        <p class="text-gray-600 mt-2">Gerencie as configurações gerais do sistema de tickets</p>
+        <p class="text-cinza mt-2">Gerencie as configurações gerais do sistema de tickets</p>
     </div>
 </div>
 @endsection
@@ -24,11 +24,11 @@
                 </svg>
             </div>
             <div>
-                <h3 class="text-lg font-semibold text-gray-900">Sistema</h3>
-                <p class="text-sm text-gray-500">Configurações gerais</p>
+                <h3 class="text-lg font-semibold text-cinza">Sistema</h3>
+                <p class="text-sm text-cinza-claro">Configurações gerais</p>
             </div>
         </div>
-        <p class="text-gray-600 mb-6 flex-grow">Configure nome do sistema, logo, informações da empresa e configurações básicas.</p>
+        <p class="text-cinza mb-6 flex-grow">Configure nome do sistema, logo, informações da empresa e configurações básicas.</p>
         <x-button 
             variant="primary" 
             tag="a" 
@@ -51,11 +51,11 @@
                 </svg>
             </div>
             <div>
-                <h3 class="text-lg font-semibold text-gray-900">Email</h3>
-                <p class="text-sm text-gray-500">Configurações SMTP</p>
+                <h3 class="text-lg font-semibold text-cinza">Email</h3>
+                <p class="text-sm text-cinza-claro">Configurações SMTP</p>
             </div>
         </div>
-        <p class="text-gray-600 mb-6 flex-grow">Configure servidor SMTP, credenciais e configurações de envio de emails.</p>
+        <p class="text-cinza mb-6 flex-grow">Configure servidor SMTP, credenciais e configurações de envio de emails.</p>
         <x-button 
             variant="success" 
             tag="a" 
@@ -77,11 +77,11 @@
                 </svg>
             </div>
             <div>
-                <h3 class="text-lg font-semibold text-gray-900">Templates</h3>
-                <p class="text-sm text-gray-500">Templates de notificação</p>
+                <h3 class="text-lg font-semibold text-cinza">Templates</h3>
+                <p class="text-sm text-cinza-claro">Templates de notificação</p>
             </div>
         </div>
-        <p class="text-gray-600 mb-6 flex-grow">Edite e personalize os templates de email para notificações do sistema.</p>
+        <p class="text-cinza mb-6 flex-grow">Edite e personalize os templates de email para notificações do sistema.</p>
         <x-button 
             variant="warning" 
             tag="a" 
@@ -103,11 +103,11 @@
                 </svg>
             </div>
             <div>
-                <h3 class="text-lg font-semibold text-gray-900">Usuários</h3>
-                <p class="text-sm text-gray-500">Gerenciar usuários</p>
+                <h3 class="text-lg font-semibold text-cinza">Usuários</h3>
+                <p class="text-sm text-cinza-claro">Gerenciar usuários</p>
             </div>
         </div>
-        <p class="text-gray-600 mb-6 flex-grow">Gerencie usuários, permissões e configurações de acesso ao sistema.</p>
+        <p class="text-cinza mb-6 flex-grow">Gerencie usuários, permissões e configurações de acesso ao sistema.</p>
         <x-button 
             variant="info" 
             tag="a" 
@@ -129,11 +129,11 @@
                 </svg>
             </div>
             <div>
-                <h3 class="text-lg font-semibold text-gray-900">Notificações</h3>
-                <p class="text-sm text-gray-500">Configurações de alertas</p>
+                <h3 class="text-lg font-semibold text-cinza">Notificações</h3>
+                <p class="text-sm text-cinza-claro">Configurações de alertas</p>
             </div>
         </div>
-        <p class="text-gray-600 mb-6 flex-grow">Configure tipos de notificação, frequência e preferências do sistema.</p>
+        <p class="text-cinza mb-6 flex-grow">Configure tipos de notificação, frequência e preferências do sistema.</p>
         <x-button 
             variant="danger" 
             tag="a" 

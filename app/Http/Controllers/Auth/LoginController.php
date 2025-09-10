@@ -52,9 +52,11 @@ class LoginController extends Controller
                 $request->session()->put('auth.password_confirmed_at', time());
             }
 
+            \Log::info('Login bem-sucedido, chamando sendLoginResponse');
             return $this->sendLoginResponse($request);
         }
 
+        \Log::info('Login falhado, chamando sendFailedLoginResponse');
         return $this->sendFailedLoginResponse($request);
     }
 
@@ -67,16 +69,23 @@ class LoginController extends Controller
      */
     protected function authenticated(Request $request, $user)
     {
-        // Registrar auditoria de login bem-sucedido
-        $this->auditService->log(
-            'login_success',
-            $user,
-            $user,
-            $request,
-            [],
-            ['email' => $user->email, 'role' => $user->role],
-            'Login realizado com sucesso'
-        );
+        \Log::info('Método authenticated chamado para usuário: ' . $user->name);
+        
+        try {
+            // Registrar auditoria de login bem-sucedido
+            $this->auditService->log(
+                'login_success',
+                $user,
+                $user,
+                $request,
+                [],
+                ['email' => $user->email, 'role' => $user->role],
+                'Login realizado com sucesso'
+            );
+            \Log::info('Auditoria de login registrada com sucesso');
+        } catch (\Exception $e) {
+            \Log::error('Erro ao registrar auditoria de login: ' . $e->getMessage());
+        }
 
         // Redirecionar baseado no perfil do usuário
         if ($user->isAdmin()) {
@@ -100,15 +109,19 @@ class LoginController extends Controller
 
         // Registrar auditoria de logout
         if ($user) {
-            $this->auditService->log(
-                'logout',
-                $user,
-                $user,
-                $request,
-                [],
-                ['email' => $user->email, 'role' => $user->role],
-                'Logout realizado'
-            );
+            try {
+                $this->auditService->log(
+                    'logout',
+                    $user,
+                    $user,
+                    $request,
+                    [],
+                    ['email' => $user->email, 'role' => $user->role],
+                    'Logout realizado'
+                );
+            } catch (\Exception $e) {
+                \Log::error('Erro ao registrar auditoria de logout: ' . $e->getMessage());
+            }
         }
 
         $this->guard()->logout();
@@ -153,9 +166,16 @@ class LoginController extends Controller
      */
     protected function attemptLogin(Request $request)
     {
-        return $this->guard()->attempt(
-            $this->credentials($request), $request->boolean('remember')
+        $credentials = $this->credentials($request);
+        \Log::info('Tentativa de login com credenciais: ' . json_encode($credentials));
+        
+        $result = $this->guard()->attempt(
+            $credentials, $request->boolean('remember')
         );
+        
+        \Log::info('Resultado do attempt: ' . ($result ? 'SUCESSO' : 'FALHA'));
+        
+        return $result;
     }
 
     /**
@@ -197,15 +217,19 @@ class LoginController extends Controller
     protected function sendFailedLoginResponse(Request $request)
     {
         // Registrar auditoria de tentativa de login falhada
-        $this->auditService->log(
-            'login_failed',
-            new \App\Models\User(), // Usar um modelo vazio para tentativas falhadas
-            null, // Sem usuário para tentativas falhadas
-            $request,
-            [],
-            ['email' => $request->input($this->username())],
-            'Tentativa de login falhada'
-        );
+        try {
+            $this->auditService->log(
+                'login_failed',
+                new \App\Models\User(), // Usar um modelo vazio para tentativas falhadas
+                null, // Sem usuário para tentativas falhadas
+                $request,
+                [],
+                ['email' => $request->input($this->username())],
+                'Tentativa de login falhada'
+            );
+        } catch (\Exception $e) {
+            \Log::error('Erro ao registrar auditoria de login falhado: ' . $e->getMessage());
+        }
 
         throw ValidationException::withMessages([
             $this->username() => [trans('auth.failed')],

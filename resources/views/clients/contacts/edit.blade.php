@@ -3,269 +3,229 @@
 @section('title', 'Editar Contato')
 
 @section('header')
-<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-md-between">
-    <div class="flex-grow-1">
-        <div class="d-flex align-items-center mb-2">
-            <a href="{{ route('clients.show', $client) }}" class="btn btn-outline-secondary btn-sm me-3">
-                <svg class="me-1" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+    <div class="mb-4 sm:mb-0">
+        <div class="flex items-center mb-2">
+            <x-button variant="outline" size="sm" tag="a" href="{{ route('clients.show', $client) }}">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                 </svg>
                 Voltar
-            </a>
-            <h2 class="fs-2 fw-bold text-dark mb-0">
-                Editar Contato
-            </h2>
+            </x-button>
         </div>
-        <p class="text-muted mb-0">
-            <strong>Empresa:</strong> {{ $client->company_name }} | 
-            <strong>Contato:</strong> {{ $contact->name }}
-        </p>
+        <span class="text-sm text-cinza-claro">Cliente: {{ $client->trade_name ?? $client->company_name }}</span>
+        <h1 class="page-title mt-1">Editar Contato</h1>
+        <p class="text-cinza mt-2">Atualize as informações do contato</p>
     </div>
 </div>
 @endsection
 
 @section('content')
-<div class="container-fluid">
-    <div class="row g-4">
-        <div class="col-12 col-lg-8">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0">
-                    <h5 class="mb-0 fw-semibold">Informações do Contato</h5>
+<div class="space-y-6">
+    <x-card title="Informações do Contato">
+        <form action="{{ route('clients.contacts.update', ['client' => $client, 'contact' => $contact]) }}" method="POST" class="space-y-6">
+            @csrf
+            @method('PUT')
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Nome Completo -->
+                <div>
+                    <label for="name" class="block text-sm font-medium text-cinza mb-2">Nome Completo *</label>
+                    <input type="text" id="name" name="name" required 
+                        class="w-full px-3 py-2 border border-cinza-claro-2 rounded-md focus:outline-none focus:ring-2 focus:ring-roxo focus:border-transparent @error('name') border-vermelho @enderror"
+                        value="{{ old('name', $contact->name) }}">
+                    @error('name')
+                        <div class="text-vermelho text-sm mt-1">{{ $message }}</div>
+                    @enderror
                 </div>
-                <div class="card-body">
-                    <form action="{{ route('clients.contacts.update', ['client' => $client, 'contact' => $contact]) }}" method="POST" class="d-flex flex-column gap-4">
-                        @csrf
-                        @method('PUT')
-                        
-                        <!-- Informações Pessoais -->
-                        <div>
-                            <h6 class="fw-semibold text-dark mb-3">Informações Pessoais</h6>
-                            <div class="row g-3">
-                                <div class="col-12 col-md-6">
-                                    <label for="name" class="form-label fw-medium text-dark">Nome Completo *</label>
-                                    <input type="text" id="name" name="name" value="{{ old('name', $contact->name) }}" required
-                                        class="form-control @error('name') is-invalid @enderror">
-                                    @error('name')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                
-                                <div class="col-12 col-md-6">
-                                    <label for="email" class="form-label fw-medium text-dark">E-mail *</label>
-                                    <input type="email" id="email" name="email" value="{{ old('email', $contact->email) }}" required
-                                        class="form-control @error('email') is-invalid @enderror">
-                                    @error('email')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
 
-                        <!-- Informações Profissionais -->
-                        <div>
-                            <h6 class="fw-semibold text-dark mb-3">Informações Profissionais</h6>
-                            <div class="row g-3">
-                                <div class="col-12 col-md-6">
-                                    <label for="position" class="form-label fw-medium text-dark">Cargo</label>
-                                    <input type="text" id="position" name="position" value="{{ old('position', $contact->position) }}"
-                                        class="form-control @error('position') is-invalid @enderror">
-                                    @error('position')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                
-                                <div class="col-12 col-md-6">
-                                    <label for="department" class="form-label fw-medium text-dark">Departamento</label>
-                                    <input type="text" id="department" name="department" value="{{ old('department', $contact->department) }}"
-                                        class="form-control @error('department') is-invalid @enderror">
-                                    @error('department')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
+                <!-- Email -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-cinza mb-2">Email *</label>
+                    <input type="email" id="email" name="email" required 
+                        class="w-full px-3 py-2 border border-cinza-claro-2 rounded-md focus:outline-none focus:ring-2 focus:ring-roxo focus:border-transparent @error('email') border-vermelho @enderror"
+                        value="{{ old('email', $contact->email) }}">
+                    @error('email')
+                        <div class="text-vermelho text-sm mt-1">{{ $message }}</div>
+                    @enderror
+                </div>
 
-                        <!-- Contato -->
-                        <div>
-                            <h6 class="fw-semibold text-dark mb-3">Contato</h6>
-                            <div class="row g-3">
-                                <div class="col-12 col-md-6">
-                                    <label for="phone" class="form-label fw-medium text-dark">Telefone</label>
-                                    <input type="tel" id="phone" name="phone" value="{{ old('phone', $contact->phone) }}"
-                                        class="form-control @error('phone') is-invalid @enderror" placeholder="(11) 99999-9999">
-                                    @error('phone')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
+                <!-- Telefone -->
+                <div>
+                    <label for="phone" class="block text-sm font-medium text-cinza mb-2">Telefone</label>
+                    <input type="tel" id="phone" name="phone" 
+                        class="w-full px-3 py-2 border border-cinza-claro-2 rounded-md focus:outline-none focus:ring-2 focus:ring-roxo focus:border-transparent @error('phone') border-vermelho @enderror"
+                        value="{{ old('phone', $contact->phone) }}"
+                        placeholder="(11) 99999-9999">
+                    @error('phone')
+                        <div class="text-vermelho text-sm mt-1">{{ $message }}</div>
+                    @enderror
+                </div>
 
-                        <!-- Configurações -->
-                        <div>
-                            <h6 class="fw-semibold text-dark mb-3">Configurações</h6>
-                            <div class="d-flex flex-column gap-3">
-                                <div class="form-check">
-                                    <input type="checkbox" id="is_primary" name="is_primary" value="1" 
-                                        {{ old('is_primary', $contact->is_primary) ? 'checked' : '' }}
-                                        class="form-check-input">
-                                    <label for="is_primary" class="form-check-label fw-medium text-dark">
-                                        Contato principal
-                                    </label>
-                                </div>
-                                
-                                <div>
-                                    <label for="user_type" class="form-label fw-medium text-dark">Tipo de Usuário *</label>
-                                    <select id="user_type" name="user_type" required
-                                        class="form-select @error('user_type') is-invalid @enderror">
-                                        <option value="cliente_funcionario" {{ old('user_type', $contact->user_type) === 'cliente_funcionario' ? 'selected' : '' }}>
-                                            Funcionário da Empresa
-                                        </option>
-                                        <option value="cliente_gestor" {{ old('user_type', $contact->user_type) === 'cliente_gestor' ? 'selected' : '' }}>
-                                            Gestor da Empresa
-                                        </option>
-                                    </select>
-                                    <div class="form-text">
-                                        <strong>Gestor:</strong> Pode criar usuários e ver todos os tickets da empresa<br>
-                                        <strong>Funcionário:</strong> Apenas seus próprios tickets
-                                    </div>
-                                    @error('user_type')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
+                <!-- Cargo -->
+                <div>
+                    <label for="position" class="block text-sm font-medium text-cinza mb-2">Cargo</label>
+                    <input type="text" id="position" name="position" 
+                        class="w-full px-3 py-2 border border-cinza-claro-2 rounded-md focus:outline-none focus:ring-2 focus:ring-roxo focus:border-transparent @error('position') border-vermelho @enderror"
+                        value="{{ old('position', $contact->position) }}"
+                        placeholder="Ex: Gerente, Diretor, etc.">
+                    @error('position')
+                        <div class="text-vermelho text-sm mt-1">{{ $message }}</div>
+                    @enderror
+                </div>
 
-                        <!-- Redefinir Senha -->
-                        <div class="border-top pt-4">
-                            <h6 class="fw-semibold text-dark mb-3">Redefinir Senha</h6>
-                            <div class="alert alert-info">
-                                <div class="d-flex">
-                                    <div class="flex-shrink-0">
-                                        <svg class="text-info" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                        </svg>
-                                    </div>
-                                    <div class="ms-3">
-                                        <h6 class="alert-heading fw-semibold">Informações sobre senha</h6>
-                                        <p class="mb-1">Deixe os campos de senha em branco se não quiser alterar a senha atual.</p>
-                                        <p class="mb-0">Se preencher, uma nova senha será definida para este usuário.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="row g-3">
-                                <div class="col-12 col-md-6">
-                                    <label for="new_password" class="form-label fw-medium text-dark">Nova Senha</label>
-                                    <input type="password" id="new_password" name="new_password" minlength="8"
-                                        class="form-control @error('new_password') is-invalid @enderror">
-                                    <div class="form-text">Mínimo de 8 caracteres</div>
-                                    @error('new_password')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                
-                                <div class="col-12 col-md-6">
-                                    <label for="new_password_confirmation" class="form-label fw-medium text-dark">Confirmar Nova Senha</label>
-                                    <input type="password" id="new_password_confirmation" name="new_password_confirmation" minlength="8"
-                                        class="form-control @error('new_password_confirmation') is-invalid @enderror">
-                                    @error('new_password_confirmation')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
+                <!-- Departamento -->
+                <div>
+                    <label for="department" class="block text-sm font-medium text-cinza mb-2">Departamento</label>
+                    <input type="text" id="department" name="department" 
+                        class="w-full px-3 py-2 border border-cinza-claro-2 rounded-md focus:outline-none focus:ring-2 focus:ring-roxo focus:border-transparent @error('department') border-vermelho @enderror"
+                        value="{{ old('department', $contact->department) }}"
+                        placeholder="Ex: TI, Vendas, Suporte, etc.">
+                    @error('department')
+                        <div class="text-vermelho text-sm mt-1">{{ $message }}</div>
+                    @enderror
+                </div>
 
-                        <!-- Botões -->
-                        <div class="d-flex justify-content-end gap-2 pt-4 border-top">
-                            <a href="{{ route('clients.show', $client) }}" 
-                                class="btn btn-outline-secondary d-inline-flex align-items-center">
-                                <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                </svg>
-                                Cancelar
-                            </a>
-                            <button type="submit" 
-                                class="btn btn-primary d-inline-flex align-items-center">
-                                <svg class="me-2" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                Atualizar Contato
-                            </button>
-                        </div>
-                    </form>
+                <!-- Tipo de Contato -->
+                <div>
+                    <label for="contact_type" class="block text-sm font-medium text-cinza mb-2">Tipo de Contato</label>
+                    <select id="contact_type" name="contact_type" 
+                        class="w-full px-3 py-2 border border-cinza-claro-2 rounded-md focus:outline-none focus:ring-2 focus:ring-roxo focus:border-transparent @error('contact_type') border-vermelho @enderror">
+                        <option value="">Selecione o tipo</option>
+                        <option value="primary" {{ old('contact_type', $contact->contact_type) == 'primary' ? 'selected' : '' }}>Principal</option>
+                        <option value="secondary" {{ old('contact_type', $contact->contact_type) == 'secondary' ? 'selected' : '' }}>Secundário</option>
+                        <option value="technical" {{ old('contact_type', $contact->contact_type) == 'technical' ? 'selected' : '' }}>Técnico</option>
+                        <option value="commercial" {{ old('contact_type', $contact->contact_type) == 'commercial' ? 'selected' : '' }}>Comercial</option>
+                        <option value="financial" {{ old('contact_type', $contact->contact_type) == 'financial' ? 'selected' : '' }}>Financeiro</option>
+                    </select>
+                    @error('contact_type')
+                        <div class="text-vermelho text-sm mt-1">{{ $message }}</div>
+                    @enderror
                 </div>
             </div>
-        </div>
 
-        <div class="col-12 col-lg-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0">
-                    <h5 class="mb-0 fw-semibold">Informações do Contato</h5>
-                </div>
-                <div class="card-body">
-                    <div class="d-flex flex-column gap-3">
-                        <div class="d-flex align-items-center">
-                            <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
-                                <svg class="text-primary" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                </svg>
-                            </div>
-                            <div>
-                                <div class="fw-medium text-dark">{{ $contact->name }}</div>
-                                <small class="text-muted">{{ $contact->email }}</small>
-                            </div>
-                        </div>
-                        
-                        @if($contact->position)
-                        <div class="d-flex align-items-center">
-                            <div class="bg-info bg-opacity-10 rounded-circle p-2 me-3">
-                                <svg class="text-info" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 01-2 2H8a2 2 0 01-2-2V6m8 0H8m8 0v6a2 2 0 01-2 2H8a2 2 0 01-2-2V6"></path>
-                                </svg>
-                            </div>
-                            <div>
-                                <div class="fw-medium text-dark">{{ $contact->position }}</div>
-                                @if($contact->department)
-                                    <small class="text-muted">{{ $contact->department }}</small>
-                                @endif
-                            </div>
-                        </div>
-                        @endif
-                        
-                        @if($contact->phone)
-                        <div class="d-flex align-items-center">
-                            <div class="bg-success bg-opacity-10 rounded-circle p-2 me-3">
-                                <svg class="text-success" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
-                                </svg>
-                            </div>
-                            <div>
-                                <div class="fw-medium text-dark">{{ $contact->phone }}</div>
-                            </div>
-                        </div>
-                        @endif
-                        
-                        <div class="d-flex align-items-center">
-                            <div class="bg-warning bg-opacity-10 rounded-circle p-2 me-3">
-                                <svg class="text-warning" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                            </div>
-                            <div>
-                                <div class="fw-medium text-dark">
-                                    @if($contact->is_primary)
-                                        Contato Principal
-                                    @else
-                                        Contato Secundário
-                                    @endif
-                                </div>
-                                <small class="text-muted">{{ ucfirst(str_replace('_', ' ', $contact->user_type)) }}</small>
-                            </div>
-                        </div>
+            <!-- Observações -->
+            <div>
+                <label for="notes" class="block text-sm font-medium text-cinza mb-2">Observações</label>
+                <textarea id="notes" name="notes" rows="3" 
+                    class="w-full px-3 py-2 border border-cinza-claro-2 rounded-md focus:outline-none focus:ring-2 focus:ring-roxo focus:border-transparent @error('notes') border-vermelho @enderror"
+                    placeholder="Informações adicionais sobre o contato...">{{ old('notes', $contact->notes) }}</textarea>
+                @error('notes')
+                    <div class="text-vermelho text-sm mt-1">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <!-- Configurações -->
+            <div class="space-y-4">
+                <h3 class="text-lg font-medium text-cinza">Configurações</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Status -->
+                    <div class="flex items-center">
+                        <input type="checkbox" id="is_active" name="is_active" value="1" 
+                            class="w-4 h-4 text-roxo border-cinza-claro-2 rounded focus:ring-roxo" 
+                            {{ old('is_active', $contact->is_active) ? 'checked' : '' }}>
+                        <label for="is_active" class="ml-2 text-sm text-cinza">Contato ativo</label>
+                    </div>
+
+                    <!-- Receber Notificações -->
+                    <div class="flex items-center">
+                        <input type="checkbox" id="receive_notifications" name="receive_notifications" value="1" 
+                            class="w-4 h-4 text-roxo border-cinza-claro-2 rounded focus:ring-roxo" 
+                            {{ old('receive_notifications', $contact->receive_notifications) ? 'checked' : '' }}>
+                        <label for="receive_notifications" class="ml-2 text-sm text-cinza">Receber notificações</label>
+                    </div>
+
+                    <!-- Contato Principal -->
+                    <div class="flex items-center">
+                        <input type="checkbox" id="is_primary" name="is_primary" value="1" 
+                            class="w-4 h-4 text-roxo border-cinza-claro-2 rounded focus:ring-roxo" 
+                            {{ old('is_primary', $contact->is_primary) ? 'checked' : '' }}>
+                        <label for="is_primary" class="ml-2 text-sm text-cinza">Contato principal</label>
+                    </div>
+
+                    <!-- Acesso ao Sistema -->
+                    <div class="flex items-center">
+                        <input type="checkbox" id="has_system_access" name="has_system_access" value="1" 
+                            class="w-4 h-4 text-roxo border-cinza-claro-2 rounded focus:ring-roxo" 
+                            {{ old('has_system_access', $contact->has_system_access) ? 'checked' : '' }}>
+                        <label for="has_system_access" class="ml-2 text-sm text-cinza">Acesso ao sistema</label>
                     </div>
                 </div>
             </div>
-        </div>
+
+            <!-- Botões -->
+            <div class="flex justify-end gap-3 pt-6 border-t border-cinza-claro-2">
+                <x-button variant="outline" tag="a" href="{{ route('clients.show', $client) }}">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                    Cancelar
+                </x-button>
+                <x-button variant="primary" type="submit">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Salvar Alterações
+                </x-button>
+            </div>
+        </form>
+    </x-card>
+
+    <!-- Informações Adicionais -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <x-card title="Informações do Sistema">
+            <div class="space-y-3">
+                <div class="flex justify-between">
+                    <span class="text-sm text-cinza-claro">Criado em:</span>
+                    <span class="text-sm text-cinza">{{ $contact->created_at->format('d/m/Y H:i') }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-sm text-cinza-claro">Última atualização:</span>
+                    <span class="text-sm text-cinza">{{ $contact->updated_at->format('d/m/Y H:i') }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-sm text-cinza-claro">ID do contato:</span>
+                    <span class="text-sm text-cinza">#{{ $contact->id }}</span>
+                </div>
+            </div>
+        </x-card>
+
+        <x-card title="Ações Rápidas">
+            <div class="space-y-2">
+                <x-button variant="outline" size="sm" tag="a" href="mailto:{{ $contact->email }}">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                    </svg>
+                    Enviar Email
+                </x-button>
+                
+                @if($contact->phone)
+                    <x-button variant="outline" size="sm" tag="a" href="tel:{{ $contact->phone }}">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                        </svg>
+                        Ligar
+                    </x-button>
+                @endif
+                
+                <x-button variant="outline" size="sm" onclick="duplicateContact()">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                    </svg>
+                    Duplicar
+                </x-button>
+            </div>
+        </x-card>
     </div>
 </div>
+
+<script>
+function duplicateContact() {
+    if (confirm('Tem certeza que deseja duplicar este contato?')) {
+        // Implementar duplicação do contato
+        console.log('Duplicando contato:', {{ $contact->id }});
+    }
+}
+</script>
 @endsection
