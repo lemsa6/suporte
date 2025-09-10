@@ -1,4 +1,4 @@
-# 📚 Índice da Documentação - Sistema de Suporte v1.2
+# 📚 Índice da Documentação - Sistema de Suporte v1.2.6
 
 ## 🎯 **Documentação Principal**
 
@@ -125,13 +125,15 @@
 
 ## 📈 **Status da Documentação**
 
-### **✅ Documentação Atualizada (v1.2)**
+### **✅ Documentação Atualizada (v1.2.6)**
 - ✅ Compêndio completo consolidado
 - ✅ Guias de instalação e uso atualizados
 - ✅ Documentação técnica completa
-- ✅ Sistema de cores documentado
+- ✅ Sistema de cores documentado (sem Bootstrap)
 - ✅ Componentes Blade documentados
 - ✅ Arquitetura detalhada
+- ✅ Sistema de recuperação de senhas documentado
+- ✅ Auditoria de login/logout documentada
 
 ### **🔄 Documentação Removida/Consolidada**
 - ❌ Documentos duplicados removidos
@@ -151,6 +153,6 @@
 
 ---
 
-**Índice atualizado em:** Dezembro 2024  
-**Versão:** 1.2  
+**Índice atualizado em:** Janeiro 2025  
+**Versão:** 1.2.6  
 **Status:** ✅ **COMPLETO E ORGANIZADO**

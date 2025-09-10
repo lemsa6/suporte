@@ -1,4 +1,4 @@
-# 📚 Compêndio Completo - Sistema de Suporte v1.2
+# 📚 Compêndio Completo - Sistema de Suporte v1.2.6
 
 ## 🎯 **Visão Geral do Sistema**
 
@@ -9,8 +9,9 @@ O Sistema de Suporte e Tickets é uma plataforma completa desenvolvida em **Lara
 - ✅ **Gestão de clientes** com contatos hierárquicos
 - ✅ **Sistema de notificações** avançado (internas + e-mail)
 - ✅ **Sistema de anexos** com preview
-- ✅ **Sistema de auditoria** completo
-- ✅ **Interface responsiva** com Tailwind CSS
+- ✅ **Sistema de auditoria** completo com login/logout
+- ✅ **Sistema de recuperação de senhas** integrado
+- ✅ **Interface responsiva** com Tailwind CSS (sem Bootstrap)
 - ✅ **Componentes Blade** reutilizáveis
 - ✅ **Docker** para desenvolvimento e produção
 
@@ -38,10 +39,10 @@ resources/
 │   ├── components/      # Componentes Blade reutilizáveis
 │   ├── layouts/         # Layouts base
 │   ├── admin/          # Views administrativas
-│   ├── auth/           # Views de autenticação
+│   ├── auth/           # Views de autenticação (inclui recuperação de senhas)
 │   └── [resources]/    # Views por recurso
 ├── css/
-│   └── tailwind.css    # CSS principal com sistema de cores
+│   └── tailwind.css    # CSS principal com sistema de cores (sem Bootstrap)
 └── js/
     └── app.js          # JavaScript principal
 ```
@@ -170,17 +171,15 @@ admin > tecnico > cliente_gestor > cliente_funcionario
 
 ### **Configuração de E-mail**
 ```env
-# Desenvolvimento (Mailpit)
-MAIL_MAILER=smtp
-MAIL_HOST=mailpit
-MAIL_PORT=1025
-
-# Produção (Gmail)
+# Produção (Gmail SMTP)
 MAIL_MAILER=smtp
 MAIL_HOST=smtp.gmail.com
 MAIL_PORT=587
-MAIL_USERNAME=seu-email@gmail.com
+MAIL_USERNAME=contato@8bits.pro
 MAIL_PASSWORD=sua-chave-de-aplicativo
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=contato@8bits.pro
+MAIL_FROM_NAME="Sistema de Suporte"
 ```
 
 ---
@@ -188,12 +187,14 @@ MAIL_PASSWORD=sua-chave-de-aplicativo
 ## 🔐 **Sistema de Auditoria**
 
 ### **Eventos Rastreados**
+- ✅ **Autenticação** - Login e logout de usuários
 - ✅ **Criação** de tickets, mensagens, clientes, categorias
 - ✅ **Atualização** de status, prioridade, atribuição
 - ✅ **Exclusão** (soft delete) de registros
 - ✅ **Respostas** em tickets
 - ✅ **Fechamento** e reabertura de tickets
 - ✅ **Visualização** de tickets (configurável)
+- ✅ **Recuperação de senhas** - Solicitações e resets
 
 ### **Informações Capturadas**
 - **Usuário** - Quem executou a ação
@@ -209,6 +210,39 @@ MAIL_PASSWORD=sua-chave-de-aplicativo
 - **Detalhes Completos** - Informações detalhadas
 - **Estatísticas** - Análise de atividade
 - **Exportação CSV** - Para análise externa
+
+---
+
+## 🔑 **Sistema de Recuperação de Senhas**
+
+### **Funcionalidades Implementadas**
+- ✅ **Solicitação de Reset** - Formulário para solicitar nova senha
+- ✅ **E-mail de Recuperação** - Envio de link seguro por e-mail
+- ✅ **Reset de Senha** - Formulário para definir nova senha
+- ✅ **Validação de Token** - Tokens seguros com expiração
+- ✅ **Auditoria Completa** - Log de todas as tentativas de recuperação
+
+### **Fluxo de Recuperação**
+1. **Solicitação** - Usuário informa e-mail no formulário
+2. **Validação** - Sistema verifica se e-mail existe
+3. **Token** - Geração de token seguro com expiração
+4. **E-mail** - Envio de link de recuperação
+5. **Reset** - Usuário acessa link e define nova senha
+6. **Confirmação** - Login com nova senha
+
+### **Configuração de E-mail**
+```env
+# Configuração para recuperação de senhas
+MAIL_FROM_ADDRESS=contato@8bits.pro
+MAIL_FROM_NAME="Sistema de Suporte"
+```
+
+### **Segurança**
+- ✅ **Tokens únicos** com expiração de 1 hora
+- ✅ **Rate limiting** para evitar spam
+- ✅ **Validação de e-mail** antes do envio
+- ✅ **Logs de auditoria** para todas as tentativas
+- ✅ **Invalidação** de tokens após uso
 
 ---
 
@@ -244,7 +278,7 @@ docker-compose exec app npm run build
 - **URL**: http://localhost:9000
 - **Login**: admin@admin.com
 - **Senha**: password
-- **Mailpit**: http://localhost:8025
+- **Recuperação de Senha**: http://localhost:9000/password/email
 
 ---
 
@@ -304,12 +338,14 @@ audit_logs (N) -----> (1) auditable (polimórfico)
 ## 🔒 **Segurança e Performance**
 
 ### **Segurança Implementada**
-- ✅ **Autenticação Laravel Breeze**
-- ✅ **Autorização com Gates e Policies**
-- ✅ **Proteção CSRF**
+- ✅ **Autenticação Laravel Breeze** - Sistema completo de login/logout
+- ✅ **Sistema de Recuperação de Senhas** - Reset seguro com tokens
+- ✅ **Autorização com Gates e Policies** - Controle granular de acesso
+- ✅ **Proteção CSRF** - Proteção contra ataques CSRF
 - ✅ **Validação e sanitização** de dados
-- ✅ **Controle de acesso granular**
-- ✅ **Sistema de auditoria** completo
+- ✅ **Controle de acesso granular** - Por role e permissão
+- ✅ **Sistema de auditoria** completo com login/logout
+- ✅ **Rate limiting** para recuperação de senhas
 
 ### **Otimizações de Performance**
 - ✅ **Consultas otimizadas** com Eager Loading
@@ -382,6 +418,6 @@ docker-compose exec app php artisan optimize:clear
 
 ---
 
-**Compêndio v1.2** - Sistema de Suporte e Tickets  
-*Última atualização: Dezembro 2024*  
-**Desenvolvido com ❤️ em Laravel 12 + Tailwind CSS**
+**Compêndio v1.2.6** - Sistema de Suporte e Tickets  
+*Última atualização: Janeiro 2025*  
+**Desenvolvido com ❤️ em Laravel 12 + Tailwind CSS (sem Bootstrap)**

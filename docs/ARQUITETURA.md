@@ -1,10 +1,10 @@
-# 🏗️ Arquitetura do Sistema de Suporte
+# 🏗️ Arquitetura do Sistema de Suporte v1.2.6
 
 > **📚 Para documentação completa, consulte o [Compêndio do Sistema](COMPENDIO_SISTEMA_SUPORTE.md)**
 
 ## **Visão Geral**
 
-O Sistema de Suporte e Tickets foi desenvolvido seguindo as melhores práticas do Laravel 12, com arquitetura MVC, padrões de design e princípios SOLID.
+O Sistema de Suporte e Tickets foi desenvolvido seguindo as melhores práticas do Laravel 12, com arquitetura MVC, padrões de design e princípios SOLID. Utiliza **Tailwind CSS** como framework principal (sem Bootstrap) e inclui sistema completo de recuperação de senhas e auditoria de login/logout.
 
 ## **📐 Estrutura da Aplicação**
 
@@ -93,7 +93,57 @@ class CheckRoleMiddleware
 }
 ```
 
-### **4. Sistema de Auditoria** 🆕
+### **4. Sistema de Recuperação de Senhas** 🆕
+
+```php
+// Controller de recuperação de senhas
+class PasswordResetController extends Controller
+{
+    public function sendResetLink(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+        
+        $status = Password::sendResetLink($request->only('email'));
+        
+        return $status === Password::RESET_LINK_SENT
+            ? back()->with(['status' => __($status)])
+            : back()->withErrors(['email' => __($status)]);
+    }
+    
+    public function reset(Request $request)
+    {
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|confirmed|min:8',
+        ]);
+        
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user, $password) {
+                $user->forceFill(['password' => Hash::make($password)])->save();
+                event(new PasswordReset($user));
+            }
+        );
+        
+        return $status === Password::PASSWORD_RESET
+            ? redirect()->route('login')->with('status', __($status))
+            : back()->withErrors(['email' => [__($status)]]);
+    }
+}
+
+// Mailable para recuperação
+class PasswordResetMail extends Mailable
+{
+    public function build()
+    {
+        return $this->markdown('emails.password-reset')
+            ->subject('Recuperação de Senha - Sistema de Suporte');
+    }
+}
+```
+
+### **5. Sistema de Auditoria** 🆕
 
 ```php
 // Middleware de captura de dados de auditoria
@@ -145,6 +195,9 @@ tickets (1) -----> (N) ticket_messages
 ticket_messages (1) -----> (N) attachments
 categories (1) -----> (N) tickets
 
+-- Sistema de Recuperação de Senhas 🆕
+users (1) -----> (N) password_resets
+
 -- Sistema de Auditoria 🆕
 users (1) -----> (N) audit_logs
 audit_logs (N) -----> (1) auditable (polimórfico)
@@ -173,6 +226,7 @@ database/migrations/
 ├── 2025_08_15_000005_create_ticket_messages_table.php
 ├── 2025_08_15_000006_create_attachments_table.php
 ├── 2025_09_05_170827_add_soft_delete_to_tickets_table.php
+├── 2025_01_15_000002_create_password_resets_table.php 🆕
 ├── 2025_09_07_021207_create_audit_logs_table.php 🆕
 ├── 2025_09_07_021231_add_audit_fields_to_tickets_table.php 🆕
 └── 2025_09_07_021302_add_audit_fields_to_ticket_messages_table.php 🆕
@@ -247,8 +301,8 @@ class NotificationService
 
 ### **1. Framework CSS**
 
-- **Bootstrap 5**: Framework responsivo
-- **SCSS**: Pré-processador CSS
+- **Tailwind CSS v3+**: Framework utility-first (sem Bootstrap)
+- **Componentes Blade**: Reutilizáveis e personalizáveis
 - **CSS Inline**: Para e-mails (compatibilidade)
 
 ### **2. JavaScript**
@@ -589,6 +643,6 @@ php artisan optimize
 
 ---
 
-**Arquitetura do Sistema v1.1** - Desenvolvido com ❤️ em Laravel 12
+**Arquitetura do Sistema v1.2.6** - Desenvolvido com ❤️ em Laravel 12 + Tailwind CSS
 
-*Última atualização: 05/09/2025*
+*Última atualização: Janeiro 2025*
