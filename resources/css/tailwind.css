@@ -514,7 +514,7 @@
   
   /* Títulos específicos para dashboard */
   .page-title {
-    @apply text-4xl font-light text-gray-900;
+    @apply text-4xl font-light text-cinza-claro;
     font-family: 'Lato', sans-serif;
   }
   
@@ -767,7 +767,8 @@
          }
          
          .table th {
-           @apply px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider;
+           @apply px-6 py-3 bg-gray-50 text-left text-xs font-medium uppercase tracking-wider;
+           color: var(--cinza-claro) !important;
          }
          
          .table td {

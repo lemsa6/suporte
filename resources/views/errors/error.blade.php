@@ -3,7 +3,7 @@
 @section('title', 'Erro')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-cinza-claro-2 to-cinza-claro flex items-center justify-center px-4">
+<div class="min-h-screen bg-cinza-claro-2 flex items-center justify-center px-4">
     <div class="max-w-2xl w-full text-center">
         <!-- Código de Erro -->
         <div class="mb-8">

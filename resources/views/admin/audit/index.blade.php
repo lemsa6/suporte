@@ -102,20 +102,19 @@
     <h2 class="section-title mb-4">Logs de Auditoria ({{ $logs->total() }})</h2>
     <x-card>
         @if($logs->count() > 0)
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-cinza-claro-2">
-                    <thead class="bg-cinza-claro-2">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-cinza-claro uppercase tracking-wider">ID</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-cinza-claro uppercase tracking-wider">Evento</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-cinza-claro uppercase tracking-wider">Modelo</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-cinza-claro uppercase tracking-wider">Usuário</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-cinza-claro uppercase tracking-wider">Data/Hora</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-cinza-claro uppercase tracking-wider">IP</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-cinza-claro uppercase tracking-wider">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-cinza-claro-2">
+            <x-table striped hover>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Evento</th>
+                        <th>Modelo</th>
+                        <th>Usuário</th>
+                        <th>Data/Hora</th>
+                        <th>IP</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
                         @foreach($logs as $log)
                             <tr class="hover:bg-cinza-claro-2">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-cinza">
@@ -154,9 +153,8 @@
                                 </td>
                             </tr>
                         @endforeach
-                    </tbody>
-                </table>
-            </div>
+                </tbody>
+            </x-table>
 
             <!-- Paginação -->
             <div class="mt-6">

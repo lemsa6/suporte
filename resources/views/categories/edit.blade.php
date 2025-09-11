@@ -104,7 +104,7 @@
                         <div class="flex items-center gap-3">
                             <div id="color-preview" class="w-8 h-8 rounded border category-color-badge" style="--category-color: {{ old('color', $category->color) }};"></div>
                             <div>
-                                <p class="mb-1 font-medium text-cinza">Preview da Cor</p>
+                                <p class="mb-1 font-medium text-cinza-claro">Preview da Cor</p>
                                 <p class="mb-0 text-sm text-cinza-claro">Esta cor será usada para identificar visualmente a categoria</p>
                             </div>
                         </div>

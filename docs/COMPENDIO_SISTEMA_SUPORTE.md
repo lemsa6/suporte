@@ -171,7 +171,7 @@ admin > tecnico > cliente_gestor > cliente_funcionario
 
 ### **Configuração de E-mail**
 ```env
-# Produção (Gmail SMTP)
+# Produção (Gmail SMTP)AS DEPOIS QUE DEMOS APENAS UM ATUALIZAR NOS ARQUIVOS DO GIT, ELEAS SÃO DECLARDAS EM BD OU COISA ASSIM? NO PHP ARTISAN SEI LÁ
 MAIL_MAILER=smtp
 MAIL_HOST=smtp.gmail.com
 MAIL_PORT=587

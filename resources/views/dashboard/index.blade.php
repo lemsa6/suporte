@@ -25,30 +25,6 @@
 
 @section('content')
 <div class="dashboard-content space-y-6">
-    <!-- Flash Messages -->
-    @if(session('success'))
-        <x-alert type="success" dismissible>
-            {{ session('success') }}
-        </x-alert>
-    @endif
-
-    @if(session('error'))
-        <x-alert type="error" dismissible>
-            {{ session('error') }}
-        </x-alert>
-    @endif
-
-    @if(session('warning'))
-        <x-alert type="warning" dismissible>
-            {{ session('warning') }}
-        </x-alert>
-    @endif
-
-    @if(session('info'))
-        <x-alert type="info" dismissible>
-            {{ session('info') }}
-        </x-alert>
-    @endif
     <!-- Tickets Recentes (4/6) + Métricas (2/6) -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         <!-- Tickets Recentes (4/6) -->
