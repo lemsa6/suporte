@@ -118,6 +118,18 @@ class AuditController extends Controller
     }
 
     /**
+     * Exibe logs de auditoria de um usuário específico
+     */
+    public function userLogs(User $user): View
+    {
+        $logs = $this->auditService->getLogs([
+            'user_id' => $user->id
+        ])->paginate(20);
+
+        return view('admin.audit.user', compact('user', 'logs'));
+    }
+
+    /**
      * Exibe estatísticas de auditoria
      */
     public function statistics(Request $request): View

@@ -56,11 +56,12 @@
 @section('content')
 <div class="space-y-6">
     <!-- Informações do Ticket -->
+    <h2 class="section-title mb-4">Informações do Ticket</h2>
     <x-card>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <!-- Informações Principais -->
             <div class="space-y-4">
-                <h3 class="section-title mb-4">Informações Principais</h3>
+                <h3 class="subsection-title mb-4">Informações Principais</h3>
                 <div class="space-y-3">
                     <div class="flex items-center justify-between py-2 border-b border-padrao">
                         <span class="text-sm font-medium text-cinza">Status:</span>
@@ -98,7 +99,7 @@
 
             <!-- Informações Adicionais -->
             <div class="space-y-4">
-                <h3 class="section-title mb-4">Detalhes do Ticket</h3>
+                <h3 class="subsection-title mb-4">Detalhes do Ticket</h3>
                 <div class="space-y-3">
                     <div class="flex items-center justify-between py-2 border-b border-padrao">
                         <span class="text-sm font-medium text-bege">Responsável:</span>
@@ -134,9 +135,11 @@
             </div>
         </div>
 
-        <!-- Cliente -->
-        <div class="mt-8 pt-6 border-t border-padrao">
-            <h3 class="section-title mb-4">Informações do Cliente</h3>
+    </x-card>
+    
+    <!-- Cliente -->
+    <h2 class="section-title mb-4">Informações do Cliente</h2>
+    <x-card>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="bg-creme p-4 rounded-lg">
                     <div class="flex justify-between items-center mb-2">
@@ -167,79 +170,89 @@
             </div>
         </div>
 
-        @if($ticket->resolution_notes)
-        <div class="mt-6 pt-6 border-t border-padrao">
-            <h3 class="section-title mb-4">Notas de Resolução</h3>
-            <div class="alert-info p-4 rounded-lg">
-                <p class="text-cinza">{{ $ticket->resolution_notes }}</p>
-            </div>
+    </x-card>
+    
+    @if($ticket->resolution_notes)
+    <h2 class="section-title mb-4">Notas de Resolução</h2>
+    <x-card>
+        <div class="alert-info p-4 rounded-lg">
+            <p class="text-cinza">{{ $ticket->resolution_notes }}</p>
         </div>
-        @endif
-
-        <!-- Descrição -->
-        <div class="mt-6 pt-6 border-t border-padrao">
-            <h3 class="section-title mb-4">Descrição do Problema</h3>
-            <div class="bg-creme border border-padrao p-4 rounded-lg">
-                <p class="text-cinza whitespace-pre-wrap">{{ $ticket->description }}</p>
-            </div>
+    </x-card>
+    @endif
+    
+    <!-- Descrição -->
+    <h2 class="section-title mb-4">Descrição do Problema</h2>
+    <x-card>
+        <div class="bg-creme border border-padrao p-4 rounded-lg">
+            <p class="text-cinza whitespace-pre-wrap">{{ $ticket->description }}</p>
         </div>
     </x-card>
 
     <!-- Timeline de Mensagens -->
+    <h2 class="section-title mb-4">Histórico de Mensagens</h2>
     <x-card>
-        <h2 class="section-title mb-6">Histórico de Mensagens</h2>
         @if($ticket->messages->count() > 0)
-            <div class="space-y-6">
-                @foreach($ticket->messages as $message)
-                    <div class="flex gap-4 p-4 bg-creme rounded-lg border border-padrao">
-                        <!-- Avatar -->
-                        <div class="flex-shrink-0">
-                            <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-medium
-                                @if($message->user) bg-roxo
-                                @else bg-creme
-                                @endif">
-                                @if($message->user)
-                                    {{ substr($message->user->name, 0, 1) }}
-                                @else
-                                    {{ substr($message->contact->name, 0, 1) }}
-                                @endif
-                            </div>
-                        </div>
-                        
-                        <!-- Conteúdo da Mensagem -->
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-center justify-between mb-2">
-                                <div class="flex items-center gap-2">
-                                    <span class="font-medium text-cinza">
-                                        @if($message->user)
-                                            {{ $message->user->name }}
-                                            <span class="text-sm text-cinza-claro">({{ ucfirst($message->user->role) }})</span>
-                                        @else
-                                            {{ $message->contact->name }}
-                                            <span class="text-sm text-cinza-claro">(Cliente)</span>
-                                        @endif
-                                    </span>
-                                    <x-badge variant="
-                                        @if($message->type === 'note') info
-                                        @elseif($message->type === 'status_change') warning
-                                        @else secondary
-                                        @endif">
-                                        {{ ucfirst($message->type) }}
-                                    </x-badge>
-                                    @if($message->is_internal)
-                                        <x-badge variant="danger">Interno</x-badge>
+            <!-- Timeline Container -->
+            <div class="relative">
+                <!-- Linha da Timeline -->
+                <div class="absolute left-6 top-0 bottom-0 w-0.5 bg-cinza-claro-2"></div>
+                
+                <!-- Mensagens da Timeline -->
+                <div class="space-y-8">
+                    @foreach($ticket->messages as $index => $message)
+                        <div class="relative flex items-start">
+                            <!-- Avatar da Timeline -->
+                            <div class="relative z-10 flex-shrink-0">
+                                <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-medium border-4 border-white
+                                    @if($message->user) bg-roxo
+                                    @else bg-amarelo text-cinza
+                                    @endif">
+                                    @if($message->user)
+                                        {{ substr($message->user->name, 0, 1) }}
+                                    @else
+                                        {{ substr($message->contact->name, 0, 1) }}
                                     @endif
                                 </div>
-                                <span class="text-sm text-cinza-claro">{{ $message->created_at->format('d/m/Y H:i') }}</span>
                             </div>
                             
-                            <div class="prose max-w-none">
-                                <p class="text-cinza whitespace-pre-wrap">{{ $message->message }}</p>
-                            </div>
+                            <!-- Conteúdo da Mensagem -->
+                            <div class="ml-6 flex-1 min-w-0">
+                                <div class="bg-branco rounded-lg border border-padrao p-4 shadow-sm relative">
+                                    <!-- Cabeçalho -->
+                                    <div class="flex items-center justify-between mb-3">
+                                        <div class="flex items-center gap-2">
+                                            <span class="font-medium text-cinza">
+                                                @if($message->user)
+                                                    {{ $message->user->name }}
+                                                    <span class="text-sm text-cinza-claro">({{ ucfirst($message->user->role) }})</span>
+                                                @else
+                                                    {{ $message->contact->name }}
+                                                    <span class="text-sm text-cinza-claro">(Cliente)</span>
+                                                @endif
+                                            </span>
+                                            <x-badge variant="
+                                                @if($message->type === 'note') info
+                                                @elseif($message->type === 'status_change') warning
+                                                @else secondary
+                                                @endif">
+                                                {{ ucfirst($message->type) }}
+                                            </x-badge>
+                                            @if($message->is_internal)
+                                                <x-badge variant="danger">Interno</x-badge>
+                                            @endif
+                                        </div>
+                                        <span class="text-sm text-cinza-claro">{{ $message->created_at->format('d/m/Y H:i') }}</span>
+                                    </div>
+                                    
+                                    <!-- Mensagem -->
+                                    <div class="text-cinza whitespace-pre-wrap">{{ $message->message }}</div>
                             
-                            @if($message->attachments->count() > 0)
-                                <div class="mt-4">
-                                    <h4 class="text-sm font-medium text-cinza mb-2">Anexos:</h4>
+                                    
+                                    <!-- Anexos -->
+                                    @if($message->attachments->count() > 0)
+                                        <div class="mt-4 pt-3 border-t border-padrao">
+                                            <p class="text-sm font-medium text-cinza mb-2">Anexos:</p>
                                     <div class="flex flex-wrap gap-2">
                                         @foreach($message->attachments as $attachment)
                                             @php
@@ -271,21 +284,26 @@
                                             </div>
                                         @endforeach
                                     </div>
-                                </div>
-                            @endif
-                            
-                            @if($message->metadata)
-                                <div class="mt-3">
-                                    @if(isset($message->metadata['status_change']))
-                                        <x-badge variant="warning">
-                                            Status alterado de "{{ $message->metadata['status_change']['from'] }}" para "{{ $message->metadata['status_change']['to'] }}"
-                                        </x-badge>
+                                        </div>
+                                    @endif
+                                    
+                                    @if($message->metadata)
+                                        <div class="mt-3">
+                                            @if(isset($message->metadata['status_change']))
+                                                <x-badge variant="warning">
+                                                    Status alterado de "{{ $message->metadata['status_change']['from'] }}" para "{{ $message->metadata['status_change']['to'] }}"
+                                                </x-badge>
+                                            @endif
+                                        </div>
                                     @endif
                                 </div>
-                            @endif
+                                
+                                <!-- Seta apontando para o avatar -->
+                                <div class="absolute left-0 top-4 w-0 h-0 border-t-8 border-b-8 border-r-8 border-transparent border-r-padrao transform -translate-x-1"></div>
+                            </div>
                         </div>
-                    </div>
-                @endforeach
+                    @endforeach
+                </div>
             </div>
         @else
             <div class="text-center py-12">
@@ -300,8 +318,8 @@
 
     <!-- Nova Mensagem -->
     @if($ticket->status !== 'fechado')
+    <h2 class="section-title mb-4">Adicionar Mensagem</h2>
     <x-card>
-        <h2 class="section-title mb-6">Adicionar Mensagem</h2>
         <form action="{{ route('tickets.message', $ticket->ticket_number) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
             

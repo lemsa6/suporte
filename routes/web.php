@@ -148,9 +148,8 @@ Route::get('/test-contacts/{client}', function($client) {
         Route::put('/admin/settings/templates', [App\Http\Controllers\Admin\SettingsController::class, 'updateTemplate'])->name('admin.settings.templates.update');
         Route::post('/admin/settings/templates/preview', [App\Http\Controllers\Admin\SettingsController::class, 'previewTemplate'])->name('admin.settings.templates.preview');
         Route::post('/admin/settings/templates/test', [App\Http\Controllers\Admin\SettingsController::class, 'testEmail'])->name('admin.settings.templates.test');
-        Route::get('/admin/settings/notifications', function () {
-            return view('admin.settings.notifications');
-        })->name('admin.settings.notifications');
+        Route::get('/admin/settings/notifications', [App\Http\Controllers\Admin\SettingsController::class, 'notifications'])->name('admin.settings.notifications');
+        Route::put('/admin/settings/notifications', [App\Http\Controllers\Admin\SettingsController::class, 'updateNotifications'])->name('admin.settings.notifications.update');
         
         // Rotas legadas (compatibilidade)
         Route::get('/settings', function () {
@@ -173,6 +172,7 @@ Route::get('/test-contacts/{client}', function($client) {
             Route::get('/statistics', [App\Http\Controllers\AuditController::class, 'statistics'])->name('statistics');
             Route::get('/export', [App\Http\Controllers\AuditController::class, 'export'])->name('export');
             Route::get('/ticket/{ticketNumber}', [App\Http\Controllers\AuditController::class, 'ticketLogs'])->name('ticket');
+            Route::get('/user/{user}', [App\Http\Controllers\AuditController::class, 'userLogs'])->name('user');
             Route::get('/{auditLog}', [App\Http\Controllers\AuditController::class, 'show'])->name('show');
             
             // APIs

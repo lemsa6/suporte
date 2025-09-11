@@ -5,205 +5,191 @@
 @section('header')
 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
     <div class="mb-4 sm:mb-0">
-        <span class="text-sm text-cinza-claro">Administração</span>
+        <div class="flex items-center gap-3 mb-2">
+            <a href="{{ route('admin.settings.index') }}" class="text-cinza-claro hover:text-cinza">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+            </a>
+            <span class="text-sm text-cinza-claro">Configurações</span>
+        </div>
         <h1 class="page-title mt-1">Configurações de Notificações</h1>
-        <p class="text-cinza mt-2">Configure as notificações do sistema</p>
+        <p class="text-cinza mt-2">Configure tipos de notificação, frequência e preferências do sistema</p>
     </div>
-    <x-button variant="outline" tag="a" href="{{ route('admin.settings.index') }}">
-        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-        </svg>
-        Voltar
-    </x-button>
 </div>
 @endsection
 
 @section('content')
 <div class="space-y-6">
-    <!-- Notificações de Email -->
-    <x-card title="Notificações de Email">
-        <form method="POST" action="{{ route('admin.settings.notifications.update') }}" class="space-y-6">
-            @csrf
-            @method('PUT')
-
+    <form action="{{ route('admin.settings.notifications.update') }}" method="POST">
+        @csrf
+        @method('PUT')
+        
+        <!-- Configurações Gerais -->
+        <h2 class="section-title mb-4">Configurações Gerais</h2>
+        <x-card>
             <div class="space-y-6">
-                <!-- Notificações de Tickets -->
-                <div>
-                    <h3 class="text-lg font-medium text-cinza mb-4">Notificações de Tickets</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-center justify-between p-4 border border-cinza-claro-2 rounded-lg">
-                            <div>
-                                <label class="text-sm font-medium text-cinza" for="notify_ticket_created">
-                                    Novo Ticket Criado
-                                </label>
-                                <p class="text-xs text-cinza-claro mt-1">Notificar quando um novo ticket for criado</p>
-                            </div>
-                            <input type="checkbox" id="notify_ticket_created" name="notify_ticket_created" value="1" 
-                                class="w-4 h-4 text-roxo border-cinza-claro-2 rounded focus:ring-roxo"
-                                {{ old('notify_ticket_created', $settings['notify_ticket_created'] ?? false) ? 'checked' : '' }}>
-                        </div>
-
-                        <div class="flex items-center justify-between p-4 border border-cinza-claro-2 rounded-lg">
-                            <div>
-                                <label class="text-sm font-medium text-cinza" for="notify_ticket_replied">
-                                    Ticket Respondido
-                                </label>
-                                <p class="text-xs text-cinza-claro mt-1">Notificar quando um ticket receber uma resposta</p>
-                            </div>
-                            <input type="checkbox" id="notify_ticket_replied" name="notify_ticket_replied" value="1" 
-                                class="w-4 h-4 text-roxo border-cinza-claro-2 rounded focus:ring-roxo"
-                                {{ old('notify_ticket_replied', $settings['notify_ticket_replied'] ?? false) ? 'checked' : '' }}>
-                        </div>
-
-                        <div class="flex items-center justify-between p-4 border border-cinza-claro-2 rounded-lg">
-                            <div>
-                                <label class="text-sm font-medium text-cinza" for="notify_ticket_status_changed">
-                                    Status Alterado
-                                </label>
-                                <p class="text-xs text-cinza-claro mt-1">Notificar quando o status de um ticket for alterado</p>
-                            </div>
-                            <input type="checkbox" id="notify_ticket_status_changed" name="notify_ticket_status_changed" value="1" 
-                                class="w-4 h-4 text-roxo border-cinza-claro-2 rounded focus:ring-roxo"
-                                {{ old('notify_ticket_status_changed', $settings['notify_ticket_status_changed'] ?? false) ? 'checked' : '' }}>
-                        </div>
-
-                        <div class="flex items-center justify-between p-4 border border-cinza-claro-2 rounded-lg">
-                            <div>
-                                <label class="text-sm font-medium text-cinza" for="notify_ticket_assigned">
-                                    Ticket Atribuído
-                                </label>
-                                <p class="text-xs text-cinza-claro mt-1">Notificar quando um ticket for atribuído a um técnico</p>
-                            </div>
-                            <input type="checkbox" id="notify_ticket_assigned" name="notify_ticket_assigned" value="1" 
-                                class="w-4 h-4 text-roxo border-cinza-claro-2 rounded focus:ring-roxo"
-                                {{ old('notify_ticket_assigned', $settings['notify_ticket_assigned'] ?? false) ? 'checked' : '' }}>
-                        </div>
+                <!-- Notificações Habilitadas -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-medium text-cinza">Notificações Habilitadas</h3>
+                        <p class="text-sm text-cinza-claro">Habilitar ou desabilitar todas as notificações do sistema</p>
                     </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="notifications_enabled" value="1" class="sr-only peer" {{ old('notifications_enabled', $settings['notifications_enabled']) ? 'checked' : '' }}>
+                        <div class="w-11 h-6 bg-cinza-claro-2 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-roxo/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-roxo"></div>
+                    </label>
                 </div>
 
-                <!-- Notificações de Sistema -->
+                <!-- Frequência de Notificações -->
                 <div>
-                    <h3 class="text-lg font-medium text-cinza mb-4">Notificações de Sistema</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-center justify-between p-4 border border-cinza-claro-2 rounded-lg">
-                            <div>
-                                <label class="text-sm font-medium text-cinza" for="notify_system_maintenance">
-                                    Manutenção do Sistema
-                                </label>
-                                <p class="text-xs text-cinza-claro mt-1">Notificar sobre manutenções programadas</p>
-                            </div>
-                            <input type="checkbox" id="notify_system_maintenance" name="notify_system_maintenance" value="1" 
-                                class="w-4 h-4 text-roxo border-cinza-claro-2 rounded focus:ring-roxo"
-                                {{ old('notify_system_maintenance', $settings['notify_system_maintenance'] ?? false) ? 'checked' : '' }}>
-                        </div>
-
-                        <div class="flex items-center justify-between p-4 border border-cinza-claro-2 rounded-lg">
-                            <div>
-                                <label class="text-sm font-medium text-cinza" for="notify_security_alerts">
-                                    Alertas de Segurança
-                                </label>
-                                <p class="text-xs text-cinza-claro mt-1">Notificar sobre eventos de segurança</p>
-                            </div>
-                            <input type="checkbox" id="notify_security_alerts" name="notify_security_alerts" value="1" 
-                                class="w-4 h-4 text-roxo border-cinza-claro-2 rounded focus:ring-roxo"
-                                {{ old('notify_security_alerts', $settings['notify_security_alerts'] ?? false) ? 'checked' : '' }}>
-                        </div>
-
-                        <div class="flex items-center justify-between p-4 border border-cinza-claro-2 rounded-lg">
-                            <div>
-                                <label class="text-sm font-medium text-cinza" for="notify_backup_status">
-                                    Status de Backup
-                                </label>
-                                <p class="text-xs text-cinza-claro mt-1">Notificar sobre o status dos backups</p>
-                            </div>
-                            <input type="checkbox" id="notify_backup_status" name="notify_backup_status" value="1" 
-                                class="w-4 h-4 text-roxo border-cinza-claro-2 rounded focus:ring-roxo"
-                                {{ old('notify_backup_status', $settings['notify_backup_status'] ?? false) ? 'checked' : '' }}>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Configurações de Frequência -->
-                <div>
-                    <h3 class="text-lg font-medium text-cinza mb-4">Configurações de Frequência</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label for="notification_frequency" class="block text-sm font-medium text-cinza mb-2">Frequência de Notificações</label>
-                            <select id="notification_frequency" name="notification_frequency" 
-                                class="w-full px-3 py-2 border border-cinza-claro-2 rounded-md focus:outline-none focus:ring-2 focus:ring-roxo focus:border-transparent">
-                                <option value="immediate" {{ old('notification_frequency', $settings['notification_frequency'] ?? 'immediate') == 'immediate' ? 'selected' : '' }}>Imediata</option>
-                                <option value="hourly" {{ old('notification_frequency', $settings['notification_frequency'] ?? 'immediate') == 'hourly' ? 'selected' : '' }}>A cada hora</option>
-                                <option value="daily" {{ old('notification_frequency', $settings['notification_frequency'] ?? 'immediate') == 'daily' ? 'selected' : '' }}>Diária</option>
-                                <option value="weekly" {{ old('notification_frequency', $settings['notification_frequency'] ?? 'immediate') == 'weekly' ? 'selected' : '' }}>Semanal</option>
-                            </select>
-                        </div>
-
-                        <div>
-                            <label for="notification_time" class="block text-sm font-medium text-cinza mb-2">Horário de Notificação</label>
-                            <input type="time" id="notification_time" name="notification_time" 
-                                class="w-full px-3 py-2 border border-cinza-claro-2 rounded-md focus:outline-none focus:ring-2 focus:ring-roxo focus:border-transparent"
-                                value="{{ old('notification_time', $settings['notification_time'] ?? '09:00') }}">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Botões -->
-                <div class="flex justify-end gap-3 pt-6 border-t border-cinza-claro-2">
-                    <x-button variant="outline" type="button" onclick="resetNotifications()">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                        </svg>
-                        Resetar
-                    </x-button>
-                    <x-button variant="primary" type="submit">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                        </svg>
-                        Salvar Configurações
-                    </x-button>
+                    <label for="notification_frequency" class="block text-sm font-medium text-cinza mb-2">Frequência de Notificações</label>
+                    <select name="notification_frequency" id="notification_frequency" class="form-select">
+                        <option value="immediate" {{ old('notification_frequency', $settings['notification_frequency']) === 'immediate' ? 'selected' : '' }}>Imediata</option>
+                        <option value="hourly" {{ old('notification_frequency', $settings['notification_frequency']) === 'hourly' ? 'selected' : '' }}>A cada hora</option>
+                        <option value="daily" {{ old('notification_frequency', $settings['notification_frequency']) === 'daily' ? 'selected' : '' }}>Diariamente</option>
+                    </select>
+                    <p class="mt-1 text-sm text-cinza-claro">Define com que frequência as notificações são enviadas</p>
                 </div>
             </div>
-        </form>
-    </x-card>
+        </x-card>
 
-    <!-- Teste de Notificações -->
-    <x-card title="Teste de Notificações">
-        <div class="space-y-4">
-            <p class="text-cinza-claro">Teste as configurações de notificação enviando um email de teste.</p>
+        <!-- Canais de Notificação -->
+        <h2 class="section-title mb-4">Canais de Notificação</h2>
+        <x-card>
+            <div class="space-y-6">
+                <!-- Email -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-start space-x-3">
+                        <div class="w-10 h-10 bg-verde bg-opacity-10 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-verde" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-medium text-cinza">Notificações por Email</h3>
+                            <p class="text-sm text-cinza-claro">Enviar notificações via email para usuários</p>
+                        </div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="email_notifications" value="1" class="sr-only peer" {{ old('email_notifications', $settings['email_notifications']) ? 'checked' : '' }}>
+                        <div class="w-11 h-6 bg-cinza-claro-2 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-roxo/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-roxo"></div>
+                    </label>
+                </div>
+
+                <!-- SMS -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-start space-x-3">
+                        <div class="w-10 h-10 bg-amarelo bg-opacity-10 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-amarelo" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-medium text-cinza">Notificações por SMS</h3>
+                            <p class="text-sm text-cinza-claro">Enviar notificações via SMS (requer configuração adicional)</p>
+                        </div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="sms_notifications" value="1" class="sr-only peer" {{ old('sms_notifications', $settings['sms_notifications']) ? 'checked' : '' }}>
+                        <div class="w-11 h-6 bg-cinza-claro-2 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-roxo/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-roxo"></div>
+                    </label>
+                </div>
+
+                <!-- Push -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-start space-x-3">
+                        <div class="w-10 h-10 bg-roxo-det bg-opacity-10 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-roxo-det" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 19h6v-6H4v6z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5h6V1H4v4z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 3h5l-5-5v5z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-medium text-cinza">Notificações Push</h3>
+                            <p class="text-sm text-cinza-claro">Enviar notificações push no navegador</p>
+                        </div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="push_notifications" value="1" class="sr-only peer" {{ old('push_notifications', $settings['push_notifications']) ? 'checked' : '' }}>
+                        <div class="w-11 h-6 bg-cinza-claro-2 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-roxo/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-roxo"></div>
+                    </label>
+                </div>
+            </div>
+        </x-card>
+
+        <!-- Eventos de Notificação -->
+        <h2 class="section-title mb-4">Eventos de Notificação</h2>
+        <x-card>
+            <div class="space-y-6">
+                <!-- Ticket Criado -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-medium text-cinza">Ticket Criado</h3>
+                        <p class="text-sm text-cinza-claro">Notificar quando um novo ticket é criado</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="notify_ticket_created" value="1" class="sr-only peer" {{ old('notify_ticket_created', $settings['notify_ticket_created']) ? 'checked' : '' }}>
+                        <div class="w-11 h-6 bg-cinza-claro-2 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-roxo/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-roxo"></div>
+                    </label>
+                </div>
+
+                <!-- Ticket Atualizado -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-medium text-cinza">Ticket Atualizado</h3>
+                        <p class="text-sm text-cinza-claro">Notificar quando um ticket é atualizado</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="notify_ticket_updated" value="1" class="sr-only peer" {{ old('notify_ticket_updated', $settings['notify_ticket_updated']) ? 'checked' : '' }}>
+                        <div class="w-11 h-6 bg-cinza-claro-2 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-roxo/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-roxo"></div>
+                    </label>
+                </div>
+
+                <!-- Ticket Fechado -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-medium text-cinza">Ticket Fechado</h3>
+                        <p class="text-sm text-cinza-claro">Notificar quando um ticket é fechado</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="notify_ticket_closed" value="1" class="sr-only peer" {{ old('notify_ticket_closed', $settings['notify_ticket_closed']) ? 'checked' : '' }}>
+                        <div class="w-11 h-6 bg-cinza-claro-2 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-roxo/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-roxo"></div>
+                    </label>
+                </div>
+
+                <!-- Atribuição de Ticket -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-medium text-cinza">Atribuição de Ticket</h3>
+                        <p class="text-sm text-cinza-claro">Notificar quando um ticket é atribuído a um usuário</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="notify_assignment" value="1" class="sr-only peer" {{ old('notify_assignment', $settings['notify_assignment']) ? 'checked' : '' }}>
+                        <div class="w-11 h-6 bg-cinza-claro-2 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-roxo/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-roxo"></div>
+                    </label>
+                </div>
+            </div>
+        </x-card>
+
+        <!-- Botões -->
+        <div class="flex justify-end gap-3">
+            <x-button variant="outline" tag="a" href="{{ route('admin.settings.index') }}">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+                Cancelar
+            </x-button>
             
-            <div class="flex gap-3">
-                <x-button variant="outline" onclick="testNotification('ticket')">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                    Testar Notificação de Ticket
-                </x-button>
-                
-                <x-button variant="outline" onclick="testNotification('system')">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                    </svg>
-                    Testar Notificação de Sistema
-                </x-button>
-            </div>
+            <x-button variant="primary" type="submit">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                Salvar Configurações
+            </x-button>
         </div>
-    </x-card>
+    </form>
 </div>
-
-<script>
-function resetNotifications() {
-    if (confirm('Tem certeza que deseja resetar todas as configurações de notificação para os valores padrão?')) {
-        // Implementar reset das notificações
-        console.log('Resetando configurações de notificação');
-    }
-}
-
-function testNotification(type) {
-    if (confirm(`Tem certeza que deseja enviar um email de teste de notificação ${type}?`)) {
-        // Implementar teste de notificação
-        console.log('Enviando teste de notificação:', type);
-    }
-}
-</script>
 @endsection

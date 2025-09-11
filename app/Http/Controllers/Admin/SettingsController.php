@@ -28,11 +28,13 @@ class SettingsController extends Controller
     public function system(): View
     {
         $settings = [
-            'system_name' => Setting::get('system_name', 'Sistema de Tickets'),
-            'system_logo' => Setting::get('system_logo', ''),
+            'app_name' => Setting::get('app_name', 'Sistema de Tickets'),
+            'app_url' => Setting::get('app_url', config('app.url')),
+            'app_logo' => Setting::get('app_logo', ''),
             'company_name' => Setting::get('company_name', '8Bits Pro'),
-            'company_email' => Setting::get('company_email', 'contato@8bits.pro'),
-            'company_phone' => Setting::get('company_phone', '(11) 99999-9999'),
+            'company_cnpj' => Setting::get('company_cnpj', ''),
+            'contact_email' => Setting::get('contact_email', 'contato@8bits.pro'),
+            'contact_phone' => Setting::get('contact_phone', '(11) 99999-9999'),
             'company_address' => Setting::get('company_address', ''),
             'company_website' => Setting::get('company_website', ''),
             'company_working_hours' => Setting::get('company_working_hours', 'Segunda a Sexta, 8h às 18h'),
@@ -48,10 +50,13 @@ class SettingsController extends Controller
     public function updateSystem(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'system_name' => 'required|string|max:255',
+            'app_name' => 'required|string|max:255',
+            'app_url' => 'required|url|max:255',
+            'app_logo' => 'nullable|string|max:255',
             'company_name' => 'required|string|max:255',
-            'company_email' => 'required|email|max:255',
-            'company_phone' => 'required|string|max:50',
+            'company_cnpj' => 'nullable|string|max:18',
+            'contact_email' => 'required|email|max:255',
+            'contact_phone' => 'nullable|string|max:50',
             'company_address' => 'nullable|string|max:500',
             'company_website' => 'nullable|url|max:255',
             'company_working_hours' => 'nullable|string|max:255',
@@ -215,6 +220,58 @@ class SettingsController extends Controller
         }
 
         return null;
+    }
+
+    /**
+     * Configurações de notificações
+     */
+    public function notifications(): View
+    {
+        $settings = [
+            'notifications_enabled' => Setting::get('notifications_enabled', true),
+            'email_notifications' => Setting::get('email_notifications', true),
+            'sms_notifications' => Setting::get('sms_notifications', false),
+            'push_notifications' => Setting::get('push_notifications', true),
+            'notification_frequency' => Setting::get('notification_frequency', 'immediate'),
+            'notify_ticket_created' => Setting::get('notify_ticket_created', true),
+            'notify_ticket_updated' => Setting::get('notify_ticket_updated', true),
+            'notify_ticket_closed' => Setting::get('notify_ticket_closed', true),
+            'notify_assignment' => Setting::get('notify_assignment', true),
+        ];
+
+        return view('admin.settings.notifications', compact('settings'));
+    }
+
+    /**
+     * Atualizar configurações de notificações
+     */
+    public function updateNotifications(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'notifications_enabled' => 'boolean',
+            'email_notifications' => 'boolean',
+            'sms_notifications' => 'boolean',
+            'push_notifications' => 'boolean',
+            'notification_frequency' => 'required|in:immediate,hourly,daily',
+            'notify_ticket_created' => 'boolean',
+            'notify_ticket_updated' => 'boolean',
+            'notify_ticket_closed' => 'boolean',
+            'notify_assignment' => 'boolean',
+        ]);
+
+        // Converter checkboxes não marcados para false
+        $booleanFields = ['notifications_enabled', 'email_notifications', 'sms_notifications', 'push_notifications', 'notify_ticket_created', 'notify_ticket_updated', 'notify_ticket_closed', 'notify_assignment'];
+        
+        foreach ($booleanFields as $field) {
+            $validated[$field] = $request->has($field) ? true : false;
+        }
+
+        foreach ($validated as $key => $value) {
+            Setting::set($key, $value, null, 'notifications');
+        }
+
+        return redirect()->route('admin.settings.notifications')
+            ->with('success', 'Configurações de notificações atualizadas com sucesso!');
     }
 
     /**
