@@ -232,6 +232,7 @@
                 // Removido: mainContent.style.width para não sobrescrever CSS
             }
         });
+
     </script>
 
     @stack('scripts')

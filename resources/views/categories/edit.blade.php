@@ -53,33 +53,33 @@
                     
                     <!-- Cores Predefinidas -->
                     <div class="grid grid-cols-6 gap-2 mb-3">
-                        <button type="button" class="color-picker-btn w-full h-12 rounded border-2 border-cinza-claro-2 hover:border-cinza-claro focus:outline-none focus:ring-2 focus:ring-roxo focus:ring-offset-2" 
+                        <button type="button" class="color-picker-btn w-full h-12 rounded border-2 border-padrao hover:border-cinza-claro focus:outline-none focus:ring-2 focus:ring-roxo focus:ring-offset-2" 
                             data-color="#3B82F6" style="background-color: #3B82F6;" title="Azul"></button>
-                        <button type="button" class="color-picker-btn w-full h-12 rounded border-2 border-cinza-claro-2 hover:border-cinza-claro focus:outline-none focus:ring-2 focus:ring-roxo focus:ring-offset-2" 
+                        <button type="button" class="color-picker-btn w-full h-12 rounded border-2 border-padrao hover:border-cinza-claro focus:outline-none focus:ring-2 focus:ring-roxo focus:ring-offset-2" 
                             data-color="#10B981" style="background-color: #10B981;" title="Verde"></button>
-                        <button type="button" class="color-picker-btn w-full h-12 rounded border-2 border-cinza-claro-2 hover:border-cinza-claro focus:outline-none focus:ring-2 focus:ring-roxo focus:ring-offset-2" 
+                        <button type="button" class="color-picker-btn w-full h-12 rounded border-2 border-padrao hover:border-cinza-claro focus:outline-none focus:ring-2 focus:ring-roxo focus:ring-offset-2" 
                             data-color="#F59E0B" style="background-color: #F59E0B;" title="Amarelo"></button>
-                        <button type="button" class="color-picker-btn w-full h-12 rounded border-2 border-cinza-claro-2 hover:border-cinza-claro focus:outline-none focus:ring-2 focus:ring-roxo focus:ring-offset-2" 
+                        <button type="button" class="color-picker-btn w-full h-12 rounded border-2 border-padrao hover:border-cinza-claro focus:outline-none focus:ring-2 focus:ring-roxo focus:ring-offset-2" 
                             data-color="#EF4444" style="background-color: #EF4444;" title="Vermelho"></button>
-                        <button type="button" class="color-picker-btn w-full h-12 rounded border-2 border-cinza-claro-2 hover:border-cinza-claro focus:outline-none focus:ring-2 focus:ring-roxo focus:ring-offset-2" 
+                        <button type="button" class="color-picker-btn w-full h-12 rounded border-2 border-padrao hover:border-cinza-claro focus:outline-none focus:ring-2 focus:ring-roxo focus:ring-offset-2" 
                             data-color="#8B5CF6" style="background-color: #8B5CF6;" title="Roxo"></button>
-                        <button type="button" class="color-picker-btn w-full h-12 rounded border-2 border-cinza-claro-2 hover:border-cinza-claro focus:outline-none focus:ring-2 focus:ring-roxo focus:ring-offset-2" 
+                        <button type="button" class="color-picker-btn w-full h-12 rounded border-2 border-padrao hover:border-cinza-claro focus:outline-none focus:ring-2 focus:ring-roxo focus:ring-offset-2" 
                             data-color="#F97316" style="background-color: #F97316;" title="Laranja"></button>
                     </div>
 
                     <!-- Cores Adicionais -->
                     <div class="grid grid-cols-6 gap-2 mb-3">
-                        <button type="button" class="color-picker-btn w-full h-12 rounded border-2 border-cinza-claro-2 hover:border-cinza-claro focus:outline-none focus:ring-2 focus:ring-roxo focus:ring-offset-2" 
+                        <button type="button" class="color-picker-btn w-full h-12 rounded border-2 border-padrao hover:border-cinza-claro focus:outline-none focus:ring-2 focus:ring-roxo focus:ring-offset-2" 
                             data-color="#06B6D4" style="background-color: #06B6D4;" title="Ciano"></button>
-                        <button type="button" class="color-picker-btn w-full h-12 rounded border-2 border-cinza-claro-2 hover:border-cinza-claro focus:outline-none focus:ring-2 focus:ring-roxo focus:ring-offset-2" 
+                        <button type="button" class="color-picker-btn w-full h-12 rounded border-2 border-padrao hover:border-cinza-claro focus:outline-none focus:ring-2 focus:ring-roxo focus:ring-offset-2" 
                             data-color="#84CC16" style="background-color: #84CC16;" title="Lima"></button>
-                        <button type="button" class="color-picker-btn w-full h-12 rounded border-2 border-cinza-claro-2 hover:border-cinza-claro focus:outline-none focus:ring-2 focus:ring-roxo focus:ring-offset-2" 
+                        <button type="button" class="color-picker-btn w-full h-12 rounded border-2 border-padrao hover:border-cinza-claro focus:outline-none focus:ring-2 focus:ring-roxo focus:ring-offset-2" 
                             data-color="#EC4899" style="background-color: #EC4899;" title="Rosa"></button>
-                        <button type="button" class="color-picker-btn w-full h-12 rounded border-2 border-cinza-claro-2 hover:border-cinza-claro focus:outline-none focus:ring-2 focus:ring-roxo focus:ring-offset-2" 
+                        <button type="button" class="color-picker-btn w-full h-12 rounded border-2 border-padrao hover:border-cinza-claro focus:outline-none focus:ring-2 focus:ring-roxo focus:ring-offset-2" 
                             data-color="#6B7280" style="background-color: #6B7280;" title="Cinza"></button>
-                        <button type="button" class="color-picker-btn w-full h-12 rounded border-2 border-cinza-claro-2 hover:border-cinza-claro focus:outline-none focus:ring-2 focus:ring-roxo focus:ring-offset-2" 
+                        <button type="button" class="color-picker-btn w-full h-12 rounded border-2 border-padrao hover:border-cinza-claro focus:outline-none focus:ring-2 focus:ring-roxo focus:ring-offset-2" 
                             data-color="#059669" style="background-color: #059669;" title="Esmeralda"></button>
-                        <button type="button" class="color-picker-btn w-full h-12 rounded border-2 border-cinza-claro-2 hover:border-cinza-claro focus:outline-none focus:ring-2 focus:ring-roxo focus:ring-offset-2" 
+                        <button type="button" class="color-picker-btn w-full h-12 rounded border-2 border-padrao hover:border-cinza-claro focus:outline-none focus:ring-2 focus:ring-roxo focus:ring-offset-2" 
                             data-color="#DC2626" style="background-color: #DC2626;" title="Vermelho Escuro"></button>
                     </div>
 
@@ -87,10 +87,10 @@
                     <div class="flex items-center gap-3 mb-3">
                         <label for="custom-color" class="block text-sm font-medium text-cinza mb-0">Cor personalizada:</label>
                         <input type="color" id="custom-color" name="custom_color" 
-                            class="w-12 h-12 border border-cinza-claro-2 rounded-md cursor-pointer"
+                            class="w-12 h-12 border border-padrao rounded-md cursor-pointer"
                             value="{{ old('color', $category->color) }}">
                         <input type="text" id="color" name="color" required
-                            class="w-full px-3 py-2 border border-cinza-claro-2 rounded-md focus:outline-none focus:ring-2 focus:ring-roxo focus:border-transparent @error('color') border-vermelho @enderror"
+                            class="w-full px-3 py-2 border border-padrao rounded-md focus:outline-none focus:ring-2 focus:ring-roxo focus:border-transparent @error('color') border-vermelho @enderror"
                             value="{{ old('color', $category->color) }}"
                             placeholder="#000000">
                     </div>
@@ -100,7 +100,7 @@
                     @enderror
 
                     <!-- Preview da Cor Selecionada -->
-                    <div class="p-3 border rounded bg-cinza-claro-2">
+                    <div class="p-3 border rounded bg-creme">
                         <div class="flex items-center gap-3">
                             <div id="color-preview" class="w-8 h-8 rounded border category-color-badge" style="--category-color: {{ old('color', $category->color) }};"></div>
                             <div>
@@ -188,13 +188,13 @@
         // Remover seleção anterior de todos os botões
         document.querySelectorAll('.color-picker-btn').forEach(btn => {
             btn.classList.remove('border-primary', 'border-3');
-            btn.classList.add('border-cinza-claro-2');
+            btn.classList.add('border-padrao');
         });
         
         // Marcar cor selecionada (se for uma das predefinidas)
         const selectedButton = document.querySelector(`[data-color="${color}"]`);
         if (selectedButton) {
-            selectedButton.classList.remove('border-cinza-claro-2');
+            selectedButton.classList.remove('border-padrao');
             selectedButton.classList.add('border-primary', 'border-3');
         }
         
@@ -234,7 +234,7 @@
         // Marcar botão da cor atual como selecionado
         const currentButton = document.querySelector(`[data-color="${selectedColor}"]`);
         if (currentButton) {
-            currentButton.classList.remove('border-cinza-claro-2');
+            currentButton.classList.remove('border-padrao');
             currentButton.classList.add('border-primary', 'border-3');
         }
     });

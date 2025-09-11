@@ -62,7 +62,7 @@
             <div class="space-y-4">
                 <h3 class="section-title mb-4">Informações Principais</h3>
                 <div class="space-y-3">
-                    <div class="flex items-center justify-between py-2 border-b border-cinza-claro-2">
+                    <div class="flex items-center justify-between py-2 border-b border-padrao">
                         <span class="text-sm font-medium text-cinza">Status:</span>
                         <x-badge variant="
                             @if($ticket->status === 'aberto') warning
@@ -73,7 +73,7 @@
                             {{ ucfirst($ticket->status) }}
                         </x-badge>
                     </div>
-                    <div class="flex items-center justify-between py-2 border-b border-cinza-claro-2">
+                    <div class="flex items-center justify-between py-2 border-b border-padrao">
                         <span class="text-sm font-medium text-cinza">Prioridade:</span>
                         <x-badge variant="
                             @if($ticket->priority === 'alta') danger
@@ -83,12 +83,12 @@
                             {{ ucfirst($ticket->priority) }}
                         </x-badge>
                     </div>
-                    <div class="flex items-center justify-between py-2 border-b border-cinza-claro-2">
-                        <span class="text-sm font-medium text-cinza">Categoria:</span>
-                        <span class="text-cinza font-medium">{{ $ticket->category->name }}</span>
+                    <div class="flex items-center justify-between py-2 border-b border-padrao">
+                        <span class="text-sm font-medium text-bege">Categoria:</span>
+                        <span class="text-bege font-medium">{{ $ticket->category->name }}</span>
                     </div>
-                    <div class="flex items-center justify-between py-2 border-b border-cinza-claro-2">
-                        <span class="text-sm font-medium text-cinza">Urgente:</span>
+                    <div class="flex items-center justify-between py-2 border-b border-padrao">
+                        <span class="text-sm font-medium text-bege">Urgente:</span>
                         <x-badge variant="{{ $ticket->is_urgent ? 'danger' : 'secondary' }}">
                             {{ $ticket->is_urgent ? 'Sim' : 'Não' }}
                         </x-badge>
@@ -100,9 +100,9 @@
             <div class="space-y-4">
                 <h3 class="section-title mb-4">Detalhes do Ticket</h3>
                 <div class="space-y-3">
-                    <div class="flex items-center justify-between py-2 border-b border-cinza-claro-2">
-                        <span class="text-sm font-medium text-cinza">Responsável:</span>
-                        <span class="text-cinza font-medium">
+                    <div class="flex items-center justify-between py-2 border-b border-padrao">
+                        <span class="text-sm font-medium text-bege">Responsável:</span>
+                        <span class="text-bege font-medium">
                             @if($ticket->assignedTo)
                                 {{ $ticket->assignedTo->name }}
                             @else
@@ -110,22 +110,22 @@
                             @endif
                         </span>
                     </div>
-                    <div class="flex items-center justify-between py-2 border-b border-cinza-claro-2">
-                        <span class="text-sm font-medium text-cinza">Aberto em:</span>
-                        <span class="text-cinza font-medium">{{ $ticket->opened_at->format('d/m/Y H:i') }}</span>
+                    <div class="flex items-center justify-between py-2 border-b border-padrao">
+                        <span class="text-sm font-medium text-bege">Aberto em:</span>
+                        <span class="text-bege font-medium">{{ $ticket->opened_at->format('d/m/Y H:i') }}</span>
                     </div>
-                    <div class="flex items-center justify-between py-2 border-b border-cinza-claro-2">
-                        <span class="text-sm font-medium text-cinza">Tempo aberto:</span>
-                        <span class="text-cinza font-medium">{{ $ticket->days_open }} dias</span>
+                    <div class="flex items-center justify-between py-2 border-b border-padrao">
+                        <span class="text-sm font-medium text-bege">Tempo aberto:</span>
+                        <span class="text-bege font-medium">{{ $ticket->days_open }} dias</span>
                     </div>
                     @if($ticket->resolved_at)
-                    <div class="flex items-center justify-between py-2 border-b border-cinza-claro-2">
+                    <div class="flex items-center justify-between py-2 border-b border-padrao">
                         <span class="text-sm font-medium text-cinza">Resolvido em:</span>
                         <span class="text-cinza font-medium">{{ $ticket->resolved_at->format('d/m/Y H:i') }}</span>
                     </div>
                     @endif
                     @if($ticket->closed_at)
-                    <div class="flex items-center justify-between py-2 border-b border-cinza-claro-2">
+                    <div class="flex items-center justify-between py-2 border-b border-padrao">
                         <span class="text-sm font-medium text-cinza">Fechado em:</span>
                         <span class="text-cinza font-medium">{{ $ticket->closed_at->format('d/m/Y H:i') }}</span>
                     </div>
@@ -135,10 +135,10 @@
         </div>
 
         <!-- Cliente -->
-        <div class="mt-8 pt-6 border-t border-cinza-claro">
+        <div class="mt-8 pt-6 border-t border-padrao">
             <h3 class="section-title mb-4">Informações do Cliente</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="bg-cinza-claro-2 p-4 rounded-lg">
+                <div class="bg-creme p-4 rounded-lg">
                     <div class="flex justify-between items-center mb-2">
                         <span class="text-sm font-medium text-cinza">Empresa:</span>
                         <span class="text-cinza font-medium">{{ $ticket->client->company_name }}</span>
@@ -148,7 +148,7 @@
                         <span class="text-cinza font-medium">{{ $ticket->client->formatted_cnpj }}</span>
                     </div>
                 </div>
-                <div class="bg-cinza-claro-2 p-4 rounded-lg">
+                <div class="bg-creme p-4 rounded-lg">
                     <div class="flex justify-between items-center mb-2">
                         <span class="text-sm font-medium text-cinza">Contato:</span>
                         <span class="text-cinza font-medium">{{ $ticket->contact->name }}</span>
@@ -168,7 +168,7 @@
         </div>
 
         @if($ticket->resolution_notes)
-        <div class="mt-6 pt-6 border-t border-cinza-claro">
+        <div class="mt-6 pt-6 border-t border-padrao">
             <h3 class="section-title mb-4">Notas de Resolução</h3>
             <div class="alert-info p-4 rounded-lg">
                 <p class="text-cinza">{{ $ticket->resolution_notes }}</p>
@@ -177,9 +177,9 @@
         @endif
 
         <!-- Descrição -->
-        <div class="mt-6 pt-6 border-t border-cinza-claro">
+        <div class="mt-6 pt-6 border-t border-padrao">
             <h3 class="section-title mb-4">Descrição do Problema</h3>
-            <div class="bg-cinza-claro-2 border border-cinza-claro p-4 rounded-lg">
+            <div class="bg-creme border border-padrao p-4 rounded-lg">
                 <p class="text-cinza whitespace-pre-wrap">{{ $ticket->description }}</p>
             </div>
         </div>
@@ -191,12 +191,12 @@
         @if($ticket->messages->count() > 0)
             <div class="space-y-6">
                 @foreach($ticket->messages as $message)
-                    <div class="flex gap-4 p-4 bg-cinza-claro-2 rounded-lg border border-cinza-claro">
+                    <div class="flex gap-4 p-4 bg-creme rounded-lg border border-padrao">
                         <!-- Avatar -->
                         <div class="flex-shrink-0">
                             <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-medium
                                 @if($message->user) bg-roxo
-                                @else bg-cinza-claro-2
+                                @else bg-creme
                                 @endif">
                                 @if($message->user)
                                     {{ substr($message->user->name, 0, 1) }}
@@ -325,7 +325,7 @@
                 @if(auth()->user()->canManageTickets())
                 <div class="flex items-center">
                     <div class="flex items-center h-5">
-                        <input type="checkbox" id="is_internal" name="is_internal" value="1" class="h-4 w-4 text-roxo focus:ring-roxo border-cinza-claro rounded">
+                        <input type="checkbox" id="is_internal" name="is_internal" value="1" class="h-4 w-4 text-roxo focus:ring-roxo border-padrao rounded">
                     </div>
                     <div class="ml-3 text-sm">
                         <label for="is_internal" class="font-medium text-cinza">

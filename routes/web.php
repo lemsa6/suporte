@@ -182,7 +182,7 @@ Route::get('/test-contacts/{client}', function($client) {
     });
 });
 
-// Rota de fallback - COMENTADA PARA TESTAR PÁGINAS DE ERRO
-// Route::fallback(function () {
-//     return redirect()->route('dashboard');
-// });
+// Rota de fallback
+Route::fallback(function () {
+    return redirect()->route('dashboard');
+});

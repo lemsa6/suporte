@@ -93,24 +93,24 @@
     <x-card>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div class="space-y-4">
-                <div class="flex items-center justify-between py-2 border-b border-cinza-claro-2">
+                <div class="flex items-center justify-between py-2 border-b border-padrao">
                     <span class="text-sm font-medium text-cinza">Nome da Empresa:</span>
                     <span class="font-medium text-cinza">{{ $client->company_name }}</span>
                 </div>
                 
                 @if($client->trade_name)
-                <div class="flex items-center justify-between py-2 border-b border-cinza-claro-2">
+                <div class="flex items-center justify-between py-2 border-b border-padrao">
                     <span class="text-sm font-medium text-cinza">Nome Fantasia:</span>
                     <span class="font-medium text-cinza">{{ $client->trade_name }}</span>
                 </div>
                 @endif
                 
-                <div class="flex items-center justify-between py-2 border-b border-cinza-claro-2">
+                <div class="flex items-center justify-between py-2 border-b border-padrao">
                     <span class="text-sm font-medium text-cinza">CNPJ:</span>
                     <span class="font-mono text-sm text-cinza">{{ $client->formatted_cnpj }}</span>
                 </div>
                 
-                <div class="flex items-center justify-between py-2 border-b border-cinza-claro-2">
+                <div class="flex items-center justify-between py-2 border-b border-padrao">
                     <span class="text-sm font-medium text-cinza">Status:</span>
                     <x-badge variant="{{ $client->is_active ? 'success' : 'danger' }}">
                         {{ $client->is_active ? 'Ativo' : 'Inativo' }}
@@ -120,7 +120,7 @@
             
             <div class="space-y-4">
                 @if($client->email)
-                <div class="flex items-center justify-between py-2 border-b border-cinza-claro-2">
+                <div class="flex items-center justify-between py-2 border-b border-padrao">
                     <span class="text-sm font-medium text-cinza">Email:</span>
                     <a href="mailto:{{ $client->email }}" class="text-roxo hover:text-roxo-det text-sm">
                         {{ $client->email }}
@@ -129,7 +129,7 @@
                 @endif
                 
                 @if($client->phone)
-                <div class="flex items-center justify-between py-2 border-b border-cinza-claro-2">
+                <div class="flex items-center justify-between py-2 border-b border-padrao">
                     <span class="text-sm font-medium text-cinza">Telefone:</span>
                     <a href="tel:{{ $client->phone }}" class="text-roxo hover:text-roxo-det text-sm">
                         {{ $client->phone }}
@@ -138,13 +138,13 @@
                 @endif
                 
                 @if($client->address)
-                <div class="flex items-center justify-between py-2 border-b border-cinza-claro-2">
+                <div class="flex items-center justify-between py-2 border-b border-padrao">
                     <span class="text-sm font-medium text-cinza">Endereço:</span>
                     <span class="text-sm text-right max-w-xs text-cinza">{{ $client->address }}</span>
                 </div>
                 @endif
                 
-                <div class="flex items-center justify-between py-2 border-b border-cinza-claro-2">
+                <div class="flex items-center justify-between py-2 border-b border-padrao">
                     <span class="text-sm font-medium text-cinza">Data de Cadastro:</span>
                     <span class="text-sm text-cinza">{{ $client->created_at->format('d/m/Y H:i') }}</span>
                 </div>
@@ -152,9 +152,9 @@
         </div>
         
         @if($client->notes)
-        <div class="mt-6 pt-6 border-t border-cinza-claro">
+        <div class="mt-6 pt-6 border-t border-padrao">
             <h3 class="text-sm font-medium text-cinza mb-3">Observações</h3>
-            <div class="bg-cinza-claro-2 border border-cinza-claro p-4 rounded-lg">
+            <div class="bg-creme border border-padrao p-4 rounded-lg">
                 <p class="text-sm whitespace-pre-wrap">{{ $client->notes }}</p>
             </div>
         </div>
@@ -178,7 +178,7 @@
         @if($client->contacts->count() > 0)
             <div class="space-y-4">
                 @foreach($client->contacts as $contact)
-                    <div class="flex items-center p-4 bg-cinza-claro-2 rounded-lg border border-cinza-claro">
+                    <div class="flex items-center p-4 bg-creme rounded-lg border border-padrao">
                         <div class="w-10 h-10 bg-roxo bg-opacity-10 rounded-full flex items-center justify-center mr-4">
                             <span class="text-sm font-medium text-roxo">{{ substr($contact->name, 0, 1) }}</span>
                         </div>
@@ -250,7 +250,7 @@
         @if($client->tickets->count() > 0)
             <div class="space-y-4">
                 @foreach($client->tickets->take(5) as $ticket)
-                    <div class="flex items-center p-4 bg-cinza-claro-2 rounded-lg border border-cinza-claro">
+                    <div class="flex items-center p-4 bg-creme rounded-lg border border-padrao">
                         <div class="w-10 h-10 bg-roxo bg-opacity-10 rounded-full flex items-center justify-center mr-4">
                             <svg class="w-5 h-5 text-roxo" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
@@ -389,7 +389,7 @@
                     </div>
                 </form>
 
-                <div id="reset-password-section" class="mt-6 pt-6 border-t border-cinza-claro hidden">
+                <div id="reset-password-section" class="mt-6 pt-6 border-t border-padrao hidden">
                     <h6 class="font-medium mb-4">Redefinir Senha</h6>
                     
                     <div class="space-y-4">
