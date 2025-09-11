@@ -88,6 +88,7 @@
 
 /* Quadrados de cores */
 .bg-site { background-color: var(--creme); }        /* Fundo do site (creme) */
+.bg-creme { background-color: var(--creme); }       /* Fundo creme */
 .bg-div { background-color: var(--branco); }          /* Fundo das divs (branco) */
 .bg-primary { background-color: var(--roxo); }      /* Cor principal (roxo-mate) */
 .bg-primary-hover { background-color: var(--roxo-claro); } /* Hover principal (roxo-mate-2) */
