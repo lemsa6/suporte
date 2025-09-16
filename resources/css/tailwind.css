@@ -134,7 +134,7 @@
 @media (max-width: 1024px) {
   .main-content {
     margin-left: 0;
-  width: 100%;
+    width: 100%;
   }
   
   .sidebar {
@@ -267,7 +267,25 @@
 
   /* Sidebar Close Button */
   .sidebar-close-btn {
-    @apply lg:hidden p-2 rounded-md text-cinza-claro hover:text-white hover:bg-sidebar-hover;
+    @apply lg:hidden p-2 rounded-md text-cinza-claro hover:text-white;
+  }
+  
+  .sidebar-close-btn:hover {
+    background-color: var(--roxo-claro);
+  }
+  
+  /* Mobile Header */
+  .mobile-header {
+    @apply hidden;
+  }
+  
+  .mobile-menu-toggle {
+    @apply transition-colors duration-200;
+  }
+  
+  .mobile-menu-toggle:hover {
+    background-color: var(--cinza-claro-2);
+    color: var(--roxo);
   }
 
   /* Sidebar User Section */

@@ -144,8 +144,22 @@
             </div>
         </div>
 
+        <!-- Mobile Overlay -->
+        <div id="mobileOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden hidden" onclick="toggleSidebar()"></div>
+
         <!-- Main Content -->
         <div class="main-content">
+            <!-- Mobile Header com botão hamburger -->
+            <div class="mobile-header lg:hidden bg-white shadow-sm border-b border-cinza-claro-2 p-4 flex items-center justify-between">
+                <button type="button" class="mobile-menu-toggle p-2 rounded-md text-cinza hover:bg-cinza-claro-2 hover:text-roxo transition-colors" onclick="toggleSidebar()">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+                <h1 class="text-lg font-medium text-cinza">{{ \App\Helpers\SystemHelper::name() }}</h1>
+                <div class="w-10"></div> <!-- Espaçador para centralizar o título -->
+            </div>
+            
             <!-- Page Content -->
             <div class="main-content-container">
                 <main class="py-6">
@@ -190,7 +204,14 @@
     <script>
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobileOverlay');
+            
             sidebar.classList.toggle('-translate-x-full');
+            
+            // Controlar overlay apenas em mobile
+            if (window.innerWidth < 1024) {
+                overlay.classList.toggle('hidden');
+            }
         }
 
         function toggleUserMenu() {
@@ -201,11 +222,13 @@
         // Fechar sidebar ao clicar fora em telas pequenas
         document.addEventListener('click', function(event) {
             const sidebar = document.getElementById('sidebar');
-            const toggleButton = document.querySelector('.lg\\:hidden button');
+            const toggleButton = document.querySelector('.mobile-menu-toggle');
+            const closeButton = document.querySelector('.sidebar-close-btn');
             const isClickInsideSidebar = sidebar.contains(event.target);
             const isClickOnToggleButton = toggleButton && toggleButton.contains(event.target);
+            const isClickOnCloseButton = closeButton && closeButton.contains(event.target);
 
-            if (!isClickInsideSidebar && !isClickOnToggleButton && !sidebar.classList.contains('-translate-x-full') && window.innerWidth < 1024) {
+            if (!isClickInsideSidebar && !isClickOnToggleButton && !isClickOnCloseButton && !sidebar.classList.contains('-translate-x-full') && window.innerWidth < 1024) {
                 sidebar.classList.add('-translate-x-full');
             }
         });
@@ -223,13 +246,11 @@
         // Ajustar layout em resize
         window.addEventListener('resize', function() {
             const sidebar = document.getElementById('sidebar');
-            const mainContent = document.querySelector('.main-content');
+            const overlay = document.getElementById('mobileOverlay');
             
             if (window.innerWidth >= 1024) {
                 sidebar.classList.remove('-translate-x-full');
-                // Removido: mainContent.style.width para não sobrescrever CSS
-            } else {
-                // Removido: mainContent.style.width para não sobrescrever CSS
+                overlay.classList.add('hidden'); // Esconder overlay em desktop
             }
         });
 

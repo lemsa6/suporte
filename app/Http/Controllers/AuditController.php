@@ -117,7 +117,7 @@ class AuditController extends Controller
         return view('admin.audit.ticket', compact('ticket', 'logs'));
     }
 
-    /**
+     /**
      * Exibe logs de auditoria de um usuário específico
      */
     public function userLogs(User $user): View
