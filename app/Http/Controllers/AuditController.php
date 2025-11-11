@@ -109,7 +109,7 @@ class AuditController extends Controller
             abort(404, 'Ticket não encontrado.');
         }
 
-        $logs = $this->auditService->getLogs([
+        $auditLogs = $this->auditService->getLogs([
             'auditable_type' => 'App\Models\Ticket',
             'auditable_id' => $ticket->id
         ])->paginate(20);
@@ -117,7 +117,7 @@ class AuditController extends Controller
         // Buscar usuários para filtros
         $users = User::select('id', 'name')->orderBy('name')->get();
 
-        return view('admin.audit.ticket', compact('ticket', 'logs', 'users'));
+        return view('admin.audit.ticket', compact('ticket', 'auditLogs', 'users'));
     }
 
      /**
