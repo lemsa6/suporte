@@ -114,7 +114,10 @@ class AuditController extends Controller
             'auditable_id' => $ticket->id
         ])->paginate(20);
 
-        return view('admin.audit.ticket', compact('ticket', 'logs'));
+        // Buscar usuários para filtros
+        $users = User::select('id', 'name')->orderBy('name')->get();
+
+        return view('admin.audit.ticket', compact('ticket', 'logs', 'users'));
     }
 
      /**
