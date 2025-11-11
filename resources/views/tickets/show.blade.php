@@ -34,15 +34,24 @@
             </svg>
             Editar
         </x-button>
+        @if(auth()->user()->isAdmin() || auth()->user()->isTecnico())
+            <x-button variant="outline" type="button" onclick="openStatusModal()">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"></path>
+                </svg>
+                Alterar Status
+            </x-button>
+        @endif
         @if($ticket->status !== 'fechado')
-            <x-button variant="success" onclick="changeStatus('{{ $ticket->ticket_number }}', 'fechado')">
+            <!-- TESTE: Se você vê este comentário, o arquivo está sendo editado corretamente -->
+            <x-button variant="success" type="button" onclick="openCloseTicketModal()">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
                 Fechar Ticket
             </x-button>
         @else
-            <x-button variant="primary" onclick="reopenTicket('{{ $ticket->ticket_number }}')">
+            <x-button variant="primary" type="button" onclick="openReopenTicketModal()">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                 </svg>
@@ -51,6 +60,58 @@
         @endif
     </div>
 </div>
+
+<!-- Modal para Fechar Ticket -->
+<div id="close-ticket-modal" class="fixed inset-0 bg-black bg-opacity-10 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-lg shadow-lg max-w-sm mx-4 transform transition-all duration-300 scale-95 opacity-0" id="close-ticket-modal-content">
+            <div class="flex items-center justify-between p-6 border-b border-cinza-claro">
+                <h3 class="text-lg font-semibold text-cinza">Fechar Ticket</h3>
+                <button type="button" onclick="closeCloseTicketModal()" class="text-cinza-claro hover:text-cinza">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="p-6">
+                <div class="flex items-center mb-4">
+                    <div class="flex-shrink-0 w-10 h-10 mx-auto bg-amarelo-claro rounded-full flex items-center justify-center">
+                        <svg class="w-6 h-6 text-amarelo" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <h4 class="text-lg font-medium text-cinza mb-2">Tem certeza?</h4>
+                    <p class="text-sm text-cinza-claro mb-4">
+                        Esta ação irá alterar o status do ticket <strong>{{ $ticket->ticket_number }}</strong> para <strong>"Fechado"</strong>.
+                    </p>
+                    <p class="text-xs text-cinza-claro">
+                        O ticket poderá ser reaberto posteriormente se necessário.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="flex items-center justify-end gap-3 p-6 border-t border-cinza-claro">
+                <x-button variant="outline" onclick="closeCloseTicketModal()">
+                    Cancelar
+                </x-button>
+                <form action="{{ route('tickets.change-status', $ticket->ticket_number) }}" method="POST" style="display: inline;">
+                    @csrf
+                    <input type="hidden" name="status" value="fechado">
+                    <x-button variant="success" type="submit">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Sim, Fechar Ticket
+                    </x-button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @section('content')
@@ -375,43 +436,41 @@
 </div>
 
 <!-- Modal de Preview de Anexos -->
-<div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title fw-semibold" id="previewModalLabel">
-                    <svg class="me-2" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<!-- Modal para preview de anexos -->
+<div id="previewModal" class="fixed inset-0 bg-black bg-opacity-10 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-lg shadow-lg max-w-3xl mx-4 max-h-[90vh] overflow-hidden transform transition-all duration-300 scale-95 opacity-0" id="previewModalContent">
+            <div class="flex items-center justify-between p-6 border-b border-cinza-claro">
+                <h3 id="previewModalLabel" class="text-lg font-semibold text-cinza flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                     </svg>
                     Preview do Arquivo
-                </h5>
-                <button type="button" class="text-cinza-claro hover:text-cinza" onclick="closePreviewModal()" aria-label="Close">
+                </h3>
+                <button type="button" onclick="closePreviewModal()" class="text-cinza-claro hover:text-cinza">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                 </button>
             </div>
-            <div class="modal-body p-0">
-                <div id="previewContent" class="flex justify-center items-center preview-modal">
+            
+            <div class="overflow-y-auto" style="max-height: calc(90vh - 140px);">
+                <div id="previewContent" class="flex justify-center items-center p-6 min-h-[400px]">
                     <div class="text-center">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Carregando...</span>
-                        </div>
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-roxo mx-auto"></div>
                         <p class="mt-2 text-cinza-claro">Carregando preview...</p>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <x-button variant="outline" onclick="closeStatusModal()">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
+            
+            <div class="flex items-center justify-end gap-3 p-6 border-t border-cinza-claro">
+                <x-button variant="outline" onclick="closePreviewModal()">
                     Fechar
                 </x-button>
-                <x-button variant="primary" tag="a" href="#" id="downloadBtn">
+                <x-button variant="primary" id="downloadBtn" tag="a" href="#" target="_blank">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                     </svg>
                     Download
                 </x-button>
@@ -420,38 +479,106 @@
     </div>
 </div>
 
-<!-- Modal para alterar status -->
-<div id="status-modal" class="modal fade" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title fw-semibold">Alterar Status</h5>
-                <button type="button" class="absolute top-4 right-4 text-cinza-claro hover:text-cinza" onclick="closeStatusModal()">
+<!-- Modal para Reabrir Ticket -->
+<div id="reopen-ticket-modal" class="fixed inset-0 bg-black bg-opacity-10 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-lg shadow-lg max-w-sm mx-4 transform transition-all duration-300 scale-95 opacity-0" id="reopen-ticket-modal-content">
+            <div class="flex items-center justify-between p-6 border-b border-cinza-claro">
+                <h3 class="text-lg font-semibold text-cinza">Reabrir Ticket</h3>
+                <button type="button" onclick="closeReopenTicketModal()" class="text-cinza-claro hover:text-cinza">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                 </button>
             </div>
-            <div class="modal-body">
-                <div class="mb-3">
-                    <label for="new-status" class="block text-sm font-medium text-cinza mb-2">Novo Status</label>
-                    <x-select id="new-status">
-                        <option value="aberto">Aberto</option>
-                        <option value="em_andamento">Em Andamento</option>
-                        <option value="resolvido">Resolvido</option>
-                        <option value="fechado">Fechado</option>
-                    </x-select>
+            
+            <div class="p-6">
+                <div class="flex items-center mb-4">
+                    <div class="flex-shrink-0 w-10 h-10 mx-auto bg-azul-claro rounded-full flex items-center justify-center">
+                        <svg class="w-6 h-6 text-azul" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                    </div>
                 </div>
+                <div class="text-center">
+                    <h4 class="text-lg font-medium text-cinza mb-2">Tem certeza?</h4>
+                    <p class="text-sm text-cinza-claro mb-4">
+                        Esta ação irá alterar o status do ticket <strong>{{ $ticket->ticket_number }}</strong> para <strong>"Aberto"</strong>.
+                    </p>
+                    <p class="text-xs text-cinza-claro">
+                        O ticket voltará a aparecer na lista de tickets ativos.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="flex items-center justify-end gap-3 p-6 border-t border-cinza-claro">
+                <x-button variant="outline" onclick="closeReopenTicketModal()">
+                    Cancelar
+                </x-button>
+                <form action="{{ route('tickets.reopen', $ticket->ticket_number) }}" method="POST" style="display: inline;">
+                    @csrf
+                    <x-button variant="primary" type="submit">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        Sim, Reabrir Ticket
+                    </x-button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
-                <div class="mb-3">
-                    <label for="status-notes" class="block text-sm font-medium text-cinza mb-2">Observações (opcional)</label>
-                    <x-textarea id="status-notes" rows="3" placeholder="Adicione observações sobre a mudança de status..."></x-textarea>
+<!-- Modal para Alterar Status -->
+<div id="status-modal" class="fixed inset-0 bg-black bg-opacity-10 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-lg shadow-lg max-w-md mx-4 transform transition-all duration-300 scale-95 opacity-0" id="status-modal-content">
+            <div class="flex items-center justify-between p-6 border-b border-cinza-claro">
+                <h3 class="text-lg font-semibold text-cinza flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"></path>
+                    </svg>
+                    Alterar Status
+                </h3>
+                <button type="button" onclick="closeStatusModal()" class="text-cinza-claro hover:text-cinza">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <form action="{{ route('tickets.change-status', $ticket->ticket_number) }}" method="POST">
+                @csrf
+                <div class="p-6 space-y-4">
+                    <div>
+                        <label for="status" class="block text-sm font-medium text-cinza mb-2">Novo Status *</label>
+                        <select id="status" name="status" required class="w-full px-3 py-2 border border-cinza-claro-2 rounded-md focus:outline-none focus:ring-2 focus:ring-roxo focus:border-transparent">
+                            <option value="">Selecione o status</option>
+                            <option value="aberto" {{ $ticket->status == 'aberto' ? 'selected' : '' }}>Aberto</option>
+                            <option value="em_andamento" {{ $ticket->status == 'em_andamento' ? 'selected' : '' }}>Em Andamento</option>
+                            <option value="resolvido" {{ $ticket->status == 'resolvido' ? 'selected' : '' }}>Resolvido</option>
+                            <option value="fechado" {{ $ticket->status == 'fechado' ? 'selected' : '' }}>Fechado</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="notes" class="block text-sm font-medium text-cinza mb-2">Observações (opcional)</label>
+                        <textarea id="notes" name="notes" rows="3" placeholder="Adicione observações sobre a mudança de status..." class="w-full px-3 py-2 border border-cinza-claro-2 rounded-md focus:outline-none focus:ring-2 focus:ring-roxo focus:border-transparent resize-none"></textarea>
+                    </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <x-button variant="outline" onclick="closeStatusModal()">Cancelar</x-button>
-                <x-button variant="primary" type="button" onclick="executeStatusChange()">Alterar Status</x-button>
-            </div>
+                
+                <div class="flex items-center justify-end gap-3 p-6 border-t border-cinza-claro">
+                    <x-button variant="outline" type="button" onclick="closeStatusModal()">
+                        Cancelar
+                    </x-button>
+                    <x-button variant="primary" type="submit">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"></path>
+                        </svg>
+                        Alterar Status
+                    </x-button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -460,51 +587,157 @@
 
 @push('scripts')
 <script>
-    function changeStatus(ticketHash, status) {
-        if (status === 'fechado') {
-            if (confirm('Tem certeza que deseja fechar este ticket?')) {
-                // Implementar fechamento via AJAX
-                console.log('Fechando ticket', ticketHash);
-            }
-        } else {
-            showStatusModal(ticketHash);
-        }
-    }
+function openCloseTicketModal() {
+    const modal = document.getElementById('close-ticket-modal');
+    const content = document.getElementById('close-ticket-modal-content');
+    
+    modal.classList.remove('hidden');
+    
+    // Animação de entrada
+    setTimeout(() => {
+        content.classList.remove('scale-95', 'opacity-0');
+        content.classList.add('scale-100', 'opacity-100');
+    }, 10);
+}
 
-    function showStatusModal(ticketHash) {
-        const modal = new bootstrap.Modal(document.getElementById('status-modal'));
-        document.getElementById('status-modal').dataset.ticketHash = ticketHash;
-        modal.show();
-    }
+function closeCloseTicketModal() {
+    const modal = document.getElementById('close-ticket-modal');
+    const content = document.getElementById('close-ticket-modal-content');
+    
+    // Animação de saída
+    content.classList.remove('scale-100', 'opacity-100');
+    content.classList.add('scale-95', 'opacity-0');
+    
+    // Esconder modal após animação
+    setTimeout(() => {
+        modal.classList.add('hidden');
+    }, 300);
+}
 
-    function executeStatusChange() {
-        const modal = document.getElementById('status-modal');
-        const ticketHash = modal.dataset.ticketHash;
-        const newStatus = document.getElementById('new-status').value;
-        const notes = document.getElementById('status-notes').value;
-        
-        // Implementar alteração de status via AJAX
-        console.log('Alterando status do ticket', ticketHash, 'para', newStatus, 'com notas:', notes);
-        
-        const modalInstance = bootstrap.Modal.getInstance(modal);
-        modalInstance.hide();
+// Fechar modal ao clicar fora dele
+document.addEventListener('click', function(event) {
+    const closeModal = document.getElementById('close-ticket-modal');
+    const reopenModal = document.getElementById('reopen-ticket-modal');
+    const statusModal = document.getElementById('status-modal');
+    
+    if (event.target === closeModal) {
+        closeCloseTicketModal();
     }
+    if (event.target === reopenModal) {
+        closeReopenTicketModal();
+    }
+    if (event.target === statusModal) {
+        closeStatusModal();
+    }
+});
 
-    function reopenTicket(ticketHash) {
-        if (confirm('Tem certeza que deseja reabrir este ticket?')) {
-            // Implementar reabertura via AJAX
-            console.log('Reabrindo ticket', ticketHash);
-        }
+// Fechar modal com ESC
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        closeCloseTicketModal();
+        closeReopenTicketModal();
+        closeStatusModal();
+        closePreviewModal();
     }
+});
+
+function openStatusModal() {
+    const modal = document.getElementById('status-modal');
+    const content = document.getElementById('status-modal-content');
+    
+    modal.classList.remove('hidden');
+    
+    // Animação de entrada
+    setTimeout(() => {
+        content.classList.remove('scale-95', 'opacity-0');
+        content.classList.add('scale-100', 'opacity-100');
+    }, 10);
+}
+
+function closeStatusModal() {
+    const modal = document.getElementById('status-modal');
+    const content = document.getElementById('status-modal-content');
+    
+    // Animação de saída
+    content.classList.remove('scale-100', 'opacity-100');
+    content.classList.add('scale-95', 'opacity-0');
+    
+    // Esconder modal após animação
+    setTimeout(() => {
+        modal.classList.add('hidden');
+    }, 300);
+}
+
+function openReopenTicketModal() {
+    const modal = document.getElementById('reopen-ticket-modal');
+    const content = document.getElementById('reopen-ticket-modal-content');
+    
+    modal.classList.remove('hidden');
+    
+    // Animação de entrada
+    setTimeout(() => {
+        content.classList.remove('scale-95', 'opacity-0');
+        content.classList.add('scale-100', 'opacity-100');
+    }, 10);
+}
+
+function closeReopenTicketModal() {
+    const modal = document.getElementById('reopen-ticket-modal');
+    const content = document.getElementById('reopen-ticket-modal-content');
+    
+    // Animação de saída
+    content.classList.remove('scale-100', 'opacity-100');
+    content.classList.add('scale-95', 'opacity-0');
+    
+    // Esconder modal após animação
+    setTimeout(() => {
+        modal.classList.add('hidden');
+    }, 300);
+}
+
+function closePreviewModal() {
+    const modal = document.getElementById('previewModal');
+    const content = document.getElementById('previewModalContent');
+    
+    // Animação de saída
+    content.classList.remove('scale-100', 'opacity-100');
+    content.classList.add('scale-95', 'opacity-0');
+    
+    // Esconder modal após animação
+    setTimeout(() => {
+        modal.classList.add('hidden');
+    }, 300);
+}
+
+// Fechar modal de preview ao clicar fora dele
+document.addEventListener('click', function(event) {
+    const modal = document.getElementById('previewModal');
+    if (event.target === modal) {
+        closePreviewModal();
+    }
+});
+    // Função changeStatus removida - agora usa formulário PHP direto
+
+    // Funções AJAX antigas removidas - agora usa formulários PHP diretos
+
+    // Função reopenTicket AJAX removida - agora usa formulário PHP direto
 
     function previewAttachment(attachmentId, filename, fileType) {
         // Mostrar modal
-        const modal = new bootstrap.Modal(document.getElementById('previewModal'));
-        modal.show();
+        const modal = document.getElementById('previewModal');
+        const content = document.getElementById('previewModalContent');
+        
+        modal.classList.remove('hidden');
+        
+        // Animação de entrada
+        setTimeout(() => {
+            content.classList.remove('scale-95', 'opacity-0');
+            content.classList.add('scale-100', 'opacity-100');
+        }, 10);
         
         // Atualizar título
         document.getElementById('previewModalLabel').innerHTML = `
-            <svg class="me-2" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
             </svg>
@@ -518,9 +751,7 @@
         const previewContent = document.getElementById('previewContent');
         previewContent.innerHTML = `
             <div class="text-center">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Carregando...</span>
-                </div>
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-roxo mx-auto"></div>
                 <p class="mt-2 text-cinza-claro">Carregando preview...</p>
             </div>
         `;
@@ -532,7 +763,7 @@
             // Para imagens
             const img = document.createElement('img');
             img.src = previewUrl;
-            img.className = 'img-fluid';
+            img.className = 'max-w-full h-auto';
             img.style.maxHeight = '70vh';
             img.onload = function() {
                 previewContent.innerHTML = '';
@@ -575,7 +806,7 @@
                 .then(response => response.text())
                 .then(text => {
                     const pre = document.createElement('pre');
-                    pre.className = 'bg-light p-3 rounded';
+                    pre.className = 'bg-cinza-claro-2 p-3 rounded text-left';
                     pre.style.maxHeight = '70vh';
                     pre.style.overflow = 'auto';
                     pre.textContent = text;

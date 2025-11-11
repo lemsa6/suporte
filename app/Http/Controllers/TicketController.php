@@ -501,55 +501,61 @@ class TicketController extends Controller
     /**
      * Altera status do ticket
      */
-    public function changeStatus(Request $request, string $ticketNumber): JsonResponse
+    public function changeStatus(Request $request, string $ticketNumber)
     {
-        $ticket = Ticket::findByNumber($ticketNumber);
-        
-        if (!$ticket) {
-            abort(404, 'Ticket não encontrado.');
+        try {
+            $ticket = Ticket::findByNumber($ticketNumber);
+            
+            if (!$ticket) {
+                return redirect()->back()->with('error', 'Ticket não encontrado.');
+            }
+            
+            $oldStatus = $ticket->status;
+            $newStatus = $request->input('status', 'fechado');
+            
+            // Atualizar status
+            $updateData = ['status' => $newStatus];
+            
+            if ($newStatus === 'fechado' && $oldStatus !== 'fechado') {
+                $updateData['closed_at'] = now();
+            }
+            
+            $ticket->update($updateData);
+            
+            // Criar mensagem no histórico SEMPRE (mesmo se status for igual)
+            if (auth()->check()) {
+                $message = $oldStatus !== $newStatus 
+                    ? "Status alterado de '{$oldStatus}' para '{$newStatus}'"
+                    : "Ticket {$newStatus}";
+                
+                \Log::info("Criando mensagem no histórico: {$message}");
+                    
+                TicketMessage::create([
+                    'ticket_id' => $ticket->id,
+                    'user_id' => auth()->id(),
+                    'type' => 'status_change',
+                    'message' => $message,
+                    'is_internal' => true,
+                ]);
+                
+                \Log::info("Mensagem criada com sucesso");
+            } else {
+                \Log::warning("Usuário não autenticado - não criou mensagem");
+            }
+            
+            return redirect()->route('tickets.show', $ticket->ticket_number)
+                            ->with('success', 'Ticket fechado com sucesso!');
+                            
+        } catch (\Exception $e) {
+            \Log::error('Erro ao fechar ticket: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'ERRO ESPECÍFICO: ' . $e->getMessage());
         }
-        $this->authorize('update', $ticket);
-        
-        $validated = $request->validate([
-            'status' => 'required|in:aberto,em_andamento,resolvido,fechado',
-            'notes' => 'nullable|string|max:1000',
-        ]);
-        
-        $oldStatus = $ticket->status;
-        
-        $updateData = ['status' => $validated['status']];
-        
-        // Atualizar timestamps baseado no status
-        if ($validated['status'] === 'resolvido' && $oldStatus !== 'resolvido') {
-            $updateData['resolved_at'] = now();
-        } elseif ($validated['status'] === 'fechado' && $oldStatus !== 'fechado') {
-            $updateData['closed_at'] = now();
-        }
-        
-        $ticket->update($updateData);
-        
-        // Criar mensagem de mudança de status
-        TicketMessage::create([
-            'ticket_id' => $ticket->id,
-            'user_id' => auth()->id(),
-            'type' => 'status_change',
-            'message' => "Status alterado de '{$oldStatus}' para '{$validated['status']}'" . 
-                        ($validated['notes'] ? "\n\nNotas: {$validated['notes']}" : ''),
-            'is_internal' => true,
-            'metadata' => [
-                'old_status' => $oldStatus,
-                'new_status' => $validated['status'],
-                'notes' => $validated['notes'],
-            ],
-        ]);
-        
-        return response()->json(['success' => true]);
     }
 
     /**
      * Reabre ticket fechado
      */
-    public function reopen(string $ticketNumber): JsonResponse
+    public function reopen(string $ticketNumber)
     {
         $ticket = Ticket::findByNumber($ticketNumber);
         
@@ -559,7 +565,8 @@ class TicketController extends Controller
         $this->authorize('reopen', $ticket);
         
         if (!$ticket->canBeReopened()) {
-            return response()->json(['success' => false, 'message' => 'Ticket não pode ser reaberto']);
+            return redirect()->route('tickets.show', $ticket->ticket_number)
+                            ->with('error', 'Ticket não pode ser reaberto');
         }
         
         $ticket->update([
@@ -581,7 +588,8 @@ class TicketController extends Controller
             ],
         ]);
         
-        return response()->json(['success' => true]);
+        return redirect()->route('tickets.show', $ticket->ticket_number)
+                        ->with('success', 'Ticket reaberto com sucesso!');
     }
 
     /**

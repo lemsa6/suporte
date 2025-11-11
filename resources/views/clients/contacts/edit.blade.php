@@ -86,19 +86,16 @@
                     @enderror
                 </div>
 
-                <!-- Tipo de Contato -->
+                <!-- Tipo de Usuário -->
                 <div>
-                    <label for="contact_type" class="block text-sm font-medium text-cinza mb-2">Tipo de Contato</label>
-                    <select id="contact_type" name="contact_type" 
-                        class="w-full px-3 py-2 border border-cinza-claro-2 rounded-md focus:outline-none focus:ring-2 focus:ring-roxo focus:border-transparent @error('contact_type') border-vermelho @enderror">
+                    <label for="user_type" class="block text-sm font-medium text-cinza mb-2">Tipo de Usuário *</label>
+                    <select id="user_type" name="user_type" required
+                        class="w-full px-3 py-2 border border-cinza-claro-2 rounded-md focus:outline-none focus:ring-2 focus:ring-roxo focus:border-transparent @error('user_type') border-vermelho @enderror">
                         <option value="">Selecione o tipo</option>
-                        <option value="primary" {{ old('contact_type', $contact->contact_type) == 'primary' ? 'selected' : '' }}>Principal</option>
-                        <option value="secondary" {{ old('contact_type', $contact->contact_type) == 'secondary' ? 'selected' : '' }}>Secundário</option>
-                        <option value="technical" {{ old('contact_type', $contact->contact_type) == 'technical' ? 'selected' : '' }}>Técnico</option>
-                        <option value="commercial" {{ old('contact_type', $contact->contact_type) == 'commercial' ? 'selected' : '' }}>Comercial</option>
-                        <option value="financial" {{ old('contact_type', $contact->contact_type) == 'financial' ? 'selected' : '' }}>Financeiro</option>
+                        <option value="cliente_funcionario" {{ old('user_type', $contact->user_type) == 'cliente_funcionario' ? 'selected' : '' }}>Funcionário</option>
+                        <option value="cliente_gestor" {{ old('user_type', $contact->user_type) == 'cliente_gestor' ? 'selected' : '' }}>Gestor</option>
                     </select>
-                    @error('contact_type')
+                    @error('user_type')
                         <div class="text-vermelho text-sm mt-1">{{ $message }}</div>
                     @enderror
                 </div>

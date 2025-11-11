@@ -71,6 +71,10 @@ Route::middleware('auth')->group(function () {
         Route::delete('/tickets/{ticketNumber}', [TicketController::class, 'destroy'])->name('tickets.destroy');
         Route::post('/tickets/{ticketNumber}/message', [TicketController::class, 'addMessage'])->name('tickets.message');
         
+        // Ações de status
+        Route::post('/tickets/{ticketNumber}/change-status', [TicketController::class, 'changeStatus'])->name('tickets.change-status');
+        Route::post('/tickets/{ticketNumber}/reopen', [TicketController::class, 'reopen'])->name('tickets.reopen');
+        
         // Ações em lote
         Route::post('/tickets/bulk-action', [TicketController::class, 'bulkAction'])->name('tickets.bulk-action');
     });
