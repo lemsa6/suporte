@@ -58,7 +58,7 @@ class TicketAssigned extends Notification implements ShouldQueue
             ->line("• **Status:** {$this->ticket->status}")
             ->line("• **Aberto por:** {$this->ticket->contact->name}")
             ->line("• **Data de abertura:** " . $this->ticket->created_at->format('d/m/Y H:i'))
-            ->action('Ver Ticket', url("/tickets/{$this->ticket->id}"))
+            ->action('Ver Ticket', route('tickets.show', $this->ticket->ticket_number))
             ->line("Por favor, analise o ticket e atualize o status conforme necessário.")
             ->salutation("Atenciosamente,\nEquipe de Suporte Técnico");
     }

@@ -52,7 +52,7 @@ class TicketStatusChange extends Notification implements ShouldQueue
             ->line("• **Novo Status:** {$newStatusEmoji} " . ucfirst($this->newStatus))
             ->line("• **Ticket:** {$this->ticket->title}")
             ->line("• **Cliente:** {$this->ticket->client->company_name}")
-            ->action('Ver Ticket', url("/tickets/{$this->ticket->id}"))
+            ->action('Ver Ticket', route('tickets.show', $this->ticket->ticket_number))
             ->salutation("Atenciosamente,\nEquipe de Suporte Técnico - 8Bits Pro");
     }
 

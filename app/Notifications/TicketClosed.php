@@ -55,7 +55,7 @@ class TicketClosed extends Notification implements ShouldQueue
             ->line("• **Data de fechamento:** " . $this->ticket->closed_at->format('d/m/Y H:i'))
             ->line("• **Tempo total de resolução:** " . $this->getResolutionTime())
             ->line($resolutionNotes)
-            ->action('Ver Ticket', url("/tickets/{$this->ticket->id}"))
+            ->action('Ver Ticket', route('tickets.show', $this->ticket->ticket_number))
             ->line("Se você tiver alguma dúvida sobre a resolução, entre em contato conosco.")
             ->salutation("Atenciosamente,\nEquipe de Suporte Técnico");
     }

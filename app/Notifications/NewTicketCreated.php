@@ -61,7 +61,7 @@ class NewTicketCreated extends Notification implements ShouldQueue
             ->line("• **E-mail:** {$this->ticket->contact->email}")
             ->line("• **Data de abertura:** " . $this->ticket->created_at->format('d/m/Y H:i'))
             ->line("• **Descrição:** " . substr($this->ticket->description, 0, 200) . (strlen($this->ticket->description) > 200 ? '...' : ''))
-            ->action('Ver Ticket', url("/tickets/{$this->ticket->id}"))
+            ->action('Ver Ticket', route('tickets.show', $this->ticket->ticket_number))
             ->line("Este ticket está aguardando análise e atribuição.")
             ->salutation("Atenciosamente,\nEquipe de Suporte Técnico - 8Bits Pro");
     }

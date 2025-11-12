@@ -65,7 +65,7 @@ class ClientTicketCreatedForYou extends Notification implements ShouldQueue
         }
 
         $message->line("• **Descrição:** " . substr($this->ticket->description, 0, 200) . (strlen($this->ticket->description) > 200 ? '...' : ''))
-            ->action('Ver Ticket', url("/tickets/{$this->ticket->ticket_number}"))
+            ->action('Ver Ticket', route('tickets.show', $this->ticket->ticket_number))
             ->line("Este ticket foi criado especificamente para você. Nossa equipe técnica já está ciente e trabalhará para resolver sua solicitação.")
             ->salutation("Atenciosamente,\nEquipe de Suporte Técnico - 8Bits Pro");
 

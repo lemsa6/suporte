@@ -52,7 +52,7 @@ class TicketUrgent extends Notification implements ShouldQueue
             ->line("• **Telefone:** {$this->ticket->contact->phone}")
             ->line("• **E-mail:** {$this->ticket->contact->email}")
             ->line("• **Data de abertura:** " . $this->ticket->created_at->format('d/m/Y H:i'))
-            ->action('Ver Ticket Urgente', url("/tickets/{$this->ticket->id}"))
+            ->action('Ver Ticket Urgente', route('tickets.show', $this->ticket->ticket_number))
             ->line("⚠️ Este ticket requer resposta imediata devido à sua alta prioridade.")
             ->salutation("Equipe de Suporte Técnico - 8Bits Pro");
     }

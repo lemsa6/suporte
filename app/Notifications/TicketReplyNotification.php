@@ -59,7 +59,7 @@ class TicketReplyNotification extends Notification implements ShouldQueue
             ->line("**Nova Resposta{$isInternal}:**")
             ->line($this->reply->content)
             ->line("**Respondido em:** " . $this->reply->created_at->format('d/m/Y H:i'))
-            ->action('Ver Ticket', url("/tickets/{$this->ticket->id}"))
+            ->action('Ver Ticket', route('tickets.show', $this->ticket->ticket_number))
             ->line("Clique no botão acima para visualizar o ticket completo e responder se necessário.")
             ->salutation("Atenciosamente,\nEquipe de Suporte Técnico - 8Bits Pro");
     }

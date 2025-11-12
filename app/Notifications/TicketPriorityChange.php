@@ -59,7 +59,7 @@ class TicketPriorityChange extends Notification implements ShouldQueue
             ->line("• **Ticket:** {$this->ticket->title}")
             ->line("• **Cliente:** {$this->ticket->client->company_name}")
             ->line($urgencyMessage)
-            ->action('Ver Ticket', url("/tickets/{$this->ticket->id}"))
+            ->action('Ver Ticket', route('tickets.show', $this->ticket->ticket_number))
             ->salutation("Atenciosamente,\nEquipe de Suporte Técnico - 8Bits Pro");
     }
 
