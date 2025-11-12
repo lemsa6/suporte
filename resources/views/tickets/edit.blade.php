@@ -48,18 +48,14 @@
 
                 <!-- Cliente -->
                 <div>
-                    <label for="client_id" class="block text-sm font-medium text-cinza mb-2">Cliente *</label>
-                    <x-select id="client_id" name="client_id" required>
-                        <option value="">Selecione o cliente</option>
-                        @foreach($clients as $client)
-                            <option value="{{ $client->id }}" {{ old('client_id', $ticket->client_id) == $client->id ? 'selected' : '' }}>
-                                {{ $client->company_name }}
-                            </option>
-                        @endforeach
-                    </x-select>
-                    @error('client_id')
-                        <div class="form-error">{{ $message }}</div>
-                    @enderror
+                    <x-client-search 
+                        label="Cliente"
+                        name="client_id"
+                        :value="old('client_id', $ticket->client_id)"
+                        error="{{ $errors->first('client_id') }}"
+                        placeholder="Digite o nome da empresa, nome fantasia ou CNPJ..."
+                        required
+                    />
                 </div>
 
                 <!-- Contato -->
@@ -216,8 +212,7 @@
 @push('scripts')
 <script>
     // Carregar contatos baseado no cliente selecionado
-    document.getElementById('client_id').addEventListener('change', function() {
-        const clientId = this.value;
+    function loadContactsForClient(clientId) {
         const contactSelect = document.getElementById('contact_id');
         
         // Limpar contatos
@@ -225,7 +220,7 @@
         
         if (clientId) {
             // Fazer requisição AJAX para buscar contatos do cliente
-            fetch(`/api/clients/${clientId}/contacts`)
+            fetch(`/clients/${clientId}/contacts`)
                 .then(response => response.json())
                 .then(contacts => {
                     contacts.forEach(contact => {
@@ -241,6 +236,38 @@
                 .catch(error => {
                     console.error('Erro ao carregar contatos:', error);
                 });
+        }
+    }
+    
+    // Observar mudanças no campo hidden do cliente (usado pelo componente client-search)
+    document.addEventListener('DOMContentLoaded', function() {
+        const clientHiddenInput = document.querySelector('input[name="client_id"]');
+        
+        if (clientHiddenInput) {
+            // Carregar contatos iniciais se já houver cliente selecionado
+            if (clientHiddenInput.value) {
+                loadContactsForClient(clientHiddenInput.value);
+            }
+            
+            // Observar mudanças no campo hidden
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'value') {
+                        const clientId = clientHiddenInput.value;
+                        loadContactsForClient(clientId);
+                    }
+                });
+            });
+            
+            observer.observe(clientHiddenInput, {
+                attributes: true,
+                attributeFilter: ['value']
+            });
+            
+            // Também observar mudanças via input event
+            clientHiddenInput.addEventListener('input', function() {
+                loadContactsForClient(this.value);
+            });
         }
     });
 

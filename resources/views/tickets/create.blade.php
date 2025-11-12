@@ -93,12 +93,13 @@
                         <!-- Cliente -->
                         @if(auth()->user()->role === 'admin' || auth()->user()->role === 'tecnico')
                         <div>
-                            <x-select 
+                            <x-client-search 
                                 label="Cliente"
                                 name="client_id"
-                                :options="collect($clients)->mapWithKeys(fn($client) => [$client->id => $client->name . ($client->company_name ? ' - ' . $client->company_name : '')])->prepend('Selecione um cliente', '')"
-                                :selected="old('client_id')"
+                                :value="old('client_id')"
                                 error="{{ $errors->first('client_id') }}"
+                                placeholder="Digite o nome da empresa, nome fantasia ou CNPJ..."
+                                required
                             />
                         </div>
                         @endif
@@ -263,6 +264,64 @@
 
 @push('scripts')
 <script>
+// Carregar contatos baseado no cliente selecionado
+function loadContactsForClient(clientId) {
+    const contactSelect = document.getElementById('contact_id');
+    
+    if (!contactSelect) return; // Se não houver campo de contato, sair
+    
+    // Limpar contatos
+    contactSelect.innerHTML = '<option value="">Selecione o contato</option>';
+    
+    if (clientId) {
+        // Fazer requisição AJAX para buscar contatos do cliente
+        fetch(`/clients/${clientId}/contacts`)
+            .then(response => response.json())
+            .then(contacts => {
+                contacts.forEach(contact => {
+                    const option = document.createElement('option');
+                    option.value = contact.id;
+                    option.textContent = contact.name;
+                    if (contact.is_primary) {
+                        option.textContent += ' (Principal)';
+                        option.selected = true; // Selecionar contato principal por padrão
+                    }
+                    contactSelect.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error('Erro ao carregar contatos:', error);
+            });
+    }
+}
+
+// Observar mudanças no campo hidden do cliente (usado pelo componente client-search)
+document.addEventListener('DOMContentLoaded', function() {
+    const clientHiddenInput = document.querySelector('input[name="client_id"]');
+    
+    if (clientHiddenInput) {
+        // Observar mudanças no campo hidden
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'value') {
+                    const clientId = clientHiddenInput.value;
+                    loadContactsForClient(clientId);
+                }
+            });
+        });
+        
+        observer.observe(clientHiddenInput, {
+            attributes: true,
+            attributeFilter: ['value']
+        });
+        
+        // Também observar mudanças via input event
+        clientHiddenInput.addEventListener('input', function() {
+            loadContactsForClient(this.value);
+        });
+    }
+});
+
 // Preview de arquivos
 document.getElementById('attachments').addEventListener('change', function(e) {
     const files = e.target.files;

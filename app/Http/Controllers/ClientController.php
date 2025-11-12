@@ -313,18 +313,33 @@ class ClientController extends Controller
     }
 
     /**
-     * API: Lista clientes para select
+     * API: Lista clientes para select com busca
      */
-    public function apiList(): JsonResponse
+    public function apiList(Request $request): JsonResponse
     {
-        $clients = Client::active()
-            ->select('id', 'company_name', 'trade_name')
-            ->orderBy('company_name')
+        $search = $request->get('search', '');
+        $limit = $request->get('limit', 20);
+        
+        $query = Client::active()
+            ->select('id', 'company_name', 'trade_name', 'cnpj')
+            ->orderBy('company_name');
+        
+        // Aplicar busca se fornecida
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('company_name', 'like', "%{$search}%")
+                  ->orWhere('trade_name', 'like', "%{$search}%")
+                  ->orWhere('cnpj', 'like', "%{$search}%");
+            });
+        }
+        
+        $clients = $query->limit($limit)
             ->get()
             ->map(function ($client) {
                 return [
                     'id' => $client->id,
-                    'text' => $client->company_name . ($client->trade_name ? " ({$client->trade_name})" : '')
+                    'text' => $client->company_name . ($client->trade_name ? " ({$client->trade_name})" : ''),
+                    'cnpj' => $client->cnpj
                 ];
             });
         
