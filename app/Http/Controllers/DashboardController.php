@@ -240,7 +240,7 @@ class DashboardController extends Controller
     {
         $query = Ticket::with(['client', 'category', 'contact'])
             ->latest('updated_at')
-            ->limit(10);
+            ->limit(5);
         
         if ($user->isClienteGestor()) {
             $query->whereHas('client', function ($q) use ($user) {
@@ -309,7 +309,7 @@ class DashboardController extends Controller
             ->whereIn('event_type', ['login_success', 'logout'])
             ->whereNotNull('user_id')
             ->latest()
-            ->limit(8)
+            ->limit(5)
             ->get();
     }
 
@@ -361,27 +361,19 @@ class DashboardController extends Controller
      */
     private function calculateAverageResponseTime($query): string
     {
-        $tickets = (clone $query)->with(['messages' => function($q) {
-            $q->where('user_id', '!=', null)->oldest();
-        }])->get();
+        // Query SQL direta - mais eficiente que Eloquent com relacionamentos
+        $result = \DB::table('tickets')
+            ->join('ticket_messages', 'tickets.id', '=', 'ticket_messages.ticket_id')
+            ->whereNotNull('ticket_messages.user_id')
+            ->selectRaw('AVG(TIMESTAMPDIFF(HOUR, tickets.created_at, ticket_messages.created_at)) as avg_hours')
+            ->selectRaw('COUNT(*) as total_responses')
+            ->first();
 
-        $totalHours = 0;
-        $count = 0;
-
-        foreach ($tickets as $ticket) {
-            $firstResponse = $ticket->messages->first();
-            if ($firstResponse) {
-                $hours = $ticket->created_at->diffInHours($firstResponse->created_at);
-                $totalHours += $hours;
-                $count++;
-            }
-        }
-
-        if ($count === 0) {
+        if (!$result || $result->total_responses == 0) {
             return 'N/A';
         }
 
-        $avgHours = $totalHours / $count;
+        $avgHours = $result->avg_hours;
         
         if ($avgHours < 1) {
             return round($avgHours * 60) . 'min';
