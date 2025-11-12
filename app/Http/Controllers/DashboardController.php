@@ -20,28 +20,44 @@ class DashboardController extends Controller
     public function index(Request $request): View
     {
         try {
+            \Log::info('Dashboard: Iniciando carregamento do dashboard');
             $user = auth()->user();
+            \Log::info('Dashboard: Usuário autenticado', ['user_id' => $user->id, 'role' => $user->role]);
             
             // Estatísticas gerais
+            \Log::info('Dashboard: Carregando estatísticas gerais');
             $stats = $this->getGeneralStats($user);
+            \Log::info('Dashboard: Estatísticas gerais carregadas', $stats);
             
             // Tickets por status
+            \Log::info('Dashboard: Carregando tickets por status');
             $ticketsByStatus = $this->getTicketsByStatus($user);
+            \Log::info('Dashboard: Tickets por status carregados');
             
             // Tickets por prioridade
+            \Log::info('Dashboard: Carregando tickets por prioridade');
             $ticketsByPriority = $this->getTicketsByPriority($user);
+            \Log::info('Dashboard: Tickets por prioridade carregados');
             
             // Tickets por categoria
+            \Log::info('Dashboard: Carregando tickets por categoria');
             $ticketsByCategory = $this->getTicketsByCategory($user);
+            \Log::info('Dashboard: Tickets por categoria carregados');
             
             // Últimos tickets
+            \Log::info('Dashboard: Carregando últimos tickets');
             $recentTickets = $this->getRecentTickets($user);
+            \Log::info('Dashboard: Últimos tickets carregados', ['count' => $recentTickets->count()]);
             
             // Tickets urgentes
+            \Log::info('Dashboard: Carregando tickets urgentes');
             $urgentTickets = $this->getUrgentTickets($user);
+            \Log::info('Dashboard: Tickets urgentes carregados', ['count' => $urgentTickets->count()]);
             
             // Tickets não atribuídos (apenas para técnicos/admin)
+            \Log::info('Dashboard: Carregando tickets não atribuídos');
             $unassignedTickets = $user->canManageTickets() ? $this->getUnassignedTickets() : collect();
+            \Log::info('Dashboard: Tickets não atribuídos carregados', ['count' => $unassignedTickets->count()]);
             
             // Últimos logins (apenas para admin) - com fallback
             $recentLogins = collect();
@@ -68,6 +84,7 @@ class DashboardController extends Controller
                 ];
             }
             
+            \Log::info('Dashboard: Todos os dados carregados com sucesso, renderizando view');
             return view('dashboard.index', compact(
                 'stats',
                 'ticketsByStatus',
@@ -320,24 +337,44 @@ class DashboardController extends Controller
      */
     private function getQuickStats(User $user): array
     {
+        \Log::info('Dashboard: Iniciando getQuickStats');
         $query = $this->getUserTicketQuery($user);
         
-        // Tempo médio de resposta (em horas)
-        $avgResponseTime = $this->calculateAverageResponseTime($query);
+        // Tempo médio de resposta (em horas) - com timeout
+        \Log::info('Dashboard: Calculando tempo médio de resposta');
+        try {
+            $avgResponseTime = $this->calculateAverageResponseTime($query);
+            \Log::info('Dashboard: Tempo médio calculado', ['avg_time' => $avgResponseTime]);
+        } catch (\Exception $e) {
+            \Log::error('Dashboard: Erro no cálculo de tempo médio: ' . $e->getMessage());
+            $avgResponseTime = 'N/A';
+        }
         
         // Taxa de resolução (tickets resolvidos vs total)
-        $resolutionRate = $this->calculateResolutionRate($query);
+        \Log::info('Dashboard: Calculando taxa de resolução');
+        try {
+            $resolutionRate = $this->calculateResolutionRate($query);
+            \Log::info('Dashboard: Taxa de resolução calculada', ['rate' => $resolutionRate]);
+        } catch (\Exception $e) {
+            \Log::error('Dashboard: Erro no cálculo de taxa de resolução: ' . $e->getMessage());
+            $resolutionRate = '0%';
+        }
         
         // Tickets resolvidos hoje
+        \Log::info('Dashboard: Contando tickets resolvidos hoje');
         $resolvedToday = (clone $query)->resolved()
             ->whereDate('resolved_at', today())
             ->count();
+        \Log::info('Dashboard: Tickets resolvidos hoje', ['count' => $resolvedToday]);
         
         // Tickets criados esta semana
+        \Log::info('Dashboard: Contando tickets criados esta semana');
         $createdThisWeek = (clone $query)
             ->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])
             ->count();
+        \Log::info('Dashboard: Tickets criados esta semana', ['count' => $createdThisWeek]);
         
+        \Log::info('Dashboard: getQuickStats finalizado com sucesso');
         return [
             'avg_response_time' => $avgResponseTime,
             'resolution_rate' => $resolutionRate,
@@ -351,9 +388,11 @@ class DashboardController extends Controller
      */
     private function calculateAverageResponseTime($query): string
     {
+        \Log::info('Dashboard: Iniciando cálculo de tempo médio de resposta');
         $tickets = (clone $query)->with(['messages' => function($q) {
             $q->where('user_id', '!=', null)->oldest();
         }])->get();
+        \Log::info('Dashboard: Tickets carregados para cálculo', ['count' => $tickets->count()]);
 
         $totalHours = 0;
         $count = 0;
