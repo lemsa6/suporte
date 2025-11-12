@@ -73,6 +73,22 @@ class TicketMessage extends Model
         return $query->where('contact_id', $contactId);
     }
 
+    // Boot method para atualizar updated_at do ticket pai
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Atualizar updated_at do ticket quando uma mensagem é criada
+        static::created(function ($ticketMessage) {
+            $ticketMessage->ticket->touch();
+        });
+
+        // Atualizar updated_at do ticket quando uma mensagem é atualizada
+        static::updated(function ($ticketMessage) {
+            $ticketMessage->ticket->touch();
+        });
+    }
+
     // Métodos úteis
     public function isFromUser(): bool
     {

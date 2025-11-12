@@ -34,6 +34,17 @@ class Attachment extends Model
         return $this->belongsTo(Ticket::class, 'ticket_id');
     }
 
+    // Boot method para atualizar updated_at do ticket pai
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Atualizar updated_at do ticket quando um anexo é criado
+        static::created(function ($attachment) {
+            $attachment->ticketMessage->ticket->touch();
+        });
+    }
+
     // Scopes
     public function scopeByType($query, $type)
     {
