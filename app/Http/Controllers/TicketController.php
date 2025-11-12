@@ -96,6 +96,12 @@ class TicketController extends Controller
      */
     public function store(StoreTicketRequest $request): RedirectResponse
     {
+        \Log::info('Store ticket called', [
+            'has_files' => $request->hasFile('attachments'),
+            'files_count' => $request->hasFile('attachments') ? count($request->file('attachments')) : 0,
+            'all_data' => $request->all()
+        ]);
+        
         $validated = $request->validated();
         
         // Definir valores padrão
@@ -112,7 +118,7 @@ class TicketController extends Controller
             if ($client) {
                 $validated['client_id'] = $client->id;
             } else {
-                return back()->withErrors(['client_id' => 'Não foi possível identificar o cliente associado ao seu usuário.']);
+                return back()->withInput()->withErrors(['client_id' => 'Não foi possível identificar o cliente associado ao seu usuário.']);
             }
         }
         
@@ -128,22 +134,22 @@ class TicketController extends Controller
         
         // Tratar campo category_id
         if (isset($validated['category_id']) && (empty($validated['category_id']) || $validated['category_id'] === '')) {
-            return back()->withErrors(['category_id' => 'A categoria é obrigatória.']);
+            return back()->withInput()->withErrors(['category_id' => 'A categoria é obrigatória.']);
         }
         
         // Tratar campo client_id
         if (!$user->isCliente() && (!isset($validated['client_id']) || empty($validated['client_id']) || $validated['client_id'] === '')) {
-            return back()->withErrors(['client_id' => 'O cliente é obrigatório.']);
+            return back()->withInput()->withErrors(['client_id' => 'O cliente é obrigatório.']);
         }
         
         // Tratar campo title
         if (isset($validated['title']) && (empty(trim($validated['title'])) || $validated['title'] === '')) {
-            return back()->withErrors(['title' => 'O título é obrigatório.']);
+            return back()->withInput()->withErrors(['title' => 'O título é obrigatório.']);
         }
         
         // Tratar campo description
         if (isset($validated['description']) && empty(trim($validated['description']))) {
-            return back()->withErrors(['description' => 'A descrição é obrigatória.']);
+            return back()->withInput()->withErrors(['description' => 'A descrição é obrigatória.']);
         }
         
         // Se não houver contact_id, usar o contato primário do cliente
@@ -185,17 +191,24 @@ class TicketController extends Controller
 
         // Processar anexos
         if ($request->hasFile('attachments')) {
-            foreach ($request->file('attachments') as $file) {
-                $path = $file->store('tickets/' . $ticket->id, 'public');
-                
-                Attachment::create([
-                    'ticket_message_id' => $ticketMessage->id,
-                    'filename' => $file->getClientOriginalName(),
-                    'file_path' => $path,
-                    'file_type' => $file->getMimeType(),
-                    'file_size' => $file->getSize(),
-                    'disk' => 'public',
-                ]);
+            try {
+                foreach ($request->file('attachments') as $file) {
+                    if ($file->isValid()) {
+                        $path = $file->store('tickets/' . $ticket->id, 'public');
+                        
+                        Attachment::create([
+                            'ticket_message_id' => $ticketMessage->id,
+                            'filename' => $file->getClientOriginalName(),
+                            'file_path' => $path,
+                            'file_type' => $file->getMimeType(),
+                            'file_size' => $file->getSize(),
+                            'disk' => 'public',
+                        ]);
+                    }
+                }
+            } catch (\Exception $e) {
+                \Log::error('Erro ao processar anexos: ' . $e->getMessage());
+                return back()->withInput()->withErrors(['attachments' => 'Erro ao processar anexos. Tente novamente.']);
             }
         }
 

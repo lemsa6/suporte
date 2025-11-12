@@ -30,7 +30,7 @@
             <!-- Formulário Principal -->
             <h2 class="section-title mb-4">Informações do Ticket</h2>
             <x-card>
-                <form method="POST" action="{{ route('tickets.store') }}" class="space-y-6">
+                <form method="POST" action="{{ route('tickets.store') }}" enctype="multipart/form-data" class="space-y-6">
                     @csrf
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
