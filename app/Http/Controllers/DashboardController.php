@@ -45,6 +45,9 @@ class DashboardController extends Controller
         // Últimos logins (apenas para admin)
         $recentLogins = $user->isAdmin() ? $this->getRecentLogins() : collect();
         
+        // Estatísticas rápidas
+        $quickStats = $this->getQuickStats($user);
+        
         return view('dashboard.index', compact(
             'stats',
             'ticketsByStatus',
@@ -53,7 +56,8 @@ class DashboardController extends Controller
             'recentTickets',
             'urgentTickets',
             'unassignedTickets',
-            'recentLogins'
+            'recentLogins',
+            'quickStats'
         ));
     }
 
@@ -266,10 +270,93 @@ class DashboardController extends Controller
     private function getRecentLogins(): \Illuminate\Database\Eloquent\Collection
     {
         return AuditLog::with('user')
-            ->where('event_type', 'login')
-            ->orWhere('event_type', 'logout')
+            ->whereIn('event_type', ['login_success', 'logout'])
+            ->whereNotNull('user_id')
             ->latest()
             ->limit(8)
             ->get();
+    }
+
+    /**
+     * Obtém estatísticas rápidas calculadas
+     */
+    private function getQuickStats(User $user): array
+    {
+        $query = $this->getUserTicketQuery($user);
+        
+        // Tempo médio de resposta (em horas)
+        $avgResponseTime = $this->calculateAverageResponseTime($query);
+        
+        // Taxa de resolução (tickets resolvidos vs total)
+        $resolutionRate = $this->calculateResolutionRate($query);
+        
+        // Tickets resolvidos hoje
+        $resolvedToday = (clone $query)->resolved()
+            ->whereDate('resolved_at', today())
+            ->count();
+        
+        // Tickets criados esta semana
+        $createdThisWeek = (clone $query)
+            ->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])
+            ->count();
+        
+        return [
+            'avg_response_time' => $avgResponseTime,
+            'resolution_rate' => $resolutionRate,
+            'resolved_today' => $resolvedToday,
+            'created_this_week' => $createdThisWeek,
+        ];
+    }
+
+    /**
+     * Calcula tempo médio de primeira resposta em horas
+     */
+    private function calculateAverageResponseTime($query): string
+    {
+        $tickets = (clone $query)->with(['messages' => function($q) {
+            $q->where('user_id', '!=', null)->oldest();
+        }])->get();
+
+        $totalHours = 0;
+        $count = 0;
+
+        foreach ($tickets as $ticket) {
+            $firstResponse = $ticket->messages->first();
+            if ($firstResponse) {
+                $hours = $ticket->created_at->diffInHours($firstResponse->created_at);
+                $totalHours += $hours;
+                $count++;
+            }
+        }
+
+        if ($count === 0) {
+            return 'N/A';
+        }
+
+        $avgHours = $totalHours / $count;
+        
+        if ($avgHours < 1) {
+            return round($avgHours * 60) . 'min';
+        } elseif ($avgHours < 24) {
+            return round($avgHours, 1) . 'h';
+        } else {
+            return round($avgHours / 24, 1) . 'd';
+        }
+    }
+
+    /**
+     * Calcula taxa de resolução em porcentagem
+     */
+    private function calculateResolutionRate($query): string
+    {
+        $total = (clone $query)->count();
+        $resolved = (clone $query)->whereIn('status', ['resolvido', 'fechado'])->count();
+
+        if ($total === 0) {
+            return '0%';
+        }
+
+        $rate = ($resolved / $total) * 100;
+        return round($rate) . '%';
     }
 }

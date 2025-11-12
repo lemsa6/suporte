@@ -145,19 +145,18 @@
         </div>
 
         <!-- Mobile Overlay -->
-        <div id="mobileOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden hidden" onclick="toggleSidebar()"></div>
+        <div id="mobileOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden" onclick="toggleSidebar()"></div>
 
         <!-- Main Content -->
         <div class="main-content">
             <!-- Mobile Header com botão hamburger -->
-            <div class="mobile-header lg:hidden bg-white shadow-sm border-b border-cinza-claro-2 p-4 flex items-center justify-between">
+            <div class="mobile-header bg-white shadow-sm border-b border-cinza-claro-2 p-4 items-center justify-between">
+                <h1 class="text-lg font-medium text-cinza">{{ \App\Helpers\SystemHelper::name() }}</h1>
                 <button type="button" class="mobile-menu-toggle p-2 rounded-md text-cinza hover:bg-cinza-claro-2 hover:text-roxo transition-colors" onclick="toggleSidebar()">
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>
                 </button>
-                <h1 class="text-lg font-medium text-cinza">{{ \App\Helpers\SystemHelper::name() }}</h1>
-                <div class="w-10"></div> <!-- Espaçador para centralizar o título -->
             </div>
             
             <!-- Page Content -->
@@ -202,15 +201,26 @@
     </div>
 
     <script>
+        // Estado do menu mobile
+        let isMobileMenuOpen = false;
+
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('mobileOverlay');
             
-            sidebar.classList.toggle('-translate-x-full');
-            
-            // Controlar overlay apenas em mobile
+            // Apenas funciona em mobile
             if (window.innerWidth < 1024) {
-                overlay.classList.toggle('hidden');
+                isMobileMenuOpen = !isMobileMenuOpen;
+                
+                if (isMobileMenuOpen) {
+                    // Mostrar sidebar e overlay
+                    sidebar.style.transform = 'translateX(0)';
+                    overlay.classList.remove('hidden');
+                } else {
+                    // Esconder sidebar e overlay
+                    sidebar.style.transform = 'translateX(-100%)';
+                    overlay.classList.add('hidden');
+                }
             }
         }
 
@@ -219,17 +229,10 @@
             userMenu.classList.toggle('hidden');
         }
 
-        // Fechar sidebar ao clicar fora em telas pequenas
-        document.addEventListener('click', function(event) {
-            const sidebar = document.getElementById('sidebar');
-            const toggleButton = document.querySelector('.mobile-menu-toggle');
-            const closeButton = document.querySelector('.sidebar-close-btn');
-            const isClickInsideSidebar = sidebar.contains(event.target);
-            const isClickOnToggleButton = toggleButton && toggleButton.contains(event.target);
-            const isClickOnCloseButton = closeButton && closeButton.contains(event.target);
-
-            if (!isClickInsideSidebar && !isClickOnToggleButton && !isClickOnCloseButton && !sidebar.classList.contains('-translate-x-full') && window.innerWidth < 1024) {
-                sidebar.classList.add('-translate-x-full');
+        // Fechar menu mobile ao clicar no overlay
+        document.getElementById('mobileOverlay').addEventListener('click', function() {
+            if (isMobileMenuOpen) {
+                toggleSidebar();
             }
         });
 
@@ -243,17 +246,43 @@
             }
         });
 
-        // Ajustar layout em resize
+        // Gerenciar responsividade no resize
         window.addEventListener('resize', function() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('mobileOverlay');
             
             if (window.innerWidth >= 1024) {
-                sidebar.classList.remove('-translate-x-full');
-                overlay.classList.add('hidden'); // Esconder overlay em desktop
+                // Desktop: mostrar sidebar, esconder overlay, resetar estado mobile
+                sidebar.style.transform = 'translateX(0)';
+                overlay.classList.add('hidden');
+                isMobileMenuOpen = false;
+            } else {
+                // Mobile: esconder sidebar se não estiver aberta
+                if (!isMobileMenuOpen) {
+                    sidebar.style.transform = 'translateX(-100%)';
+                    overlay.classList.add('hidden');
+                }
             }
         });
 
+        // Inicialização no carregamento da página
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobileOverlay');
+            
+            // Configurar estado inicial baseado no tamanho da tela
+            if (window.innerWidth >= 1024) {
+                // Desktop: sidebar visível
+                sidebar.style.transform = 'translateX(0)';
+                overlay.classList.add('hidden');
+                isMobileMenuOpen = false;
+            } else {
+                // Mobile: sidebar escondida
+                sidebar.style.transform = 'translateX(-100%)';
+                overlay.classList.add('hidden');
+                isMobileMenuOpen = false;
+            }
+        });
     </script>
 
     @stack('scripts')

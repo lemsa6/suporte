@@ -191,7 +191,7 @@
                     </svg>
                 </div>
                 <p class="text-sm text-cinza-claro mb-1">Versão</p>
-                <p class="text-lg font-medium text-cinza">v1.2.7</p>
+                <p class="text-lg font-medium text-cinza">v{{ config('app.version') }}</p>
             </div>
             
             <div class="text-center">
@@ -201,7 +201,7 @@
                     </svg>
                 </div>
                 <p class="text-sm text-cinza-claro mb-1">Status</p>
-                <p class="text-lg font-medium text-verde">Online</p>
+                <p class="text-lg font-medium text-verde">{{ app()->environment('production') ? 'Produção' : 'Desenvolvimento' }}</p>
             </div>
             
             <div class="text-center">

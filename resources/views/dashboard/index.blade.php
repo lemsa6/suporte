@@ -157,7 +157,7 @@
                                     </div>
                                     <div class="login-info">
                                         <p class="login-name">{{ $login->user->name ?? 'Usuário' }}</p>
-                                        <p class="login-action">{{ $login->event_type == 'login' ? 'Entrou' : 'Saiu' }}</p>
+                                        <p class="login-action">{{ $login->event_type == 'login_success' ? 'Entrou' : 'Saiu' }}</p>
                                     </div>
                                 </div>
                                 <span class="login-time">{{ $login->created_at->diffForHumans() }}</span>
@@ -182,15 +182,19 @@
                 <div class="space-y-4">
                     <div class="flex justify-between items-center">
                         <span class="text-sm text-cinza">Tempo de Resposta</span>
-                        <x-badge variant="info">2.4h</x-badge>
+                        <x-badge variant="info">{{ $quickStats['avg_response_time'] }}</x-badge>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-sm text-cinza">Taxa de Resolução</span>
-                        <x-badge variant="success">94%</x-badge>
+                        <x-badge variant="success">{{ $quickStats['resolution_rate'] }}</x-badge>
                     </div>
                     <div class="flex justify-between items-center">
-                        <span class="text-sm text-cinza">Satisfação</span>
-                        <x-badge variant="primary">4.8/5</x-badge>
+                        <span class="text-sm text-cinza">Resolvidos Hoje</span>
+                        <x-badge variant="primary">{{ $quickStats['resolved_today'] }}</x-badge>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-cinza">Criados esta Semana</span>
+                        <x-badge variant="warning">{{ $quickStats['created_this_week'] }}</x-badge>
                     </div>
                 </div>
             </x-card>

@@ -124,25 +124,39 @@
   min-height: 100vh;
   background-color: var(--creme); /* Fundo do site (creme) */
   transition: all 0.3s;
-  margin-left: 18rem;
-  width: calc(100% - 18rem);
   overflow-x: hidden;
   padding: 0;
 }
 
-/* Responsividade - Mobile */
-@media (max-width: 1024px) {
+/* Desktop - Telas grandes (≥1024px) */
+@media (min-width: 1024px) {
   .main-content {
-    margin-left: 0;
-  width: 100%;
+    margin-left: 18rem;
+    width: calc(100% - 18rem);
   }
   
   .sidebar {
-    @apply -translate-x-full;
+    transform: translateX(0);
   }
   
   .mobile-header {
-    @apply block;
+    display: none;
+  }
+}
+
+/* Mobile - Telas pequenas (<1024px) */
+@media (max-width: 1023px) {
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+  }
+  
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  
+  .mobile-header {
+    display: flex;
   }
 }
 

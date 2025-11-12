@@ -40,7 +40,7 @@ $typeClasses = [
         </div>
         
         @if($dismissible)
-            <button type="button" class="alert-dismiss" onclick="this.parentElement.parentElement.parentElement.remove()">
+            <button type="button" class="alert-dismiss" onclick="this.closest('.alert').remove()">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
@@ -48,3 +48,23 @@ $typeClasses = [
         @endif
     </div>
 </div>
+
+@if($dismissible)
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-remover alertas após 5 segundos
+    const alerts = document.querySelectorAll('.alert');
+    alerts.forEach(function(alert) {
+        setTimeout(function() {
+            if (alert.parentElement) {
+                alert.style.transition = 'opacity 0.5s ease-out';
+                alert.style.opacity = '0';
+                setTimeout(function() {
+                    alert.remove();
+                }, 500);
+            }
+        }, 5000); // 5 segundos
+    });
+});
+</script>
+@endif
