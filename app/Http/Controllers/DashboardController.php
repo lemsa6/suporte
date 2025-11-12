@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\AuditLog;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -25,6 +26,12 @@ class DashboardController extends Controller
             // Estatísticas gerais
             $stats = $this->getGeneralStats($user);
             
+            // NOVOS WIDGETS ACIONÁVEIS
+            $criticalAlerts = $this->getCriticalAlerts($user);
+            $oldestTickets = $this->getOldestTickets($user);
+            $myWorkQueue = $this->getMyWorkQueue($user);
+            $quickActions = $this->getQuickActions($user);
+            
             // Tickets por status
             $ticketsByStatus = $this->getTicketsByStatus($user);
             
@@ -34,7 +41,7 @@ class DashboardController extends Controller
             // Tickets por categoria
             $ticketsByCategory = $this->getTicketsByCategory($user);
             
-            // Últimos tickets
+            // Últimos tickets (otimizado)
             $recentTickets = $this->getRecentTickets($user);
             
             // Tickets urgentes
@@ -68,6 +75,10 @@ class DashboardController extends Controller
             
             return view('dashboard.index', compact(
                 'stats',
+                'criticalAlerts',
+                'oldestTickets',
+                'myWorkQueue',
+                'quickActions',
                 'ticketsByStatus',
                 'ticketsByPriority',
                 'ticketsByCategory',
@@ -238,25 +249,27 @@ class DashboardController extends Controller
      */
     private function getRecentTickets(User $user): \Illuminate\Database\Eloquent\Collection
     {
-        $query = Ticket::with(['client', 'category', 'contact'])
+        return $this->getUserTicketQuery($user)
+            ->select('id', 'ticket_number', 'title', 'status', 'priority', 'updated_at')
             ->latest('updated_at')
-            ->limit(5);
-        
-        if ($user->isClienteGestor()) {
-            $query->whereHas('client', function ($q) use ($user) {
-                $q->whereHas('contacts', function ($q2) use ($user) {
-                    $q2->where('email', $user->email);
-                });
+            ->limit(5)
+            ->get()
+            ->map(function($ticket) {
+                $ticket->status_color = match($ticket->status) {
+                    'aberto' => 'blue',
+                    'em_andamento' => 'yellow',
+                    'resolvido' => 'green',
+                    'fechado' => 'gray',
+                    default => 'gray'
+                };
+                $ticket->priority_color = match($ticket->priority) {
+                    'alta' => 'red',
+                    'média' => 'yellow',
+                    'baixa' => 'green',
+                    default => 'gray'
+                };
+                return $ticket;
             });
-        } elseif ($user->isClienteFuncionario()) {
-            $query->whereHas('contact', function ($q) use ($user) {
-                $q->where('email', $user->email);
-            });
-        } elseif ($user->isTecnico()) {
-            $query->where('assigned_to', $user->id);
-        }
-        
-        return $query->get();
     }
 
     /**
@@ -398,5 +411,149 @@ class DashboardController extends Controller
 
         $rate = ($resolved / $total) * 100;
         return round($rate) . '%';
+    }
+
+    /**
+     * Obtém alertas críticos que precisam de atenção imediata
+     */
+    private function getCriticalAlerts($user): array
+    {
+        $alerts = [];
+        
+        // Tickets vencidos (SLA baseado em prioridade)
+        $overdue = $this->getUserTicketQuery($user)
+            ->whereIn('status', ['aberto', 'em_andamento'])
+            ->where(function($q) {
+                $q->where(function($q1) {
+                    $q1->where('priority', 'alta')
+                       ->where('opened_at', '<', Carbon::now()->subHours(4));
+                })->orWhere(function($q2) {
+                    $q2->where('priority', 'média')
+                       ->where('opened_at', '<', Carbon::now()->subHours(8));
+                })->orWhere(function($q3) {
+                    $q3->where('priority', 'baixa')
+                       ->where('opened_at', '<', Carbon::now()->subHours(24));
+                });
+            })
+            ->count();
+            
+        if ($overdue > 0) {
+            $alerts[] = [
+                'type' => 'overdue',
+                'title' => 'Tickets Vencidos',
+                'count' => $overdue,
+                'color' => 'red',
+                'icon' => '⚠️',
+                'action' => '/tickets?filter=overdue'
+            ];
+        }
+        
+        // Tickets não atribuídos urgentes (apenas para técnicos/admin)
+        if ($user->canManageTickets()) {
+            $unassignedUrgent = Ticket::whereNull('assigned_to')
+                ->where('is_urgent', true)
+                ->whereIn('status', ['aberto', 'em_andamento'])
+                ->count();
+                
+            if ($unassignedUrgent > 0) {
+                $alerts[] = [
+                    'type' => 'unassigned_urgent',
+                    'title' => 'Urgentes Não Atribuídos',
+                    'count' => $unassignedUrgent,
+                    'color' => 'orange',
+                    'icon' => '🚨',
+                    'action' => '/tickets?filter=unassigned_urgent'
+                ];
+            }
+        }
+        
+        return $alerts;
+    }
+
+    /**
+     * Obtém os 5 tickets mais antigos em aberto
+     */
+    private function getOldestTickets($user)
+    {
+        return $this->getUserTicketQuery($user)
+            ->select('id', 'ticket_number', 'title', 'priority', 'opened_at', 'client_id')
+            ->whereIn('status', ['aberto', 'em_andamento'])
+            ->orderBy('opened_at', 'asc')
+            ->limit(5)
+            ->get()
+            ->map(function($ticket) {
+                $ticket->days_open = $ticket->opened_at->diffInDays(now());
+                $ticket->priority_color = match($ticket->priority) {
+                    'alta' => 'red',
+                    'média' => 'yellow', 
+                    'baixa' => 'green',
+                    default => 'gray'
+                };
+                return $ticket;
+            });
+    }
+
+    /**
+     * Obtém fila de trabalho personalizada do usuário
+     */
+    private function getMyWorkQueue($user)
+    {
+        if (!$user->canManageTickets()) {
+            return collect();
+        }
+        
+        return Ticket::select('id', 'ticket_number', 'title', 'priority', 'status', 'opened_at')
+            ->where('assigned_to', $user->id)
+            ->whereIn('status', ['aberto', 'em_andamento'])
+            ->orderByRaw("FIELD(priority, 'alta', 'média', 'baixa')")
+            ->orderBy('opened_at', 'asc')
+            ->limit(5)
+            ->get()
+            ->map(function($ticket) {
+                $ticket->priority_color = match($ticket->priority) {
+                    'alta' => 'red',
+                    'média' => 'yellow',
+                    'baixa' => 'green',
+                    default => 'gray'
+                };
+                return $ticket;
+            });
+    }
+
+    /**
+     * Obtém ações rápidas contextuais
+     */
+    private function getQuickActions($user): array
+    {
+        $actions = [];
+        
+        if ($user->canManageTickets()) {
+            // Próximo ticket disponível
+            $nextTicket = Ticket::whereNull('assigned_to')
+                ->whereIn('status', ['aberto'])
+                ->orderByRaw("FIELD(priority, 'alta', 'média', 'baixa')")
+                ->orderBy('opened_at', 'asc')
+                ->first();
+                
+            if ($nextTicket) {
+                $actions[] = [
+                    'title' => 'Pegar Próximo Ticket',
+                    'subtitle' => "#{$nextTicket->ticket_number}",
+                    'action' => "/tickets/{$nextTicket->ticket_number}",
+                    'color' => 'blue',
+                    'icon' => '🎯'
+                ];
+            }
+        }
+        
+        $actions[] = [
+            'title' => 'Criar Ticket',
+            'subtitle' => 'Novo chamado',
+            'action' => '/tickets/create',
+            'color' => 'green',
+            'icon' => '➕'
+        ];
+        
+        return $actions;
     }
 }
