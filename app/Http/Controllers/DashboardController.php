@@ -19,46 +19,84 @@ class DashboardController extends Controller
      */
     public function index(Request $request): View
     {
-        $user = auth()->user();
-        
-        // Estatísticas gerais
-        $stats = $this->getGeneralStats($user);
-        
-        // Tickets por status
-        $ticketsByStatus = $this->getTicketsByStatus($user);
-        
-        // Tickets por prioridade
-        $ticketsByPriority = $this->getTicketsByPriority($user);
-        
-        // Tickets por categoria
-        $ticketsByCategory = $this->getTicketsByCategory($user);
-        
-        // Últimos tickets
-        $recentTickets = $this->getRecentTickets($user);
-        
-        // Tickets urgentes
-        $urgentTickets = $this->getUrgentTickets($user);
-        
-        // Tickets não atribuídos (apenas para técnicos/admin)
-        $unassignedTickets = $user->canManageTickets() ? $this->getUnassignedTickets() : collect();
-        
-        // Últimos logins (apenas para admin)
-        $recentLogins = $user->isAdmin() ? $this->getRecentLogins() : collect();
-        
-        // Estatísticas rápidas
-        $quickStats = $this->getQuickStats($user);
-        
-        return view('dashboard.index', compact(
-            'stats',
-            'ticketsByStatus',
-            'ticketsByPriority',
-            'ticketsByCategory',
-            'recentTickets',
-            'urgentTickets',
-            'unassignedTickets',
-            'recentLogins',
-            'quickStats'
-        ));
+        try {
+            $user = auth()->user();
+            
+            // Estatísticas gerais
+            $stats = $this->getGeneralStats($user);
+            
+            // Tickets por status
+            $ticketsByStatus = $this->getTicketsByStatus($user);
+            
+            // Tickets por prioridade
+            $ticketsByPriority = $this->getTicketsByPriority($user);
+            
+            // Tickets por categoria
+            $ticketsByCategory = $this->getTicketsByCategory($user);
+            
+            // Últimos tickets
+            $recentTickets = $this->getRecentTickets($user);
+            
+            // Tickets urgentes
+            $urgentTickets = $this->getUrgentTickets($user);
+            
+            // Tickets não atribuídos (apenas para técnicos/admin)
+            $unassignedTickets = $user->canManageTickets() ? $this->getUnassignedTickets() : collect();
+            
+            // Últimos logins (apenas para admin) - com fallback
+            $recentLogins = collect();
+            if ($user->isAdmin()) {
+                try {
+                    $recentLogins = $this->getRecentLogins();
+                } catch (\Exception $e) {
+                    \Log::error('Erro ao buscar últimos logins: ' . $e->getMessage());
+                    $recentLogins = collect();
+                }
+            }
+            
+            // Estatísticas rápidas - com fallback
+            $quickStats = [];
+            try {
+                $quickStats = $this->getQuickStats($user);
+            } catch (\Exception $e) {
+                \Log::error('Erro ao calcular estatísticas rápidas: ' . $e->getMessage());
+                $quickStats = [
+                    'avg_response_time' => 'N/A',
+                    'resolution_rate' => '0%',
+                    'resolved_today' => 0,
+                    'created_this_week' => 0,
+                ];
+            }
+            
+            return view('dashboard.index', compact(
+                'stats',
+                'ticketsByStatus',
+                'ticketsByPriority',
+                'ticketsByCategory',
+                'recentTickets',
+                'urgentTickets',
+                'unassignedTickets',
+                'recentLogins',
+                'quickStats'
+            ));
+            
+        } catch (\Exception $e) {
+            \Log::error('Erro crítico no dashboard: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            
+            // Fallback com dados mínimos
+            return view('dashboard.index', [
+                'stats' => ['total' => 0, 'open' => 0, 'in_progress' => 0, 'resolved' => 0, 'closed' => 0, 'urgent' => 0, 'active' => 0],
+                'ticketsByStatus' => ['aberto' => 0, 'em_andamento' => 0, 'resolvido' => 0, 'fechado' => 0],
+                'ticketsByPriority' => ['baixa' => 0, 'média' => 0, 'alta' => 0],
+                'ticketsByCategory' => [],
+                'recentTickets' => collect(),
+                'urgentTickets' => collect(),
+                'unassignedTickets' => collect(),
+                'recentLogins' => collect(),
+                'quickStats' => ['avg_response_time' => 'N/A', 'resolution_rate' => '0%', 'resolved_today' => 0, 'created_this_week' => 0],
+            ]);
+        }
     }
 
     /**
