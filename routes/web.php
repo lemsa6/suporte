@@ -172,6 +172,10 @@ Route::get('/test-contacts/{client}', function($client) {
         Route::resource('users', UserController::class);
         Route::post('/users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
         
+        // Alteração de senha pelo admin
+        Route::get('/users/{user}/change-password', [App\Http\Controllers\Admin\UserPasswordController::class, 'show'])->name('admin.users.password.show');
+        Route::put('/users/{user}/change-password', [App\Http\Controllers\Admin\UserPasswordController::class, 'update'])->name('admin.users.password.update');
+        
         // Sistema de Auditoria
         Route::prefix('admin/audit')->name('admin.audit.')->group(function () {
             Route::get('/', [App\Http\Controllers\AuditController::class, 'index'])->name('index');

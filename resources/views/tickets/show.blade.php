@@ -252,6 +252,20 @@
 
     <!-- Timeline de Mensagens -->
     <h2 class="section-title mb-4">Histórico de Mensagens</h2>
+    
+    @if(auth()->user()->isAdmin())
+    <!-- DEBUG: Mostrar todas as mensagens para admin -->
+    <div class="mb-4 p-3 bg-yellow-100 border border-yellow-300 rounded">
+        <strong>DEBUG (Admin):</strong> Total de mensagens: {{ $ticket->messages()->count() }} | 
+        Internas: {{ $ticket->messages()->where('is_internal', true)->count() }} |
+        Públicas: {{ $ticket->messages()->where('is_internal', false)->count() }}
+        <br>Tipos: 
+        @foreach($ticket->messages()->distinct('type')->pluck('type') as $type)
+            {{ $type }}, 
+        @endforeach
+    </div>
+    @endif
+    
     <x-card>
         @if($ticket->messages->count() > 0)
             <!-- Timeline Container -->

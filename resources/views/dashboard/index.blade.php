@@ -79,33 +79,29 @@
         
         <!-- TICKETS MAIS ANTIGOS -->
         <div>
-            <h2 class="section-title mb-4 flex items-center">
-                <span class="text-orange-500 mr-2">⏰</span>
-                Tickets Mais Antigos
-            </h2>
+            <h2 class="section-title mb-4">Tickets Mais Antigos</h2>
             <x-card class="h-full">
                 @if($oldestTickets->count() > 0)
                     <div class="space-y-3">
                         @foreach($oldestTickets as $ticket)
-                        <div class="p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+                        <div class="p-3 border border-padrao rounded-lg hover:bg-creme cursor-pointer transition-colors"
                              onclick="window.location.href='{{ route('tickets.show', $ticket->ticket_number) }}'">
                             <div class="flex items-center justify-between mb-2">
-                                <span class="font-medium text-gray-900">#{{ $ticket->ticket_number }}</span>
+                                <span class="font-medium text-cinza">#{{ $ticket->ticket_number }}</span>
                                 <div class="flex items-center space-x-2">
                                     <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-{{ $ticket->priority_color }}-100 text-{{ $ticket->priority_color }}-800">
                                         {{ ucfirst($ticket->priority) }}
                                     </span>
-                                    <span class="text-xs text-gray-500">{{ $ticket->days_open }}d</span>
+                                    <span class="text-xs text-cinza-claro">{{ $ticket->days_open }}d</span>
                                 </div>
                             </div>
-                            <p class="text-sm text-gray-600 truncate">{{ $ticket->title }}</p>
+                            <p class="text-sm text-cinza-claro truncate">{{ $ticket->title }}</p>
                         </div>
                         @endforeach
                     </div>
                 @else
                     <div class="text-center py-8">
-                        <span class="text-4xl">🎉</span>
-                        <p class="text-gray-500 mt-2">Nenhum ticket antigo!</p>
+                        <p class="text-cinza-claro">Nenhum ticket antigo</p>
                     </div>
                 @endif
             </x-card>
@@ -114,31 +110,27 @@
         <!-- MINHA FILA DE TRABALHO -->
         @if(auth()->user()->canManageTickets())
         <div>
-            <h2 class="section-title mb-4 flex items-center">
-                <span class="text-blue-500 mr-2">🎯</span>
-                Minha Fila de Trabalho
-            </h2>
+            <h2 class="section-title mb-4">Minha Fila de Trabalho</h2>
             <x-card class="h-full">
                 @if($myWorkQueue->count() > 0)
                     <div class="space-y-3">
                         @foreach($myWorkQueue as $ticket)
-                        <div class="p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+                        <div class="p-3 border border-padrao rounded-lg hover:bg-creme cursor-pointer transition-colors"
                              onclick="window.location.href='{{ route('tickets.show', $ticket->ticket_number) }}'">
                             <div class="flex items-center justify-between mb-2">
-                                <span class="font-medium text-gray-900">#{{ $ticket->ticket_number }}</span>
+                                <span class="font-medium text-cinza">#{{ $ticket->ticket_number }}</span>
                                 <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-{{ $ticket->priority_color }}-100 text-{{ $ticket->priority_color }}-800">
                                     {{ ucfirst($ticket->priority) }}
                                 </span>
                             </div>
-                            <p class="text-sm text-gray-600 truncate">{{ $ticket->title }}</p>
-                            <p class="text-xs text-gray-500 mt-1">{{ $ticket->opened_at->diffForHumans() }}</p>
+                            <p class="text-sm text-cinza-claro truncate">{{ $ticket->title }}</p>
+                            <p class="text-xs text-cinza-claro mt-1">{{ $ticket->opened_at->diffForHumans() }}</p>
                         </div>
                         @endforeach
                     </div>
                 @else
                     <div class="text-center py-8">
-                        <span class="text-4xl">✨</span>
-                        <p class="text-gray-500 mt-2">Fila vazia!</p>
+                        <p class="text-cinza-claro">Fila vazia</p>
                     </div>
                 @endif
             </x-card>
@@ -147,21 +139,15 @@
 
         <!-- AÇÕES RÁPIDAS -->
         <div>
-            <h2 class="section-title mb-4 flex items-center">
-                <span class="text-green-500 mr-2">⚡</span>
-                Ações Rápidas
-            </h2>
+            <h2 class="section-title mb-4">Ações Rápidas</h2>
             <x-card class="h-full">
                 <div class="space-y-3">
                     @foreach($quickActions as $action)
-                    <div class="p-4 border border-gray-200 rounded-lg hover:bg-{{ $action['color'] }}-50 cursor-pointer transition-colors"
+                    <div class="p-4 border border-padrao rounded-lg hover:bg-creme cursor-pointer transition-colors"
                          onclick="window.location.href='{{ $action['action'] }}'">
-                        <div class="flex items-center">
-                            <span class="text-2xl mr-3">{{ $action['icon'] }}</span>
-                            <div>
-                                <h3 class="font-medium text-gray-900">{{ $action['title'] }}</h3>
-                                <p class="text-sm text-gray-600">{{ $action['subtitle'] }}</p>
-                            </div>
+                        <div>
+                            <h3 class="font-medium text-cinza">{{ $action['title'] }}</h3>
+                            <p class="text-sm text-cinza-claro">{{ $action['subtitle'] }}</p>
                         </div>
                     </div>
                     @endforeach
@@ -178,10 +164,10 @@
                 @if($recentTickets->count() > 0)
                     <div class="space-y-3">
                         @foreach($recentTickets as $ticket)
-                        <div class="p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+                        <div class="p-3 border border-padrao rounded-lg hover:bg-creme cursor-pointer transition-colors"
                              onclick="window.location.href='{{ route('tickets.show', $ticket->ticket_number) }}'">
                             <div class="flex items-center justify-between mb-2">
-                                <span class="font-medium text-gray-900">#{{ $ticket->ticket_number }}</span>
+                                <span class="font-medium text-cinza">#{{ $ticket->ticket_number }}</span>
                                 <div class="flex items-center space-x-2">
                                     <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-{{ $ticket->status_color }}-100 text-{{ $ticket->status_color }}-800">
                                         {{ ucfirst($ticket->status) }}
@@ -191,15 +177,14 @@
                                     </span>
                                 </div>
                             </div>
-                            <p class="text-sm text-gray-600 truncate">{{ $ticket->title }}</p>
-                            <p class="text-xs text-gray-500 mt-1">{{ $ticket->updated_at->diffForHumans() }}</p>
+                            <p class="text-sm text-cinza-claro truncate">{{ $ticket->title }}</p>
+                            <p class="text-xs text-cinza-claro mt-1">{{ $ticket->updated_at->diffForHumans() }}</p>
                         </div>
                         @endforeach
                     </div>
                 @else
                     <div class="text-center py-8">
-                        <span class="text-4xl">📋</span>
-                        <p class="text-gray-500 mt-2">Nenhum ticket recente</p>
+                        <p class="text-cinza-claro">Nenhum ticket recente</p>
                     </div>
                 @endif
             </x-card>
@@ -211,20 +196,20 @@
             <x-card>
                 <div class="space-y-4">
                     <div class="flex justify-between items-center">
-                        <span class="text-gray-600">Tempo de Resposta</span>
-                        <span class="font-semibold text-blue-600">{{ $quickStats['avg_response_time'] }}</span>
+                        <span class="text-cinza-claro">Tempo de Resposta</span>
+                        <span class="font-semibold text-cinza">{{ $quickStats['avg_response_time'] }}</span>
                     </div>
                     <div class="flex justify-between items-center">
-                        <span class="text-gray-600">Taxa de Resolução</span>
-                        <span class="font-semibold text-green-600">{{ $quickStats['resolution_rate'] }}</span>
+                        <span class="text-cinza-claro">Taxa de Resolução</span>
+                        <span class="font-semibold text-cinza">{{ $quickStats['resolution_rate'] }}</span>
                     </div>
                     <div class="flex justify-between items-center">
-                        <span class="text-gray-600">Resolvidos Hoje</span>
-                        <span class="font-semibold text-purple-600">{{ $quickStats['resolved_today'] }}</span>
+                        <span class="text-cinza-claro">Resolvidos Hoje</span>
+                        <span class="font-semibold text-cinza">{{ $quickStats['resolved_today'] }}</span>
                     </div>
                     <div class="flex justify-between items-center">
-                        <span class="text-gray-600">Criados esta Semana</span>
-                        <span class="font-semibold text-orange-600">{{ $quickStats['created_this_week'] }}</span>
+                        <span class="text-cinza-claro">Criados esta Semana</span>
+                        <span class="font-semibold text-cinza">{{ $quickStats['created_this_week'] }}</span>
                     </div>
                 </div>
             </x-card>
@@ -261,14 +246,15 @@
         <x-card>
             <div class="space-y-3">
                 @foreach($recentLogins as $login)
-                <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                <div class="flex items-center justify-between p-3 border border-padrao rounded-lg">
                     <div class="flex items-center">
-                        <span class="text-sm mr-3">
-                            {{ $login->event_type == 'login_success' ? '🟢 Entrou' : '🔴 Saiu' }}
+                        <div class="w-3 h-3 rounded-full mr-3 {{ $login->event_type == 'login_success' ? 'bg-green-500' : 'bg-red-500' }}"></div>
+                        <span class="text-sm font-medium text-cinza mr-2">
+                            {{ $login->event_type == 'login_success' ? 'Entrou' : 'Saiu' }}
                         </span>
-                        <span class="text-gray-600">{{ $login->user->name ?? 'Usuário #' . $login->user_id }}</span>
+                        <span class="text-cinza-claro">{{ $login->user->name ?? 'Usuário #' . $login->user_id }}</span>
                     </div>
-                    <span class="text-xs text-gray-500">{{ $login->created_at->diffForHumans() }}</span>
+                    <span class="text-xs text-cinza-claro">{{ $login->created_at->diffForHumans() }}</span>
                 </div>
                 @endforeach
             </div>

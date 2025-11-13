@@ -44,7 +44,7 @@ class NotificationService
         }
 
         // Notificar o cliente destinatário do ticket
-        if ($ticket->contact && $ticket->contact->email) {
+        if ($ticket->contact && $ticket->contact->email && $ticket->contact->receive_notifications) {
             // Se foi criado por usuário interno (admin/tecnico), usar notificação específica
             if ($createdBy && in_array($createdBy->role, ['admin', 'tecnico'])) {
                 $this->notifyClientTicketCreatedForYou($ticket, $createdBy);
@@ -59,7 +59,7 @@ class NotificationService
      */
     public function notifyClientTicketCreated(Ticket $ticket): void
     {
-        if ($ticket->contact && $ticket->contact->email) {
+        if ($ticket->contact && $ticket->contact->email && $ticket->contact->receive_notifications) {
             Mail::to($ticket->contact->email)->send(new ClientTicketCreatedMail($ticket));
         }
     }
@@ -69,7 +69,7 @@ class NotificationService
      */
     public function notifyClientTicketCreatedForYou(Ticket $ticket, $createdBy = null): void
     {
-        if ($ticket->contact && $ticket->contact->email) {
+        if ($ticket->contact && $ticket->contact->email && $ticket->contact->receive_notifications) {
             Mail::to($ticket->contact->email)->send(new ClientTicketCreatedForYouMail($ticket, $createdBy));
         }
     }
@@ -91,7 +91,7 @@ class NotificationService
         }
 
         // Notificar cliente se a resposta não for interna
-        if (!$reply->is_internal && $ticket->contact && $ticket->contact->email) {
+        if (!$reply->is_internal && $ticket->contact && $ticket->contact->email && $ticket->contact->receive_notifications) {
             $this->notifyClientTicketReplied($ticket, $reply, $repliedBy);
         }
     }
@@ -101,7 +101,7 @@ class NotificationService
      */
     public function notifyClientTicketReplied(Ticket $ticket, TicketMessage $reply, $repliedBy = null): void
     {
-        if ($ticket->contact && $ticket->contact->email) {
+        if ($ticket->contact && $ticket->contact->email && $ticket->contact->receive_notifications) {
             Mail::to($ticket->contact->email)->send(new ClientTicketRepliedMail($ticket, $reply, $repliedBy));
         }
     }
@@ -123,7 +123,7 @@ class NotificationService
         }
 
         // Notificar cliente
-        if ($ticket->contact && $ticket->contact->email) {
+        if ($ticket->contact && $ticket->contact->email && $ticket->contact->receive_notifications) {
             $this->notifyClientTicketStatusChanged($ticket, $oldStatus, $newStatus, $changedBy);
         }
     }
@@ -133,7 +133,7 @@ class NotificationService
      */
     public function notifyClientTicketStatusChanged(Ticket $ticket, string $oldStatus, string $newStatus, $changedBy = null): void
     {
-        if ($ticket->contact && $ticket->contact->email) {
+        if ($ticket->contact && $ticket->contact->email && $ticket->contact->receive_notifications) {
             Mail::to($ticket->contact->email)->send(new ClientTicketStatusChangedMail($ticket, $oldStatus, $newStatus, $changedBy));
         }
     }
@@ -155,7 +155,7 @@ class NotificationService
         }
 
         // Notificar cliente
-        if ($ticket->contact && $ticket->contact->email) {
+        if ($ticket->contact && $ticket->contact->email && $ticket->contact->receive_notifications) {
             $this->notifyClientTicketClosed($ticket, $closedBy);
         }
     }
@@ -165,7 +165,7 @@ class NotificationService
      */
     public function notifyClientTicketClosed(Ticket $ticket, $closedBy = null): void
     {
-        if ($ticket->contact && $ticket->contact->email) {
+        if ($ticket->contact && $ticket->contact->email && $ticket->contact->receive_notifications) {
             Mail::to($ticket->contact->email)->send(new ClientTicketClosedMail($ticket, $closedBy));
         }
     }

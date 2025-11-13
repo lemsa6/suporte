@@ -20,12 +20,14 @@ class ClientContact extends Model
         'department',
         'is_primary',
         'is_active',
-        'user_type'
+        'user_type',
+        'receive_notifications'
     ];
 
     protected $casts = [
         'is_primary' => 'boolean',
-        'is_active' => 'boolean'
+        'is_active' => 'boolean',
+        'receive_notifications' => 'boolean'
     ];
 
     // Relacionamentos

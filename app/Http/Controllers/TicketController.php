@@ -43,7 +43,15 @@ class TicketController extends Controller
             ->withCount(['messages', 'attachments']);
         
         // Filtros baseados no perfil do usuário
-        if ($user->isCliente()) {
+        if ($user->isClienteGestor()) {
+            // Gestor vê todos os tickets da empresa
+            $query->whereHas('client', function ($q) use ($user) {
+                $q->whereHas('contacts', function ($q2) use ($user) {
+                    $q2->where('email', $user->email);
+                });
+            });
+        } elseif ($user->isClienteFuncionario()) {
+            // Funcionário vê apenas seus próprios tickets
             $query->whereHas('contact', function ($q) use ($user) {
                 $q->where('email', $user->email);
             });
@@ -236,8 +244,17 @@ class TicketController extends Controller
 
         // Verificar se o usuário tem acesso ao ticket
         $user = auth()->user();
-        if ($user->isCliente() && $ticket->client_id !== $user->client_id) {
-            abort(403, 'Acesso negado a este ticket.');
+        if ($user->isClienteGestor()) {
+            // Gestor pode ver tickets da empresa
+            $hasAccess = $ticket->client->contacts()->where('email', $user->email)->exists();
+            if (!$hasAccess) {
+                abort(403, 'Acesso negado a este ticket.');
+            }
+        } elseif ($user->isClienteFuncionario()) {
+            // Funcionário só pode ver seus próprios tickets
+            if ($ticket->contact->email !== $user->email) {
+                abort(403, 'Acesso negado a este ticket.');
+            }
         }
 
         $ticket->load([
@@ -282,8 +299,17 @@ class TicketController extends Controller
 
         // Verificar se o usuário tem acesso ao ticket
         $user = auth()->user();
-        if ($user->isCliente() && $ticket->client_id !== $user->client_id) {
-            abort(403, 'Acesso negado a este ticket.');
+        if ($user->isClienteGestor()) {
+            // Gestor pode ver tickets da empresa
+            $hasAccess = $ticket->client->contacts()->where('email', $user->email)->exists();
+            if (!$hasAccess) {
+                abort(403, 'Acesso negado a este ticket.');
+            }
+        } elseif ($user->isClienteFuncionario()) {
+            // Funcionário só pode ver seus próprios tickets
+            if ($ticket->contact->email !== $user->email) {
+                abort(403, 'Acesso negado a este ticket.');
+            }
         }
 
         $clients = Client::active()->orderBy('company_name')->get();
@@ -308,8 +334,17 @@ class TicketController extends Controller
 
         // Verificar se o usuário tem acesso ao ticket
         $user = auth()->user();
-        if ($user->isCliente() && $ticket->client_id !== $user->client_id) {
-            abort(403, 'Acesso negado a este ticket.');
+        if ($user->isClienteGestor()) {
+            // Gestor pode ver tickets da empresa
+            $hasAccess = $ticket->client->contacts()->where('email', $user->email)->exists();
+            if (!$hasAccess) {
+                abort(403, 'Acesso negado a este ticket.');
+            }
+        } elseif ($user->isClienteFuncionario()) {
+            // Funcionário só pode ver seus próprios tickets
+            if ($ticket->contact->email !== $user->email) {
+                abort(403, 'Acesso negado a este ticket.');
+            }
         }
 
         $validated = $request->validate([
@@ -401,11 +436,23 @@ class TicketController extends Controller
 
         // Verificar se o usuário tem acesso ao ticket
         $user = auth()->user();
-        if ($user->isCliente() && $ticket->client_id !== $user->client_id) {
-            if (request()->expectsJson()) {
-                return response()->json(['success' => false, 'message' => 'Acesso negado a este ticket.'], 403);
+        if ($user->isClienteGestor()) {
+            // Gestor pode ver tickets da empresa
+            $hasAccess = $ticket->client->contacts()->where('email', $user->email)->exists();
+            if (!$hasAccess) {
+                if (request()->expectsJson()) {
+                    return response()->json(['success' => false, 'message' => 'Acesso negado a este ticket.'], 403);
+                }
+                abort(403, 'Acesso negado a este ticket.');
             }
-            abort(403, 'Acesso negado a este ticket.');
+        } elseif ($user->isClienteFuncionario()) {
+            // Funcionário só pode ver seus próprios tickets
+            if ($ticket->contact->email !== $user->email) {
+                if (request()->expectsJson()) {
+                    return response()->json(['success' => false, 'message' => 'Acesso negado a este ticket.'], 403);
+                }
+                abort(403, 'Acesso negado a este ticket.');
+            }
         }
 
         $ticket->delete();
@@ -432,8 +479,17 @@ class TicketController extends Controller
 
         // Verificar se o usuário tem acesso ao ticket
         $user = auth()->user();
-        if ($user->isCliente() && $ticket->client_id !== $user->client_id) {
-            abort(403, 'Acesso negado a este ticket.');
+        if ($user->isClienteGestor()) {
+            // Gestor pode ver tickets da empresa
+            $hasAccess = $ticket->client->contacts()->where('email', $user->email)->exists();
+            if (!$hasAccess) {
+                abort(403, 'Acesso negado a este ticket.');
+            }
+        } elseif ($user->isClienteFuncionario()) {
+            // Funcionário só pode ver seus próprios tickets
+            if ($ticket->contact->email !== $user->email) {
+                abort(403, 'Acesso negado a este ticket.');
+            }
         }
 
         $validated = $request->validate([
@@ -582,13 +638,27 @@ class TicketController extends Controller
                 $changes[] = $newUrgent ? "Marcado como urgente" : "Removido da urgência";
             }
             
+            // Se não houve mudanças, criar mensagem genérica
+            if (empty($changes)) {
+                $changes[] = "Prioridade mantida como \"{$newPriority}\"" . ($newUrgent ? " (urgente)" : "");
+            }
+            
             $message = implode("\n", $changes);
             
             if (!empty($validated['notes'])) {
                 $message .= "\n\nObservações: " . $validated['notes'];
             }
             
-            TicketMessage::create([
+            \Log::info("Criando mensagem de prioridade", [
+                'ticket_id' => $ticket->id,
+                'old_priority' => $oldPriority,
+                'new_priority' => $newPriority,
+                'old_urgent' => $oldUrgent,
+                'new_urgent' => $newUrgent,
+                'message' => $message
+            ]);
+            
+            $ticketMessage = TicketMessage::create([
                 'ticket_id' => $ticket->id,
                 'user_id' => auth()->id(),
                 'type' => 'priority_change',
@@ -603,6 +673,8 @@ class TicketController extends Controller
                     ]
                 ]
             ]);
+            
+            \Log::info("Mensagem de prioridade criada", ['message_id' => $ticketMessage->id]);
             
             // Notificar sobre mudança de prioridade se necessário
             if ($newUrgent && !$oldUrgent) {

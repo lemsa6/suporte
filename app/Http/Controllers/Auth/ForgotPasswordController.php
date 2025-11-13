@@ -27,6 +27,16 @@ class ForgotPasswordController extends Controller
      */
     public function sendResetLinkEmail(Request $request)
     {
+        // Verificar limite de tentativas por IP (5 tentativas por hora)
+        $key = 'password_reset_attempts:' . $request->ip();
+        $attempts = cache()->get($key, 0);
+        
+        if ($attempts >= 5) {
+            return back()->withErrors([
+                'email' => 'Muitas tentativas de recuperação de senha. Tente novamente em 1 hora.'
+            ]);
+        }
+
         $request->validate([
             'email' => 'required|email|exists:users,email'
         ], [
@@ -39,8 +49,23 @@ class ForgotPasswordController extends Controller
         $user = User::where('email', $email)->first();
 
         if (!$user) {
+            // Incrementar tentativas mesmo para emails inválidos (segurança)
+            cache()->put($key, $attempts + 1, now()->addHour());
+            
             throw ValidationException::withMessages([
                 'email' => 'Este email não está cadastrado em nosso sistema.'
+            ]);
+        }
+
+        // Verificar se já existe um token recente (evitar spam)
+        $recentReset = DB::table('password_resets')
+            ->where('email', $email)
+            ->where('created_at', '>', now()->subMinutes(5))
+            ->first();
+
+        if ($recentReset) {
+            return back()->withErrors([
+                'email' => 'Já enviamos um link de recuperação recentemente. Verifique seu email ou aguarde 5 minutos.'
             ]);
         }
 
@@ -61,9 +86,27 @@ class ForgotPasswordController extends Controller
         try {
             Mail::to($user->email)->send(new PasswordResetMail($user, $token));
             
+            // Incrementar contador de tentativas
+            cache()->put($key, $attempts + 1, now()->addHour());
+            
+            // Log da tentativa de recuperação
+            \Log::info('Password reset requested', [
+                'email' => $email,
+                'ip' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+                'attempts' => $attempts + 1
+            ]);
+            
             return back()->with('status', 'Enviamos um link de recuperação de senha para seu email.');
         } catch (\Exception $e) {
-            return back()->withErrors(['email' => 'Erro ao enviar email. Tente novamente mais tarde.']);
+            \Log::error('Failed to send password reset email', [
+                'email' => $email,
+                'error' => $e->getMessage()
+            ]);
+            
+            return back()->withErrors([
+                'email' => 'Erro ao enviar email. Tente novamente em alguns minutos.'
+            ]);
         }
     }
 
@@ -83,6 +126,16 @@ class ForgotPasswordController extends Controller
      */
     public function reset(Request $request)
     {
+        // Verificar limite de tentativas de reset por IP (10 tentativas por hora)
+        $key = 'password_reset_attempts:' . $request->ip();
+        $attempts = cache()->get($key, 0);
+        
+        if ($attempts >= 10) {
+            return back()->withErrors([
+                'email' => 'Muitas tentativas de redefinição de senha. Tente novamente em 1 hora.'
+            ]);
+        }
+
         $request->validate([
             'token' => 'required',
             'email' => 'required|email|exists:users,email',
@@ -106,6 +159,9 @@ class ForgotPasswordController extends Controller
             ->first();
 
         if (!$passwordReset || !Hash::check($token, $passwordReset->token)) {
+            // Incrementar tentativas para tokens inválidos
+            cache()->put($key, $attempts + 1, now()->addHour());
+            
             return back()->withErrors(['email' => 'Token inválido ou expirado.']);
         }
 
@@ -122,6 +178,17 @@ class ForgotPasswordController extends Controller
 
         // Remover token do banco
         DB::table('password_resets')->where('email', $email)->delete();
+
+        // Log da redefinição bem-sucedida
+        \Log::info('Password reset completed', [
+            'email' => $email,
+            'user_id' => $user->id,
+            'ip' => $request->ip(),
+            'user_agent' => $request->userAgent()
+        ]);
+
+        // Limpar tentativas após sucesso
+        cache()->forget($key);
 
         return redirect()->route('login')->with('status', 'Senha redefinida com sucesso! Faça login com sua nova senha.');
     }
