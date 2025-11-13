@@ -484,31 +484,141 @@ class TicketController extends Controller
     /**
      * Atribui ticket a um técnico
      */
-    public function assign(Request $request, string $ticketNumber): JsonResponse
+    public function assign(Request $request, string $ticketNumber)
     {
-        $ticket = Ticket::findByNumber($ticketNumber);
-        
-        if (!$ticket) {
-            abort(404, 'Ticket não encontrado.');
+        try {
+            $ticket = Ticket::findByNumber($ticketNumber);
+            
+            if (!$ticket) {
+                return redirect()->back()->with('error', 'Ticket não encontrado.');
+            }
+            
+            $this->authorize('assign', $ticket);
+            
+            $validated = $request->validate([
+                'assigned_to' => 'required|exists:users,id',
+                'notes' => 'nullable|string|max:1000',
+            ]);
+            
+            $oldAssignee = $ticket->assignedTo;
+            $newAssignee = User::find($validated['assigned_to']);
+            
+            $ticket->update(['assigned_to' => $validated['assigned_to']]);
+            
+            // Criar mensagem de atribuição
+            $message = $oldAssignee 
+                ? "Ticket reatribuído de {$oldAssignee->name} para {$newAssignee->name}"
+                : "Ticket atribuído a {$newAssignee->name}";
+                
+            if (!empty($validated['notes'])) {
+                $message .= "\n\nObservações: " . $validated['notes'];
+            }
+            
+            TicketMessage::create([
+                'ticket_id' => $ticket->id,
+                'user_id' => auth()->id(),
+                'type' => 'assignment',
+                'message' => $message,
+                'is_internal' => true,
+                'metadata' => [
+                    'assignment_change' => [
+                        'from' => $oldAssignee?->name,
+                        'to' => $newAssignee->name,
+                        'from_id' => $oldAssignee?->id,
+                        'to_id' => $newAssignee->id,
+                    ]
+                ]
+            ]);
+            
+            // Notificar o novo responsável
+            if ($newAssignee) {
+                $newAssignee->notify(new \App\Notifications\TicketAssigned($ticket));
+            }
+            
+            return redirect()->back()->with('success', 'Ticket atribuído com sucesso!');
+            
+        } catch (\Exception $e) {
+            \Log::error('Erro ao atribuir ticket: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Erro ao atribuir ticket. Tente novamente.');
         }
-        $this->authorize('assign', $ticket);
-        
-        $validated = $request->validate([
-            'assigned_to' => 'required|exists:users,id',
-        ]);
-        
-        $ticket->update(['assigned_to' => $validated['assigned_to']]);
-        
-        // Criar mensagem de atribuição
-        TicketMessage::create([
-            'ticket_id' => $ticket->id,
-            'user_id' => auth()->id(),
-            'type' => 'assignment',
-            'message' => 'Ticket atribuído a ' . User::find($validated['assigned_to'])->name,
-            'is_internal' => true,
-        ]);
-        
-        return response()->json(['success' => true]);
+    }
+
+    /**
+     * Altera prioridade do ticket
+     */
+    public function changePriority(Request $request, string $ticketNumber)
+    {
+        try {
+            $ticket = Ticket::findByNumber($ticketNumber);
+            
+            if (!$ticket) {
+                return redirect()->back()->with('error', 'Ticket não encontrado.');
+            }
+            
+            $this->authorize('update', $ticket);
+            
+            $validated = $request->validate([
+                'priority' => 'required|in:baixa,média,alta',
+                'is_urgent' => 'boolean',
+                'notes' => 'nullable|string|max:1000',
+            ]);
+            
+            $oldPriority = $ticket->priority;
+            $oldUrgent = $ticket->is_urgent;
+            $newPriority = $validated['priority'];
+            $newUrgent = $request->boolean('is_urgent');
+            
+            $ticket->update([
+                'priority' => $newPriority,
+                'is_urgent' => $newUrgent,
+            ]);
+            
+            // Criar mensagem de mudança de prioridade
+            $changes = [];
+            if ($oldPriority !== $newPriority) {
+                $changes[] = "Prioridade alterada de \"{$oldPriority}\" para \"{$newPriority}\"";
+            }
+            if ($oldUrgent !== $newUrgent) {
+                $changes[] = $newUrgent ? "Marcado como urgente" : "Removido da urgência";
+            }
+            
+            $message = implode("\n", $changes);
+            
+            if (!empty($validated['notes'])) {
+                $message .= "\n\nObservações: " . $validated['notes'];
+            }
+            
+            TicketMessage::create([
+                'ticket_id' => $ticket->id,
+                'user_id' => auth()->id(),
+                'type' => 'priority_change',
+                'message' => $message,
+                'is_internal' => true,
+                'metadata' => [
+                    'priority_change' => [
+                        'from' => $oldPriority,
+                        'to' => $newPriority,
+                        'urgent_from' => $oldUrgent,
+                        'urgent_to' => $newUrgent,
+                    ]
+                ]
+            ]);
+            
+            // Notificar sobre mudança de prioridade se necessário
+            if ($newUrgent && !$oldUrgent) {
+                // Notificar sobre ticket urgente
+                $ticket->assignedTo?->notify(new \App\Notifications\TicketUrgent($ticket));
+            } elseif ($oldPriority !== $newPriority) {
+                // Notificar sobre mudança de prioridade
+                $ticket->assignedTo?->notify(new \App\Notifications\TicketPriorityChange($ticket, $oldPriority, $newPriority));
+            }
+            
+            return redirect()->back()->with('success', 'Prioridade alterada com sucesso!');
+            
+        } catch (\Exception $e) {
+            \Log::error('Erro ao alterar prioridade do ticket: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Erro ao alterar prioridade. Tente novamente.');
+        }
     }
 
     /**

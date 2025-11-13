@@ -74,6 +74,8 @@ Route::middleware('auth')->group(function () {
         // Ações de status
         Route::post('/tickets/{ticketNumber}/change-status', [TicketController::class, 'changeStatus'])->name('tickets.change-status');
         Route::post('/tickets/{ticketNumber}/reopen', [TicketController::class, 'reopen'])->name('tickets.reopen');
+        Route::post('/tickets/{ticketNumber}/assign', [TicketController::class, 'assign'])->name('tickets.assign');
+        Route::post('/tickets/{ticketNumber}/change-priority', [TicketController::class, 'changePriority'])->name('tickets.change-priority');
         
         // Ações em lote
         Route::post('/tickets/bulk-action', [TicketController::class, 'bulkAction'])->name('tickets.bulk-action');

@@ -377,6 +377,74 @@
         @endif
     </x-card>
 
+    <!-- Ações do Ticket -->
+    @if($ticket->status !== 'fechado' && auth()->user()->canManageTickets())
+    <h2 class="section-title mb-4">Ações do Ticket</h2>
+    <x-card>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Alterar Status -->
+            <div class="bg-creme p-4 rounded-lg border border-padrao">
+                <div class="flex items-center mb-3">
+                    <div class="w-10 h-10 bg-amarelo bg-opacity-20 rounded-lg flex items-center justify-center mr-3">
+                        <svg class="w-5 h-5 text-amarelo" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="font-medium text-cinza">Alterar Status</h3>
+                        <p class="text-sm text-cinza-claro">Mudar o status atual</p>
+                    </div>
+                </div>
+                <x-button variant="outline" size="sm" onclick="openStatusModal()" class="w-full">
+                    Status: {{ ucfirst($ticket->status) }}
+                </x-button>
+            </div>
+
+            <!-- Atribuir Ticket -->
+            <div class="bg-creme p-4 rounded-lg border border-padrao">
+                <div class="flex items-center mb-3">
+                    <div class="w-10 h-10 bg-azul bg-opacity-20 rounded-lg flex items-center justify-center mr-3">
+                        <svg class="w-5 h-5 text-azul" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="font-medium text-cinza">Responsável</h3>
+                        <p class="text-sm text-cinza-claro">
+                            @if($ticket->assignedTo)
+                                {{ $ticket->assignedTo->name }}
+                            @else
+                                Não atribuído
+                            @endif
+                        </p>
+                    </div>
+                </div>
+                <x-button variant="outline" size="sm" onclick="openAssignModal()" class="w-full">
+                    {{ $ticket->assignedTo ? 'Reatribuir' : 'Atribuir' }}
+                </x-button>
+            </div>
+
+            <!-- Alterar Prioridade -->
+            <div class="bg-creme p-4 rounded-lg border border-padrao">
+                <div class="flex items-center mb-3">
+                    <div class="w-10 h-10 bg-vermelho bg-opacity-20 rounded-lg flex items-center justify-center mr-3">
+                        <svg class="w-5 h-5 text-vermelho" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="font-medium text-cinza">Prioridade</h3>
+                        <p class="text-sm text-cinza-claro">{{ ucfirst($ticket->priority) }}</p>
+                    </div>
+                </div>
+                <x-button variant="outline" size="sm" onclick="openPriorityModal()" class="w-full">
+                    Alterar Prioridade
+                </x-button>
+            </div>
+        </div>
+    </x-card>
+    @endif
+
     <!-- Nova Mensagem -->
     @if($ticket->status !== 'fechado')
     <h2 class="section-title mb-4">Adicionar Mensagem</h2>
@@ -395,8 +463,7 @@
                     <x-select id="type" name="type">
                         <option value="reply">Resposta</option>
                         @if(auth()->user()->canManageTickets())
-                        <option value="note">Nota</option>
-                        <option value="status_change">Mudança de Status</option>
+                        <option value="note">Nota Interna</option>
                         @endif
                     </x-select>
                 </div>
@@ -583,6 +650,129 @@
     </div>
 </div>
 
+<!-- Modal para Atribuir Ticket -->
+<div id="assign-modal" class="fixed inset-0 bg-black bg-opacity-10 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-lg shadow-lg max-w-md mx-4 transform transition-all duration-300 scale-95 opacity-0" id="assign-modal-content">
+            <div class="flex items-center justify-between p-6 border-b border-cinza-claro">
+                <h3 class="text-lg font-semibold text-cinza flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                    {{ $ticket->assignedTo ? 'Reatribuir' : 'Atribuir' }} Ticket
+                </h3>
+                <button type="button" onclick="closeAssignModal()" class="text-cinza-claro hover:text-cinza">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <form action="{{ route('tickets.assign', $ticket->ticket_number) }}" method="POST">
+                @csrf
+                <div class="p-6 space-y-4">
+                    <div>
+                        <label for="assigned_to" class="block text-sm font-medium text-cinza mb-2">Responsável *</label>
+                        <select id="assigned_to" name="assigned_to" required class="w-full px-3 py-2 border border-cinza-claro-2 rounded-md focus:outline-none focus:ring-2 focus:ring-roxo focus:border-transparent">
+                            <option value="">Selecione o responsável</option>
+                            @php
+                                $technicians = \App\Models\User::where('role', 'tecnico')->orWhere('role', 'admin')->get();
+                            @endphp
+                            @foreach($technicians as $technician)
+                                <option value="{{ $technician->id }}" {{ $ticket->assigned_to == $technician->id ? 'selected' : '' }}>
+                                    {{ $technician->name }} ({{ ucfirst($technician->role) }})
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="assign_notes" class="block text-sm font-medium text-cinza mb-2">Observações (opcional)</label>
+                        <textarea id="assign_notes" name="notes" rows="3" placeholder="Adicione observações sobre a atribuição..." class="w-full px-3 py-2 border border-cinza-claro-2 rounded-md focus:outline-none focus:ring-2 focus:ring-roxo focus:border-transparent resize-none"></textarea>
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-end gap-3 p-6 border-t border-cinza-claro">
+                    <x-button variant="outline" type="button" onclick="closeAssignModal()">
+                        Cancelar
+                    </x-button>
+                    <x-button variant="primary" type="submit">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                        {{ $ticket->assignedTo ? 'Reatribuir' : 'Atribuir' }}
+                    </x-button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Alterar Prioridade -->
+<div id="priority-modal" class="fixed inset-0 bg-black bg-opacity-10 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-lg shadow-lg max-w-md mx-4 transform transition-all duration-300 scale-95 opacity-0" id="priority-modal-content">
+            <div class="flex items-center justify-between p-6 border-b border-cinza-claro">
+                <h3 class="text-lg font-semibold text-cinza flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                    </svg>
+                    Alterar Prioridade
+                </h3>
+                <button type="button" onclick="closePriorityModal()" class="text-cinza-claro hover:text-cinza">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <form action="{{ route('tickets.change-priority', $ticket->ticket_number) }}" method="POST">
+                @csrf
+                <div class="p-6 space-y-4">
+                    <div>
+                        <label for="priority" class="block text-sm font-medium text-cinza mb-2">Nova Prioridade *</label>
+                        <select id="priority" name="priority" required class="w-full px-3 py-2 border border-cinza-claro-2 rounded-md focus:outline-none focus:ring-2 focus:ring-roxo focus:border-transparent">
+                            <option value="">Selecione a prioridade</option>
+                            <option value="baixa" {{ $ticket->priority == 'baixa' ? 'selected' : '' }}>Baixa</option>
+                            <option value="média" {{ $ticket->priority == 'média' ? 'selected' : '' }}>Média</option>
+                            <option value="alta" {{ $ticket->priority == 'alta' ? 'selected' : '' }}>Alta</option>
+                        </select>
+                    </div>
+
+                    <div class="flex items-center">
+                        <div class="flex items-center h-5">
+                            <input type="checkbox" id="is_urgent" name="is_urgent" value="1" {{ $ticket->is_urgent ? 'checked' : '' }} class="h-4 w-4 text-roxo focus:ring-roxo border-padrao rounded">
+                        </div>
+                        <div class="ml-3 text-sm">
+                            <label for="is_urgent" class="font-medium text-cinza">
+                                Marcar como urgente
+                            </label>
+                            <p class="text-cinza-claro">Tickets urgentes têm prioridade máxima</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="priority_notes" class="block text-sm font-medium text-cinza mb-2">Observações (opcional)</label>
+                        <textarea id="priority_notes" name="notes" rows="3" placeholder="Adicione observações sobre a mudança de prioridade..." class="w-full px-3 py-2 border border-cinza-claro-2 rounded-md focus:outline-none focus:ring-2 focus:ring-roxo focus:border-transparent resize-none"></textarea>
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-end gap-3 p-6 border-t border-cinza-claro">
+                    <x-button variant="outline" type="button" onclick="closePriorityModal()">
+                        Cancelar
+                    </x-button>
+                    <x-button variant="primary" type="submit">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                        Alterar Prioridade
+                    </x-button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @push('scripts')
@@ -619,6 +809,8 @@ document.addEventListener('click', function(event) {
     const closeModal = document.getElementById('close-ticket-modal');
     const reopenModal = document.getElementById('reopen-ticket-modal');
     const statusModal = document.getElementById('status-modal');
+    const assignModal = document.getElementById('assign-modal');
+    const priorityModal = document.getElementById('priority-modal');
     
     if (event.target === closeModal) {
         closeCloseTicketModal();
@@ -629,6 +821,12 @@ document.addEventListener('click', function(event) {
     if (event.target === statusModal) {
         closeStatusModal();
     }
+    if (event.target === assignModal) {
+        closeAssignModal();
+    }
+    if (event.target === priorityModal) {
+        closePriorityModal();
+    }
 });
 
 // Fechar modal com ESC
@@ -637,6 +835,8 @@ document.addEventListener('keydown', function(event) {
         closeCloseTicketModal();
         closeReopenTicketModal();
         closeStatusModal();
+        closeAssignModal();
+        closePriorityModal();
         closePreviewModal();
     }
 });
@@ -684,6 +884,62 @@ function openReopenTicketModal() {
 function closeReopenTicketModal() {
     const modal = document.getElementById('reopen-ticket-modal');
     const content = document.getElementById('reopen-ticket-modal-content');
+    
+    // Animação de saída
+    content.classList.remove('scale-100', 'opacity-100');
+    content.classList.add('scale-95', 'opacity-0');
+    
+    // Esconder modal após animação
+    setTimeout(() => {
+        modal.classList.add('hidden');
+    }, 300);
+}
+
+// Funções para Modal de Atribuição
+function openAssignModal() {
+    const modal = document.getElementById('assign-modal');
+    const content = document.getElementById('assign-modal-content');
+    
+    modal.classList.remove('hidden');
+    
+    // Animação de entrada
+    setTimeout(() => {
+        content.classList.remove('scale-95', 'opacity-0');
+        content.classList.add('scale-100', 'opacity-100');
+    }, 10);
+}
+
+function closeAssignModal() {
+    const modal = document.getElementById('assign-modal');
+    const content = document.getElementById('assign-modal-content');
+    
+    // Animação de saída
+    content.classList.remove('scale-100', 'opacity-100');
+    content.classList.add('scale-95', 'opacity-0');
+    
+    // Esconder modal após animação
+    setTimeout(() => {
+        modal.classList.add('hidden');
+    }, 300);
+}
+
+// Funções para Modal de Prioridade
+function openPriorityModal() {
+    const modal = document.getElementById('priority-modal');
+    const content = document.getElementById('priority-modal-content');
+    
+    modal.classList.remove('hidden');
+    
+    // Animação de entrada
+    setTimeout(() => {
+        content.classList.remove('scale-95', 'opacity-0');
+        content.classList.add('scale-100', 'opacity-100');
+    }, 10);
+}
+
+function closePriorityModal() {
+    const modal = document.getElementById('priority-modal');
+    const content = document.getElementById('priority-modal-content');
     
     // Animação de saída
     content.classList.remove('scale-100', 'opacity-100');
