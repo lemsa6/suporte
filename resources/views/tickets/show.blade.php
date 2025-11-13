@@ -383,17 +383,10 @@
     <x-card>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <!-- Alterar Status -->
-            <div class="bg-creme p-4 rounded-lg border border-padrao">
-                <div class="flex items-center mb-3">
-                    <div class="w-10 h-10 bg-amarelo bg-opacity-20 rounded-lg flex items-center justify-center mr-3">
-                        <svg class="w-5 h-5 text-amarelo" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"></path>
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 class="font-medium text-cinza">Alterar Status</h3>
-                        <p class="text-sm text-cinza-claro">Mudar o status atual</p>
-                    </div>
+            <div class="bg-branco p-4 rounded-lg border border-padrao">
+                <div class="mb-3">
+                    <h3 class="text-sm font-medium text-cinza">Alterar Status</h3>
+                    <p class="text-sm text-cinza-claro">Mudar o status atual</p>
                 </div>
                 <x-button variant="outline" size="sm" onclick="openStatusModal()" class="w-full">
                     Status: {{ ucfirst($ticket->status) }}
@@ -401,23 +394,16 @@
             </div>
 
             <!-- Atribuir Ticket -->
-            <div class="bg-creme p-4 rounded-lg border border-padrao">
-                <div class="flex items-center mb-3">
-                    <div class="w-10 h-10 bg-azul bg-opacity-20 rounded-lg flex items-center justify-center mr-3">
-                        <svg class="w-5 h-5 text-azul" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 class="font-medium text-cinza">Responsável</h3>
-                        <p class="text-sm text-cinza-claro">
-                            @if($ticket->assignedTo)
-                                {{ $ticket->assignedTo->name }}
-                            @else
-                                Não atribuído
-                            @endif
-                        </p>
-                    </div>
+            <div class="bg-branco p-4 rounded-lg border border-padrao">
+                <div class="mb-3">
+                    <h3 class="text-sm font-medium text-cinza">Responsável</h3>
+                    <p class="text-sm text-cinza-claro">
+                        @if($ticket->assignedTo)
+                            {{ $ticket->assignedTo->name }}
+                        @else
+                            Não atribuído
+                        @endif
+                    </p>
                 </div>
                 <x-button variant="outline" size="sm" onclick="openAssignModal()" class="w-full">
                     {{ $ticket->assignedTo ? 'Reatribuir' : 'Atribuir' }}
@@ -425,17 +411,10 @@
             </div>
 
             <!-- Alterar Prioridade -->
-            <div class="bg-creme p-4 rounded-lg border border-padrao">
-                <div class="flex items-center mb-3">
-                    <div class="w-10 h-10 bg-vermelho bg-opacity-20 rounded-lg flex items-center justify-center mr-3">
-                        <svg class="w-5 h-5 text-vermelho" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 class="font-medium text-cinza">Prioridade</h3>
-                        <p class="text-sm text-cinza-claro">{{ ucfirst($ticket->priority) }}</p>
-                    </div>
+            <div class="bg-branco p-4 rounded-lg border border-padrao">
+                <div class="mb-3">
+                    <h3 class="text-sm font-medium text-cinza">Prioridade</h3>
+                    <p class="text-sm text-cinza-claro">{{ ucfirst($ticket->priority) }}</p>
                 </div>
                 <x-button variant="outline" size="sm" onclick="openPriorityModal()" class="w-full">
                     Alterar Prioridade
