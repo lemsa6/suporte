@@ -27,6 +27,12 @@
         </div>
     </div>
     <div class="flex gap-3">
+        @if(auth()->user()->isAdmin() || auth()->user()->isTecnico() || 
+            (auth()->user()->isClienteGestor() && $client->contacts->where('email', auth()->user()->email)->where('user_type', 'cliente_gestor')->first()))
+        <x-button variant="outline" tag="a" href="{{ route('clients.users.index', $client) }}">
+            Gerenciar Usuários
+        </x-button>
+        @endif
         <x-button variant="outline" tag="a" href="{{ route('clients.edit', $client) }}">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
@@ -165,14 +171,25 @@
     <h2 class="section-title mb-4">Contatos</h2>
     <x-card>
         <x-slot name="actions">
-            @if(auth()->user()->can('manage-contacts', $client))
-            <x-button variant="primary" size="sm" onclick="showAddContactModal()">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                </svg>
-                Adicionar Contato
-            </x-button>
-            @endif
+            <div class="flex gap-2">
+                @if(auth()->user()->isAdmin() || auth()->user()->isTecnico() || 
+                    (auth()->user()->isClienteGestor() && $client->contacts->where('email', auth()->user()->email)->where('user_type', 'cliente_gestor')->first()))
+                <x-button variant="outline" size="sm" tag="a" href="{{ route('clients.users.index', $client) }}">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                    Gerenciar Usuários
+                </x-button>
+                @endif
+                @if(auth()->user()->can('manage-contacts', $client))
+                <x-button variant="primary" size="sm" onclick="showAddContactModal()">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    Adicionar Contato
+                </x-button>
+                @endif
+            </div>
         </x-slot>
         
         @if($client->contacts->count() > 0)
@@ -214,7 +231,7 @@
                         
                         @if(auth()->user()->can('manage-contacts', $client))
                         <div class="flex gap-2">
-                            <x-button variant="outline" size="sm" tag="a" href="{{ route('clients.contacts.edit', ['client' => $client, 'contact' => $contact]) }}">
+                            <x-button variant="outline" size="sm" tag="a" href="{{ route('clients.users.edit', ['client' => $client, 'contact' => $contact]) }}">
                                 Editar
                             </x-button>
                             @if(!$contact->is_primary)
@@ -317,18 +334,17 @@
 </div>
 
 <!-- Modal para adicionar/editar contato -->
-<div class="modal fade" id="contact-modal" tabindex="-1" aria-labelledby="contact-modal-title" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="contact-modal-title">Adicionar Contato</h5>
-                <button type="button" class="absolute top-4 right-4 text-cinza-claro hover:text-cinza" onclick="closeModal()" aria-label="Close">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </button>
-            </div>
-            <div class="modal-body">
+<div class="fixed inset-0 bg-cinza-escuro bg-opacity-50 hidden items-center justify-center z-50" id="contact-modal">
+    <div class="bg-branco rounded-lg shadow-lg w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between p-6 border-b border-padrao">
+            <h5 class="text-lg font-semibold text-cinza" id="contact-modal-title">Adicionar Contato</h5>
+            <button type="button" class="text-cinza-claro hover:text-cinza transition-colors" onclick="closeModal()" aria-label="Close">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <div class="p-6">
                 <form id="contact-form">
                     @csrf
                     <input type="hidden" id="contact-id" name="contact_id">
@@ -369,8 +385,13 @@
                         />
                         
                         <div class="flex items-center">
-                            <input type="checkbox" id="contact-is-primary" name="is_primary" value="1" class="form-check-input">
+                            <input type="checkbox" id="contact-is-primary" name="is_primary" value="1" class="h-4 w-4 text-roxo focus:ring-roxo border-cinza-claro rounded">
                             <label for="contact-is-primary" class="ml-2 text-sm text-cinza">Contato principal</label>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            <input type="checkbox" id="contact-receive-notifications" name="receive_notifications" value="1" checked class="h-4 w-4 text-roxo focus:ring-roxo border-cinza-claro rounded">
+                            <label for="contact-receive-notifications" class="ml-2 text-sm text-cinza">Receber notificações por email</label>
                         </div>
                         
                         <x-select 
@@ -382,15 +403,17 @@
                                 'cliente_gestor' => 'Gestor da Empresa'
                             ]"
                         />
-                        <div class="text-sm text-cinza-claro">
-                            <strong>Gestor:</strong> Pode criar usuários e ver todos os tickets da empresa<br>
-                            <strong>Funcionário:</strong> Apenas seus próprios tickets
+                        <div class="bg-creme p-4 rounded-lg border border-padrao">
+                            <div class="text-sm text-cinza-claro">
+                                <strong class="text-cinza">Gestor:</strong> Pode criar usuários e ver todos os tickets da empresa<br>
+                                <strong class="text-cinza">Funcionário:</strong> Apenas seus próprios tickets
+                            </div>
                         </div>
                     </div>
                 </form>
 
                 <div id="reset-password-section" class="mt-6 pt-6 border-t border-padrao hidden">
-                    <h6 class="font-medium mb-4">Redefinir Senha</h6>
+                    <h6 class="font-medium text-cinza mb-4">Redefinir Senha</h6>
                     
                     <div class="space-y-4">
                         <x-input 
@@ -398,6 +421,7 @@
                             name="new_password"
                             id="new-password"
                             type="password"
+                            help="Mínimo 8 caracteres"
                         />
                         
                         <x-input 
@@ -405,14 +429,15 @@
                             name="confirm_password"
                             id="confirm-password"
                             type="password"
+                            help="Repita a nova senha"
                         />
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
+            <div class="flex items-center justify-end gap-3 p-6 border-t border-padrao bg-creme">
                 <x-button variant="outline" size="sm" type="button" id="toggle-password-reset" onclick="togglePasswordReset()">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1721 9z"></path>
                     </svg>
                     Redefinir Senha
                 </x-button>
@@ -431,9 +456,11 @@
         document.getElementById('contact-form').reset();
         document.getElementById('contact-id').value = '';
         document.getElementById('contact-user-type').value = 'cliente_funcionario';
+        document.getElementById('contact-receive-notifications').checked = true;
         
-        const modal = new bootstrap.Modal(document.getElementById('contact-modal'));
-        modal.show();
+        const modal = document.getElementById('contact-modal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
         
         // Mostrar botão de definir senha para novos contatos também
         document.getElementById('reset-password-section').classList.add('hidden');
@@ -444,6 +471,34 @@
         document.getElementById('new-password').value = '';
         document.getElementById('confirm-password').value = '';
     }
+
+    function closeModal() {
+        const modal = document.getElementById('contact-modal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        
+        // Resetar formulário
+        document.getElementById('contact-form').reset();
+        document.getElementById('reset-password-section').classList.add('hidden');
+    }
+
+    // Fechar modal ao clicar fora
+    document.addEventListener('click', function(event) {
+        const modal = document.getElementById('contact-modal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+
+    // Fechar modal com ESC
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            const modal = document.getElementById('contact-modal');
+            if (!modal.classList.contains('hidden')) {
+                closeModal();
+            }
+        }
+    });
 
     function togglePasswordReset() {
         const passwordSection = document.getElementById('reset-password-section');

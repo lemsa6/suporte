@@ -85,7 +85,7 @@ class User extends Authenticatable
 
     public function clientContacts(): HasMany
     {
-        return $this->hasMany(ClientContact::class, 'email', 'email');
+        return $this->hasMany(ClientContact::class, 'user_id');
     }
 
     // Scopes

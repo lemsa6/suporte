@@ -8,10 +8,12 @@ use App\Models\Ticket;
 use App\Models\Client;
 use App\Models\User;
 use App\Models\Category;
+use App\Models\ClientContact;
 use App\Policies\TicketPolicy;
 use App\Policies\ClientPolicy;
 use App\Policies\UserPolicy;
 use App\Policies\CategoryPolicy;
+use App\Policies\ClientUserPolicy;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -25,6 +27,7 @@ class AuthServiceProvider extends ServiceProvider
         Client::class => ClientPolicy::class,
         User::class => UserPolicy::class,
         Category::class => CategoryPolicy::class,
+        ClientContact::class => ClientUserPolicy::class,
     ];
 
     /**

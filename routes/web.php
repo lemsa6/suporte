@@ -10,7 +10,6 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\AttachmentController;
-use App\Http\Controllers\CompanyUserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -92,9 +91,13 @@ Route::middleware('auth')->group(function () {
         Route::post('/clients/{client}/toggle-status', [ClientController::class, 'toggleStatus'])->name('clients.toggle-status');
         Route::post('/clients/bulk-action', [ClientController::class, 'bulkAction'])->name('clients.bulk-action');
         
-        // Rotas para gerenciar contatos dos clientes
+        // Rotas legadas de contatos (redirecionadas para o novo sistema)
+        Route::get('/clients/{client}/contacts/{contact}/edit', function($client, $contact) {
+            return redirect()->route('clients.users.edit', ['client' => $client, 'contact' => $contact]);
+        })->name('clients.contacts.edit');
+        
+        // Rotas ainda necessárias para o modal "Adicionar Contato" (será migrado futuramente)
         Route::post('/clients/{client}/contacts', [ClientController::class, 'storeContact'])->name('clients.contacts.store');
-        Route::get('/clients/{client}/contacts/{contact}/edit', [ClientController::class, 'editContact'])->name('clients.contacts.edit');
         Route::put('/clients/{client}/contacts/{contact}', [ClientController::class, 'updateContact'])->name('clients.contacts.update');
         Route::delete('/clients/{client}/contacts/{contact}', [ClientController::class, 'deleteContact'])->name('clients.contacts.delete');
         
@@ -117,10 +120,20 @@ Route::middleware('auth')->group(function () {
         Route::get('/api/reports/chart-data', [ReportController::class, 'chartData'])->name('api.reports.chart-data');
     });
 
-    // Rotas para gestores gerenciarem usuários da empresa
-    Route::middleware('role:cliente_gestor')->group(function () {
-        Route::resource('company.users', CompanyUserController::class);
-        Route::post('/company/users/{companyUser}/toggle-status', [CompanyUserController::class, 'toggleStatus'])->name('company.users.toggle-status');
+    // Rotas para gestores, admins e técnicos gerenciarem usuários da empresa
+    Route::middleware(['auth'])->group(function () {
+        // Estrutura de gerenciamento de usuários
+        Route::prefix('clients/{client}/users')->name('clients.users.')->group(function () {
+            Route::get('/', [App\Http\Controllers\Client\UserController::class, 'index'])->name('index');
+            Route::get('/create', [App\Http\Controllers\Client\UserController::class, 'create'])->name('create');
+            Route::post('/', [App\Http\Controllers\Client\UserController::class, 'store'])->name('store');
+            Route::get('/{contact}/edit', [App\Http\Controllers\Client\UserController::class, 'edit'])->name('edit');
+            Route::put('/{contact}', [App\Http\Controllers\Client\UserController::class, 'update'])->name('update');
+            Route::post('/{contact}/toggle-status', [App\Http\Controllers\Client\UserController::class, 'toggleStatus'])->name('toggle-status');
+        });
+        
+        // Rota para buscar dados de contato (AJAX)
+        Route::get('/clients/{client}/contacts/{contact}', [ClientController::class, 'getContact'])->name('clients.contacts.show');
     });
 
 // Rota para buscar contatos de um cliente (usada no formulário de criação de ticket) - Acesso para todos autenticados

@@ -580,6 +580,25 @@ class ClientController extends Controller
     }
 
     /**
+     * API: Buscar dados de um contato específico
+     */
+    public function getContact(Client $client, ClientContact $contact): JsonResponse
+    {
+        // Verificar se o contato pertence ao cliente
+        if ($contact->client_id !== $client->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Contato não encontrado.'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'contact' => $contact
+        ]);
+    }
+
+    /**
      * Retorna dados do contato para edição
      */
     public function editContact(Client $client, ClientContact $contact): View
