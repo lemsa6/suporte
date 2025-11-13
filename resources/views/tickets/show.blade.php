@@ -295,9 +295,16 @@
                                             <x-badge variant="
                                                 @if($message->type === 'note') info
                                                 @elseif($message->type === 'status_change') warning
+                                                @elseif($message->type === 'assignment') success
+                                                @elseif($message->type === 'priority_change') danger
                                                 @else secondary
                                                 @endif">
-                                                {{ ucfirst($message->type) }}
+                                                @if($message->type === 'assignment') Atribuição
+                                                @elseif($message->type === 'priority_change') Prioridade
+                                                @elseif($message->type === 'status_change') Status
+                                                @elseif($message->type === 'note') Nota
+                                                @else {{ ucfirst($message->type) }}
+                                                @endif
                                             </x-badge>
                                             @if($message->is_internal)
                                                 <x-badge variant="danger">Interno</x-badge>
@@ -349,11 +356,38 @@
                                     @endif
                                     
                                     @if($message->metadata)
-                                        <div class="mt-3">
+                                        <div class="mt-3 space-y-2">
                                             @if(isset($message->metadata['status_change']))
-                                                <x-badge variant="warning">
-                                                    Status alterado de "{{ $message->metadata['status_change']['from'] }}" para "{{ $message->metadata['status_change']['to'] }}"
-                                                </x-badge>
+                                                <div>
+                                                    <x-badge variant="warning">
+                                                        Status alterado de "{{ $message->metadata['status_change']['from'] }}" para "{{ $message->metadata['status_change']['to'] }}"
+                                                    </x-badge>
+                                                </div>
+                                            @endif
+                                            
+                                            @if(isset($message->metadata['assignment_change']))
+                                                <div>
+                                                    <x-badge variant="success">
+                                                        @if($message->metadata['assignment_change']['from'])
+                                                            Reatribuído de "{{ $message->metadata['assignment_change']['from'] }}" para "{{ $message->metadata['assignment_change']['to'] }}"
+                                                        @else
+                                                            Atribuído a "{{ $message->metadata['assignment_change']['to'] }}"
+                                                        @endif
+                                                    </x-badge>
+                                                </div>
+                                            @endif
+                                            
+                                            @if(isset($message->metadata['priority_change']))
+                                                <div>
+                                                    <x-badge variant="danger">
+                                                        Prioridade alterada de "{{ $message->metadata['priority_change']['from'] }}" para "{{ $message->metadata['priority_change']['to'] }}"
+                                                        @if($message->metadata['priority_change']['urgent_to'] && !$message->metadata['priority_change']['urgent_from'])
+                                                            - Marcado como urgente
+                                                        @elseif(!$message->metadata['priority_change']['urgent_to'] && $message->metadata['priority_change']['urgent_from'])
+                                                            - Removido da urgência
+                                                        @endif
+                                                    </x-badge>
+                                                </div>
                                             @endif
                                         </div>
                                     @endif

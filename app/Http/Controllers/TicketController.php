@@ -645,13 +645,16 @@ class TicketController extends Controller
             
             $ticket->update($updateData);
             
-            // Criar mensagem no histórico SEMPRE (mesmo se status for igual)
+            // Criar mensagem no histórico
             if (auth()->check()) {
+                $notes = $request->input('notes');
                 $message = $oldStatus !== $newStatus 
                     ? "Status alterado de '{$oldStatus}' para '{$newStatus}'"
                     : "Ticket {$newStatus}";
                 
-                \Log::info("Criando mensagem no histórico: {$message}");
+                if (!empty($notes)) {
+                    $message .= "\n\nObservações: " . $notes;
+                }
                     
                 TicketMessage::create([
                     'ticket_id' => $ticket->id,
@@ -659,11 +662,13 @@ class TicketController extends Controller
                     'type' => 'status_change',
                     'message' => $message,
                     'is_internal' => true,
+                    'metadata' => [
+                        'status_change' => [
+                            'from' => $oldStatus,
+                            'to' => $newStatus,
+                        ]
+                    ]
                 ]);
-                
-                \Log::info("Mensagem criada com sucesso");
-            } else {
-                \Log::warning("Usuário não autenticado - não criou mensagem");
             }
             
             return redirect()->route('tickets.show', $ticket->ticket_number)
