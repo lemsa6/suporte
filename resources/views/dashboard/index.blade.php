@@ -266,7 +266,7 @@
                         <span class="text-sm mr-3">
                             {{ $login->event_type == 'login_success' ? '🟢 Entrou' : '🔴 Saiu' }}
                         </span>
-                        <span class="text-gray-600">Usuário #{{ $login->user_id }}</span>
+                        <span class="text-gray-600">{{ $login->user->name ?? 'Usuário #' . $login->user_id }}</span>
                     </div>
                     <span class="text-xs text-gray-500">{{ $login->created_at->diffForHumans() }}</span>
                 </div>
