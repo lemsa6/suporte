@@ -11,8 +11,15 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->web(append: [
+            \App\Http\Middleware\SanitizeInputMiddleware::class,
+            \App\Http\Middleware\CaptureAuditInfo::class,
+        ]);
+
         $middleware->alias([
             'role' => \App\Http\Middleware\CheckRoleMiddleware::class,
+            'audit' => \App\Http\Middleware\CaptureAuditInfo::class,
+            'rate.limit' => \App\Http\Middleware\RateLimitMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

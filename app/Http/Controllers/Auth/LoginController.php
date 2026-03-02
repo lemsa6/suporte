@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Providers\RouteServiceProvider;
 use App\Services\AuditService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,12 +12,7 @@ class LoginController extends Controller
 {
     protected $auditService;
 
-    /**
-     * Where to redirect users after login.
-     *
-     * @var string
-     */
-    protected $redirectTo = RouteServiceProvider::HOME;
+    protected $redirectTo = '/dashboard';
 
     public function __construct(AuditService $auditService)
     {
@@ -52,11 +46,9 @@ class LoginController extends Controller
                 $request->session()->put('auth.password_confirmed_at', time());
             }
 
-            \Log::info('Login bem-sucedido, chamando sendLoginResponse');
             return $this->sendLoginResponse($request);
         }
 
-        \Log::info('Login falhado, chamando sendFailedLoginResponse');
         return $this->sendFailedLoginResponse($request);
     }
 
@@ -69,10 +61,7 @@ class LoginController extends Controller
      */
     protected function authenticated(Request $request, $user)
     {
-        \Log::info('Método authenticated chamado para usuário: ' . $user->name);
-        
         try {
-            // Registrar auditoria de login bem-sucedido
             $this->auditService->log(
                 'login_success',
                 $user,
@@ -82,7 +71,6 @@ class LoginController extends Controller
                 ['email' => $user->email, 'role' => $user->role],
                 'Login realizado com sucesso'
             );
-            \Log::info('Auditoria de login registrada com sucesso');
         } catch (\Exception $e) {
             \Log::error('Erro ao registrar auditoria de login: ' . $e->getMessage());
         }
@@ -166,16 +154,9 @@ class LoginController extends Controller
      */
     protected function attemptLogin(Request $request)
     {
-        $credentials = $this->credentials($request);
-        \Log::info('Tentativa de login com credenciais: ' . json_encode($credentials));
-        
-        $result = $this->guard()->attempt(
-            $credentials, $request->boolean('remember')
+        return $this->guard()->attempt(
+            $this->credentials($request), $request->boolean('remember')
         );
-        
-        \Log::info('Resultado do attempt: ' . ($result ? 'SUCESSO' : 'FALHA'));
-        
-        return $result;
     }
 
     /**

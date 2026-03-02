@@ -14,7 +14,7 @@ return [
 
     'name' => env('APP_NAME', '8BITS | SUPORTE'),
     
-    'version' => env('APP_VERSION', '1.0.0'),
+    'version' => env('APP_VERSION', '1.6.1'),
     
     'description' => env('APP_DESCRIPTION', 'Sistema de Gerenciamento de Tickets'),
     

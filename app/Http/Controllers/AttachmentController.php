@@ -15,13 +15,7 @@ class AttachmentController extends Controller
      */
     public function download(Attachment $attachment): BinaryFileResponse
     {
-        // Verificar se o usuário tem acesso ao ticket
-        $user = auth()->user();
-        $ticket = $attachment->ticket();
-        
-        if ($user->isCliente() && $ticket->client_id !== $user->client_id) {
-            abort(403, 'Acesso negado a este anexo.');
-        }
+        $this->authorizeAttachmentAccess($attachment);
         
         $filePath = Storage::disk($attachment->disk)->path($attachment->file_path);
         
@@ -37,13 +31,7 @@ class AttachmentController extends Controller
      */
     public function preview(Attachment $attachment): Response
     {
-        // Verificar se o usuário tem acesso ao ticket
-        $user = auth()->user();
-        $ticket = $attachment->ticket();
-        
-        if ($user->isCliente() && $ticket->client_id !== $user->client_id) {
-            abort(403, 'Acesso negado a este anexo.');
-        }
+        $this->authorizeAttachmentAccess($attachment);
         
         $filePath = Storage::disk($attachment->disk)->path($attachment->file_path);
         
@@ -80,5 +68,22 @@ class AttachmentController extends Controller
         ];
         
         return in_array($attachment->file_type, $previewableTypes);
+    }
+
+    private function authorizeAttachmentAccess(Attachment $attachment): void
+    {
+        $user = auth()->user();
+        $ticket = $attachment->ticket();
+
+        if (!$ticket) {
+            abort(404, 'Ticket não encontrado.');
+        }
+
+        if ($user->isCliente()) {
+            $clientIds = $user->clientContacts()->pluck('client_id')->toArray();
+            if (!in_array($ticket->client_id, $clientIds)) {
+                abort(403, 'Acesso negado a este anexo.');
+            }
+        }
     }
 }

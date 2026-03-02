@@ -2,7 +2,7 @@
 {
     "name": "laravel/laravel",
     "type": "project",
-    "description": "Sistema de Suporte e Tickets - v1.3",
+    "description": "Sistema de Suporte e Tickets - v1.6.1",
     "keywords": ["laravel", "framework", "tickets", "suporte"],
     "license": "MIT",
     "require": {

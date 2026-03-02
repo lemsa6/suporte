@@ -18,7 +18,9 @@ class TicketMessage extends Model
         'type',
         'message',
         'metadata',
-        'is_internal'
+        'is_internal',
+        'ip_address',
+        'user_agent',
     ];
 
     protected $casts = [

@@ -60,25 +60,19 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     
     // Rotas dos Tickets
-    Route::middleware(['auth'])->group(function () {
-        Route::get('/tickets', [TicketController::class, 'index'])->name('tickets.index');
-        Route::get('/tickets/create', [TicketController::class, 'create'])->name('tickets.create');
-        Route::post('/tickets', [TicketController::class, 'store'])->name('tickets.store');
-        Route::get('/tickets/{ticketNumber}', [TicketController::class, 'show'])->name('tickets.show');
-        Route::get('/tickets/{ticketNumber}/edit', [TicketController::class, 'edit'])->name('tickets.edit');
-        Route::put('/tickets/{ticketNumber}', [TicketController::class, 'update'])->name('tickets.update');
-        Route::delete('/tickets/{ticketNumber}', [TicketController::class, 'destroy'])->name('tickets.destroy');
-        Route::post('/tickets/{ticketNumber}/message', [TicketController::class, 'addMessage'])->name('tickets.message');
-        
-        // Ações de status
-        Route::post('/tickets/{ticketNumber}/change-status', [TicketController::class, 'changeStatus'])->name('tickets.change-status');
-        Route::post('/tickets/{ticketNumber}/reopen', [TicketController::class, 'reopen'])->name('tickets.reopen');
-        Route::post('/tickets/{ticketNumber}/assign', [TicketController::class, 'assign'])->name('tickets.assign');
-        Route::post('/tickets/{ticketNumber}/change-priority', [TicketController::class, 'changePriority'])->name('tickets.change-priority');
-        
-        // Ações em lote
-        Route::post('/tickets/bulk-action', [TicketController::class, 'bulkAction'])->name('tickets.bulk-action');
-    });
+    Route::get('/tickets', [TicketController::class, 'index'])->name('tickets.index');
+    Route::get('/tickets/create', [TicketController::class, 'create'])->name('tickets.create');
+    Route::post('/tickets', [TicketController::class, 'store'])->name('tickets.store');
+    Route::get('/tickets/{ticketNumber}', [TicketController::class, 'show'])->name('tickets.show');
+    Route::get('/tickets/{ticketNumber}/edit', [TicketController::class, 'edit'])->name('tickets.edit');
+    Route::put('/tickets/{ticketNumber}', [TicketController::class, 'update'])->name('tickets.update');
+    Route::delete('/tickets/{ticketNumber}', [TicketController::class, 'destroy'])->name('tickets.destroy');
+    Route::post('/tickets/{ticketNumber}/message', [TicketController::class, 'addMessage'])->name('tickets.message');
+    Route::post('/tickets/{ticketNumber}/change-status', [TicketController::class, 'changeStatus'])->name('tickets.change-status');
+    Route::post('/tickets/{ticketNumber}/reopen', [TicketController::class, 'reopen'])->name('tickets.reopen');
+    Route::post('/tickets/{ticketNumber}/assign', [TicketController::class, 'assign'])->name('tickets.assign');
+    Route::post('/tickets/{ticketNumber}/change-priority', [TicketController::class, 'changePriority'])->name('tickets.change-priority');
+    Route::post('/tickets/bulk-action', [TicketController::class, 'bulkAction'])->name('tickets.bulk-action');
     
     // Rotas de anexos
     Route::get('/attachments/{attachment}/download', [AttachmentController::class, 'download'])->name('attachments.download');
@@ -91,12 +85,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/clients/{client}/toggle-status', [ClientController::class, 'toggleStatus'])->name('clients.toggle-status');
         Route::post('/clients/bulk-action', [ClientController::class, 'bulkAction'])->name('clients.bulk-action');
         
-        // Rotas legadas de contatos (redirecionadas para o novo sistema)
-        Route::get('/clients/{client}/contacts/{contact}/edit', function($client, $contact) {
-            return redirect()->route('clients.users.edit', ['client' => $client, 'contact' => $contact]);
-        })->name('clients.contacts.edit');
-        
-        // Rotas ainda necessárias para o modal "Adicionar Contato" (será migrado futuramente)
+        // Rotas de contatos (usadas pelo modal na pagina do cliente)
         Route::post('/clients/{client}/contacts', [ClientController::class, 'storeContact'])->name('clients.contacts.store');
         Route::put('/clients/{client}/contacts/{contact}', [ClientController::class, 'updateContact'])->name('clients.contacts.update');
         Route::delete('/clients/{client}/contacts/{contact}', [ClientController::class, 'deleteContact'])->name('clients.contacts.delete');
@@ -120,40 +109,19 @@ Route::middleware('auth')->group(function () {
         Route::get('/api/reports/chart-data', [ReportController::class, 'chartData'])->name('api.reports.chart-data');
     });
 
-    // Rotas para gestores, admins e técnicos gerenciarem usuários da empresa
-    Route::middleware(['auth'])->group(function () {
-        // Estrutura de gerenciamento de usuários
-        Route::prefix('clients/{client}/users')->name('clients.users.')->group(function () {
-            Route::get('/', [App\Http\Controllers\Client\UserController::class, 'index'])->name('index');
-            Route::get('/create', [App\Http\Controllers\Client\UserController::class, 'create'])->name('create');
-            Route::post('/', [App\Http\Controllers\Client\UserController::class, 'store'])->name('store');
-            Route::get('/{contact}/edit', [App\Http\Controllers\Client\UserController::class, 'edit'])->name('edit');
-            Route::put('/{contact}', [App\Http\Controllers\Client\UserController::class, 'update'])->name('update');
-            Route::post('/{contact}/toggle-status', [App\Http\Controllers\Client\UserController::class, 'toggleStatus'])->name('toggle-status');
-        });
-        
-        // Rota para buscar dados de contato (AJAX)
-        Route::get('/clients/{client}/contacts/{contact}', [ClientController::class, 'getContact'])->name('clients.contacts.show');
+    // Rotas de gerenciamento de usuários da empresa
+    Route::prefix('clients/{client}/users')->name('clients.users.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Client\UserController::class, 'index'])->name('index');
+        Route::get('/create', [App\Http\Controllers\Client\UserController::class, 'create'])->name('create');
+        Route::post('/', [App\Http\Controllers\Client\UserController::class, 'store'])->name('store');
+        Route::get('/{contact}/edit', [App\Http\Controllers\Client\UserController::class, 'edit'])->name('edit');
+        Route::put('/{contact}', [App\Http\Controllers\Client\UserController::class, 'update'])->name('update');
+        Route::post('/{contact}/toggle-status', [App\Http\Controllers\Client\UserController::class, 'toggleStatus'])->name('toggle-status');
     });
-
-// Rota para buscar contatos de um cliente (usada no formulário de criação de ticket) - Acesso para todos autenticados
-Route::get('/clients/{client}/contacts', [ClientController::class, 'getContacts'])->name('clients.contacts.index')->middleware('auth');
-
-// Rota de teste para verificar se está funcionando
-Route::get('/test-contacts/{client}', function($client) {
-    $clientModel = \App\Models\Client::find($client);
-    if (!$clientModel) {
-        return response()->json(['error' => 'Cliente não encontrado'], 404);
-    }
     
-    $contacts = $clientModel->contacts()
-        ->select('id', 'name', 'email', 'phone', 'position', 'department', 'is_primary')
-        ->orderBy('is_primary', 'desc')
-        ->orderBy('name')
-        ->get();
-    
-    return response()->json($contacts);
-})->name('test.contacts');
+    Route::get('/clients/{client}/contacts/{contact}', [ClientController::class, 'getContact'])->name('clients.contacts.show');
+
+    Route::get('/clients/{client}/contacts', [ClientController::class, 'getContacts'])->name('clients.contacts.index');
     
     // Rotas de configurações (apenas Admin)
     Route::middleware('role:admin')->group(function () {
@@ -170,16 +138,7 @@ Route::get('/test-contacts/{client}', function($client) {
         Route::get('/admin/settings/notifications', [App\Http\Controllers\Admin\SettingsController::class, 'notifications'])->name('admin.settings.notifications');
         Route::put('/admin/settings/notifications', [App\Http\Controllers\Admin\SettingsController::class, 'updateNotifications'])->name('admin.settings.notifications.update');
         
-        // Rotas legadas (compatibilidade)
-        Route::get('/settings', function () {
-            return redirect()->route('admin.settings.index');
-        })->name('settings.index');
-        
         Route::get('/settings/users', [UserController::class, 'index'])->name('settings.users');
-        
-        Route::get('/settings/system', function () {
-            return redirect()->route('admin.settings.system');
-        })->name('settings.system');
         
         // Gerenciamento de usuários
         Route::resource('users', UserController::class);

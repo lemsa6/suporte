@@ -47,14 +47,9 @@ class SanitizeInputMiddleware
     {
         foreach ($data as $key => $value) {
             if (is_string($value)) {
-                // Remover caracteres de controle
-                $data[$key] = preg_replace('/[\x00-\x1F\x7F]/', '', $value);
-                
-                // Normalizar espaços em branco
-                $data[$key] = preg_replace('/\s+/', ' ', trim($value));
-                
-                // Escapar caracteres especiais para HTML
-                $data[$key] = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+                $clean = preg_replace('/[\x00-\x1F\x7F]/', '', $value);
+                $clean = preg_replace('/\s+/', ' ', trim($clean));
+                $data[$key] = htmlspecialchars($clean, ENT_QUOTES, 'UTF-8');
             } elseif (is_array($value)) {
                 $data[$key] = $this->sanitizeStrings($value);
             }
@@ -75,13 +70,11 @@ class SanitizeInputMiddleware
         
         foreach ($data as $key => $value) {
             if (is_string($value)) {
-                // Remover tags perigosas
+                $clean = $value;
                 foreach ($dangerousTags as $tag) {
-                    $data[$key] = preg_replace('/<\/?' . $tag . '[^>]*>/i', '', $value);
+                    $clean = preg_replace('/<\/?' . $tag . '[^>]*>/i', '', $clean);
                 }
-                
-                // Remover atributos perigosos
-                $data[$key] = preg_replace('/\s+(on\w+|javascript:|data:|vbscript:)[^=]*=[^"\'>\s]+/i', '', $value);
+                $data[$key] = preg_replace('/\s+(on\w+|javascript:|data:|vbscript:)[^=]*=[^"\'>\s]+/i', '', $clean);
             } elseif (is_array($value)) {
                 $data[$key] = $this->removeDangerousTags($value);
             }

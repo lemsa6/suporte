@@ -164,8 +164,6 @@ class ProfileController extends Controller
      */
     public function updatePreferences(Request $request): RedirectResponse
     {
-        $user = auth()->user();
-        
         $validated = $request->validate([
             'notifications_email' => ['boolean'],
             'notifications_sms' => ['boolean'],
@@ -173,8 +171,11 @@ class ProfileController extends Controller
             'timezone' => ['string', 'timezone'],
         ]);
 
-        // Atualizar preferências (implementar conforme necessário)
-        // $user->preferences()->updateOrCreate([], $validated);
+        // TODO: adicionar colunas language/timezone na tabela users via migration
+        session([
+            'user_language' => $validated['language'] ?? 'pt_BR',
+            'user_timezone' => $validated['timezone'] ?? config('app.timezone'),
+        ]);
 
         return back()->with('success', 'Preferências atualizadas com sucesso!');
     }

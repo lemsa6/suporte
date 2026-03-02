@@ -26,7 +26,7 @@ class StoreClientRequest extends FormRequest
                 'required',
                 'string',
                 'unique:clients,cnpj',
-                'regex:/^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/'
+                'regex:/^\d{14}$/'
             ],
             'company_name' => ['required', 'string', 'max:255'],
             'trade_name' => ['nullable', 'string', 'max:255'],
@@ -46,7 +46,7 @@ class StoreClientRequest extends FormRequest
         return [
             'cnpj.required' => 'O CNPJ é obrigatório.',
             'cnpj.unique' => 'Este CNPJ já está cadastrado.',
-            'cnpj.regex' => 'O CNPJ deve estar no formato 00.000.000/0000-00.',
+            'cnpj.regex' => 'O CNPJ deve conter exatamente 14 dígitos numéricos.',
             'company_name.required' => 'O nome da empresa é obrigatório.',
             'company_name.max' => 'O nome da empresa não pode ter mais de 255 caracteres.',
             'trade_name.max' => 'O nome fantasia não pode ter mais de 255 caracteres.',

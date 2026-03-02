@@ -29,9 +29,9 @@ class Attachment extends Model
         return $this->belongsTo(TicketMessage::class);
     }
 
-    public function ticket(): BelongsTo
+    public function ticket(): ?Ticket
     {
-        return $this->belongsTo(Ticket::class, 'ticket_id');
+        return $this->ticketMessage?->ticket;
     }
 
     // Boot method para atualizar updated_at do ticket pai

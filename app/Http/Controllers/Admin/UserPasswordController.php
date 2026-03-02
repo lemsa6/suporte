@@ -53,7 +53,6 @@ class UserPasswordController extends Controller
                 'password' => Hash::make($validated['new_password'])
             ]);
 
-            // Registrar no log de auditoria
             AuditLog::create([
                 'event_type' => 'password_changed_by_admin',
                 'auditable_type' => User::class,
@@ -63,26 +62,24 @@ class UserPasswordController extends Controller
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent(),
                 'old_values' => [
-                    'password_hash' => substr($oldPasswordHash, 0, 20) . '...' // Apenas parte do hash por segurança
+                    'password_hash' => substr($oldPasswordHash, 0, 20) . '...',
                 ],
                 'new_values' => [
                     'password_changed' => true,
                     'changed_by_admin' => auth()->user()->name,
-                    'admin_id' => auth()->id()
-                ],
-                'description' => 'Senha alterada pelo administrador: ' . auth()->user()->name,
-                'url' => $request->fullUrl(),
-                'method' => $request->method(),
-                'metadata' => [
+                    'admin_id' => auth()->id(),
                     'reason' => $validated['reason'] ?? 'Não informado',
                     'admin_confirmation' => true,
                     'target_user' => [
                         'id' => $user->id,
                         'name' => $user->name,
                         'email' => $user->email,
-                        'role' => $user->role
-                    ]
-                ]
+                        'role' => $user->role,
+                    ],
+                ],
+                'description' => 'Senha alterada pelo administrador: ' . auth()->user()->name,
+                'url' => $request->fullUrl(),
+                'method' => $request->method(),
             ]);
 
             // Log adicional para segurança
