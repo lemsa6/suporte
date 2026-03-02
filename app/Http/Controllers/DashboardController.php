@@ -73,6 +73,12 @@ class DashboardController extends Controller
                 ];
             }
             
+            // SLA compliance data
+            $slaData = $this->getSlaData($user);
+            
+            // Timeline: tickets criados nos ultimos 14 dias
+            $ticketsTimeline = $this->getTicketsTimeline($user, 14);
+            
             return view('dashboard.index', compact(
                 'stats',
                 'criticalAlerts',
@@ -86,7 +92,9 @@ class DashboardController extends Controller
                 'urgentTickets',
                 'unassignedTickets',
                 'recentLogins',
-                'quickStats'
+                'quickStats',
+                'slaData',
+                'ticketsTimeline'
             ));
             
         } catch (\Exception $e) {
@@ -104,6 +112,8 @@ class DashboardController extends Controller
                 'unassignedTickets' => collect(),
                 'recentLogins' => collect(),
                 'quickStats' => ['avg_response_time' => 'N/A', 'resolution_rate' => '0%', 'resolved_today' => 0, 'created_this_week' => 0],
+                'slaData' => ['alta' => ['total' => 0, 'within' => 0, 'pct' => 0], 'média' => ['total' => 0, 'within' => 0, 'pct' => 0], 'baixa' => ['total' => 0, 'within' => 0, 'pct' => 0], 'overall' => 0],
+                'ticketsTimeline' => [],
             ]);
         }
     }
@@ -411,6 +421,88 @@ class DashboardController extends Controller
 
         $rate = ($resolved / $total) * 100;
         return round($rate) . '%';
+    }
+
+    /**
+     * SLA targets em horas por prioridade
+     */
+    private const SLA_TARGETS = [
+        'alta' => 4,
+        'média' => 8,
+        'baixa' => 24,
+    ];
+
+    /**
+     * Calcula compliance de SLA por prioridade
+     */
+    private function getSlaData(User $user): array
+    {
+        $result = [];
+        $totalAll = 0;
+        $withinAll = 0;
+
+        foreach (self::SLA_TARGETS as $priority => $targetHours) {
+            $tickets = $this->getUserTicketQuery($user)
+                ->where('priority', $priority)
+                ->whereNotNull('resolved_at')
+                ->selectRaw('COUNT(*) as total')
+                ->selectRaw("SUM(CASE WHEN TIMESTAMPDIFF(HOUR, opened_at, resolved_at) <= {$targetHours} THEN 1 ELSE 0 END) as within_sla")
+                ->first();
+
+            $total = $tickets->total ?? 0;
+            $within = $tickets->within_sla ?? 0;
+            $pct = $total > 0 ? round(($within / $total) * 100) : 0;
+
+            $result[$priority] = [
+                'total' => $total,
+                'within' => $within,
+                'pct' => $pct,
+                'target_hours' => $targetHours,
+            ];
+
+            $totalAll += $total;
+            $withinAll += $within;
+        }
+
+        $result['overall'] = $totalAll > 0 ? round(($withinAll / $totalAll) * 100) : 0;
+
+        return $result;
+    }
+
+    /**
+     * Retorna contagem de tickets criados e resolvidos por dia nos ultimos N dias
+     */
+    private function getTicketsTimeline(User $user, int $days = 14): array
+    {
+        $timeline = [];
+        $startDate = now()->subDays($days - 1)->startOfDay();
+
+        $created = $this->getUserTicketQuery($user)
+            ->where('created_at', '>=', $startDate)
+            ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
+            ->groupByRaw('DATE(created_at)')
+            ->pluck('count', 'date')
+            ->toArray();
+
+        $resolved = $this->getUserTicketQuery($user)
+            ->whereNotNull('resolved_at')
+            ->where('resolved_at', '>=', $startDate)
+            ->selectRaw('DATE(resolved_at) as date, COUNT(*) as count')
+            ->groupByRaw('DATE(resolved_at)')
+            ->pluck('count', 'date')
+            ->toArray();
+
+        for ($i = 0; $i < $days; $i++) {
+            $date = now()->subDays($days - 1 - $i)->format('Y-m-d');
+            $timeline[] = [
+                'date' => $date,
+                'label' => Carbon::parse($date)->format('d/m'),
+                'created' => $created[$date] ?? 0,
+                'resolved' => $resolved[$date] ?? 0,
+            ];
+        }
+
+        return $timeline;
     }
 
     /**
